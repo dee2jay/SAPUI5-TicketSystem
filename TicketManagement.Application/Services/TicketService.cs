@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicketManagement.Application.Dispatcher;
-using TicketManagement.Application.Events;
+﻿using TicketManagement.Application.Events;
 using TicketManagement.Application.Interfaces;
 using TicketManagementSystem.Application.Events;
+using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
-using TicketManagementSystem.Infrastructure.Persistence;
-using TicketManagementSystem.Infrastructure.Persistence.Repository;
 using TicketSystem.Domain.Models;
 
 namespace TicketManagement.Application.Services

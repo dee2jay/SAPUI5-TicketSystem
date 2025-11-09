@@ -51,7 +51,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Ticket Management API",
+        Title = "SAPUI5 Ticket Management API",
         Version = "v1",
         Description = "API zur Verwaltung von Tickets und Benutzern ",
         Contact = new OpenApiContact
@@ -71,7 +71,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ticket Management API v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "SAPUI5 Ticket Management API v1");
         c.RoutePrefix = ""; // Swagger UI 
     });
 }
