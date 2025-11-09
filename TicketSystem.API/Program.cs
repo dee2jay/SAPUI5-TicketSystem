@@ -41,6 +41,17 @@ builder.Services.AddSingleton(sp =>
 // Logger Mongo
 builder.Services.AddSingleton<IAppLogger>(sp => sp.GetRequiredService<MongoLogger>());
 
+//CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        corsPolicyBuilder =>
+        {
+            corsPolicyBuilder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
