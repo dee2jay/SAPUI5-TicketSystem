@@ -6,13 +6,22 @@
         "i18n": "i18n/i18n.properties",
         "applicationVersion": {
             "version": "0.0.1"
-        },
-        "title": "{{appTitle}}",
-        "description": "{{appDescription}}",
-        "resources": "resources.json",
-        "sourceTemplate": {
-            "id": "@sap-ux/fiori-freestyle-writer:basic",
-            "version": "0.21.10"
+        }
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+        "id": "@sap-ux/fiori-freestyle-writer:basic",
+        "version": "0.21.10"
+    },
+    "dataSources": {
+    "ticketService": {
+        "uri": "https://localhost:7187/api/",
+        "type": "REST",
+        "settings": {
+        "odataVersion": "2.0"
+        }
         }
     },
     "sap.ui": {
@@ -74,8 +83,7 @@
                 "viewPath": "myui5app.view",
                 "controlAggregation": "pages",
                 "controlId": "app",
-                "clearControlAggregation": false,
-                
+                "clearControlAggregation": false                
             },
             "routes": [
                 {
@@ -103,4 +111,4 @@
             "id": "App"
         }
     }
-}
+}    
