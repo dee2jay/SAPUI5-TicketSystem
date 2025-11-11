@@ -1,5 +1,5 @@
 <mvc:View
-  controllerName="ticket.app.controller.AppConfig"
+  controllerName="ticket-ui.controller.AppConfig"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m">
   <Page id="_IDGenPage1" title="{I18n>titleAppConfig}">

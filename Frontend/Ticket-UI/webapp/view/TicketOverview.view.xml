@@ -1,4 +1,4 @@
-<mvc:View controllerName="myui5app.controller.TicketOverview"
+<mvc:View controllerName="ticket-ui.controller.TicketOverview"
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
     xmlns="sap.m">
     <Page id="pageTicketOverview" title="{i18n>title}">

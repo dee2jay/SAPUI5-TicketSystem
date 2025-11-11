@@ -2,25 +2,25 @@
   id="createTicketDialog"
   title="Neues Ticket erstellen"
   xmlns="sap.m"
-  xmlns:l="sap.ui.layout">
+  xmlns:l="sap.ui.layout.form">
   <content>
-    <l:SimpleForm editable="true" layout="ResponsiveGridLayout">
-      <Label text="Titel"/>
-      <Input value="{newTicket>Title}" placeholder="Ticket Titel"/>
-      <Label text="Beschreibung"/>
-      <TextArea value="{newTicket>Description}" rows="4"/>
-      <Label text="Priorität"/>
-      <Select selectedKey="{newTicket>Priority}">
+    <l:SimpleForm id="_IDGenSimpleForm1" editable="true" layout="ResponsiveGridLayout">
+      <Label id="_IDGenLabel" text="Titel"/>
+      <Input id="_IDGenInput" value="{newTicket>Title}" placeholder="Ticket Titel"/>
+      <Label id="_IDGenLabel1" text="Beschreibung"/>
+      <TextArea id="_IDGenTextArea" value="{newTicket>Description}" rows="4"/>
+      <Label id="_IDGenLabel2" text="Priorität"/>
+      <Select id="_IDGenSelect1" selectedKey="{newTicket>Priority}">
         <items>
-          <core:Item key="1" text="Low"/>
-          <core:Item key="2" text="Normal"/>
-          <core:Item key="3" text="High"/>
+          <core:Item id="_IDGenItem4" key="1" text="Low"/>
+          <core:Item id="_IDGenItem5" key="2" text="Normal"/>
+          <core:Item id="_IDGenItem6" key="3" text="High"/>
         </items>
       </Select>
     </l:SimpleForm>
   </content>
   <buttons>
-    <Button text="Cancel" press=".onCancelCreate"/>
-    <Button text="Create" type="Emphasized" press=".onConfirmCreate"/>
+    <Button id="_IDGenButton1" text="Cancel" press=".onCancelCreate"/>
+    <Button id="_IDGenButton2" text="Create" type="Emphasized" press=".onConfirmCreate"/>
   </buttons>
 </Dialog>

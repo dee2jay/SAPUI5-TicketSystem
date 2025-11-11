@@ -1,5 +1,5 @@
 <mvc:View
-  controllerName="ticket.app.controller.TicketDetails"
+  controllerName="ticket-ui.controller.TicketDetails"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m"
   xmlns:f="sap.f">
