@@ -4,21 +4,18 @@ sap.ui.define([
 ], function (Controller, MessageToast) {
   "use strict";
 
-  return Controller.extend("com.ticketapp.controller.TicketOverview", {
+  return Controller.extend("ticket-ui.controller.TicketOverview", {
 
-    onInit: function () {
-      this._loadTickets();
-    },
-
-    _loadTickets: function () {
-      var oModel = new sap.ui.model.json.JSONModel();
-      oModel.loadData("/api/tickets");
-
-      oModel.attachRequestCompleted(function() {
-        MessageToast.show("Tickets geladen!");
-      });
-
-      this.getView().setModel(oModel, "tickets");
-    }
-  });
+   onInit: async function () {
+            const oModel = new JSONModel();
+            try {
+                const response = await fetch("/api/tickets");
+                const data = await response.json();
+                oModel.setData({ Tickets: data });
+            } catch (err) {
+                console.error("Issue while loading tickets:", err);
+            }
+            this.getView().setModel(oModel);
+        }
+    });
 });

@@ -4,10 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TicketManagement.Application.Interfaces;
+using TicketManagementSystem.Domain.Models;
 
 namespace TicketManagement.Application.Services
 {
-    internal class UserService : IUserService
+    public class UserService : IUserService
     {
+        public Task<bool> UserExistsAsync(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> GetUserById(int userId)
+        {
+            throw new NotImplementedException();
+        }
     }
+
 }

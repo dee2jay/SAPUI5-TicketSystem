@@ -22,13 +22,21 @@ namespace TicketManagement.Application.Services
 
         public async Task<IEnumerable<Ticket>> GetAllTicketsAsync()
         {
-            var tickets = await _ticketRepository.GetAllTickets();
-            if (tickets.IsError)
+            try
             {
+                var tickets = await _ticketRepository.GetAllTickets();
+                if (!tickets.IsError)
+                {
+                    return tickets.Value;
+                }
                 await _logger.LogWarning("No tickets found.", nameof(TicketService));
-                return Enumerable.Empty<Ticket>();
             }
-            return tickets.Value;
+            catch (Exception e)
+            {
+                await _logger.LogError(e.Message, e, "Database", e.StackTrace!);
+            }
+
+            return [];
         }
         public async Task AssignTicketToUserAsync(int ticketId, string userId)
         {

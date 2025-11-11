@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
+using TicketManagement.Application.Dispatcher;
 using TicketManagement.Application.EventHandlers;
 using TicketManagement.Application.Interfaces;
 using TicketManagement.Application.Publisher;
@@ -11,52 +13,51 @@ using TicketManagementSystem.Infrastructure.Persistence.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Repositories
+// === Repositories ===
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 
-// Event Handlers
+// === Event Handlers ===
 builder.Services.AddScoped<TicketCreatedEventHandler>();
 builder.Services.AddScoped<TicketUpdatedEventHandler>();
 
-// Event Publisher
-// Event Dispatcher
+// === Event Publisher & Dispatcher ===
 builder.Services.AddScoped<EventPublisher>();
 builder.Services.AddScoped<IEventPublisher>(sp => sp.GetRequiredService<EventPublisher>());
-builder.Services.AddScoped<IEventDispatcher>(sp => sp.GetRequiredService<IEventDispatcher>());
 
-// Services
+builder.Services.AddScoped<IEventDispatcher, EventDispatcher>();
+
+// === Services ===
 builder.Services.AddScoped<ITicketService, TicketService>();
 
-// Add services to the container.
+// === Database Context ===
 builder.Services.AddDbContext<TicketDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"))
 );
 
+// === Logger Mongo ===
 builder.Services.AddSingleton(sp =>
     new MongoLogger(
         builder.Configuration.GetConnectionString("MongoDB"),
         builder.Configuration["MongoSettings:Database"]
     )
 );
-// Logger Mongo
 builder.Services.AddSingleton<IAppLogger>(sp => sp.GetRequiredService<MongoLogger>());
 
-//CORS
+// === CORS ===
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
-        corsPolicyBuilder =>
-        {
-            corsPolicyBuilder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        });
+    options.AddPolicy("AllowUI5", cors =>
+    {
+        cors.WithOrigins("http://localhost:8080")
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
 });
 
+// === Controllers ===
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
+// === Swagger / OpenAPI ===
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -64,7 +65,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "SAPUI5 Ticket Management API",
         Version = "v1",
-        Description = "API zur Verwaltung von Tickets und Benutzern ",
+        Description = "API zur Verwaltung von Tickets und Benutzern",
         Contact = new OpenApiContact
         {
             Name = "Projektteam",
@@ -73,24 +74,28 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Health Checks
+builder.Services.AddHealthChecks()
+    .AddCheck("self", () => HealthCheckResult.Healthy("API is running"));
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// === Middleware ===
 if (app.Environment.IsDevelopment())
 {
-    //app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "SAPUI5 Ticket Management API v1");
-        c.RoutePrefix = ""; // Swagger UI 
+        c.RoutePrefix = "";
     });
 }
 
+app.UseCors("AllowUI5");
+
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();

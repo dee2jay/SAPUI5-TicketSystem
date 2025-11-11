@@ -1,11 +1,11 @@
 sap.ui.define([
-   "sap/ui/core/mvc/Controller",
-   "sap/m/MessageToast",
-   "sap/ui/model/json/JSONModel",
-   "sap/ui/model/resource/ResourceModel"
+   "sap/ui/core/mvc/Controller",   
 ], (Controller) => {
    "use strict";
       
-  return Controller.extend("ui5.walkthrough.controller.App", {
+  return Controller.extend("ticket-ui.controller.App", {
+   onInit: function () {
+      console.log("App Controller initialized");
+   }
    });
 });

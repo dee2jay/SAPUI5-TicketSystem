@@ -4,7 +4,7 @@ sap.ui.define([
 ], (UIComponent, JSONModel) => {
    "use strict";
 
-   return UIComponent.extend("ui5.walkthrough.Component", {
+   return UIComponent.extend("ticket-ui.Component", {
     metadata:{
          "interfaces": ["sap.ui.core.IAsyncContentCreation"],
          "manifest": "json"
@@ -21,6 +21,12 @@ sap.ui.define([
          };
          const oModel = new JSONModel(oData);
          this.setModel(oModel);         
+
+         this.getModel("Ticket").attachEventOnce("metadataFailed", function (oEvent) {
+				/*eslint-disable no-alert */
+				alert("Request to the OData remote service failed.\nDownload the sample to your local machine and read the Walkthrough Tutorial Step 25 to see any data here.");
+				/*eslint-enable no-alert */
+			});
       }
    });
 });

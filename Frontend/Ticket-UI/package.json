@@ -9,5 +9,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "@sap/ux-ui5-tooling": "^1.19.3",
+    "@ui5/cli": "^4.0.34"
+  },
+  "devDependencies": {
+    "ui5-middleware-simpleproxy": "^3.5.2"
+  }
 }

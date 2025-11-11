@@ -1,7 +1,7 @@
 {
   "_version": "1.65.0",
   "sap.app": {
-	"id": "ui5.ticket-ui",
+	"id": "ticket-ui",
 	"i18n": "i18n/i18n.properties",
 	"title": "{{appTitle}}",
 	"description": "{{appDescription}}",
@@ -11,7 +11,7 @@
 	},
 	"dataSources": {
 		"ticketService":{
-			"uri": "https://localhost:7187/api/",
+			"uri": "https://localhost:7187/api/tickets",
 			"type": "http",
 			"customType": false,
 			"settings": {
@@ -22,6 +22,14 @@
   },
   "sap.ui": {
 	"technology": "UI5",
+	"icons": {
+		"icon": "sap-icon://ticket",
+      	"favIcon": "icon/favicon.ico",
+      	"phone": "icon/phone-icon.png",
+      	"phone@2": "icon/phone-retina.png",
+      	"tablet": "icon/tablet-icon.png",
+      	"tablet@2": "icon/tablet-retina.png"
+	},
 	"deviceTypes": {
 		"desktop": true,
 		"tablet": true,
@@ -33,21 +41,32 @@
 	  "minUI5Version": "1.108.0",
 	  "libs": {
 		"sap.ui.core": {},
-		"sap.m": {}
+		"sap.m": {},
+        "sap.f": {},
+        "sap.tnt": {},
+        "sap.ui.layout": {}
 	  }
 	},
+	"flexEnabled": true,
+	"contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
 	"models": {
 	  "i18n": {
 		"type": "sap.ui.model.resource.ResourceModel",
 		"settings": {
-		  "bundleName": "ui5.walkthrough.i18n.i18n",
-		  "supportedLocales": [""],
-		  "fallbackLocale": ""
+		  "bundleName": "ticket-ui.i18n.i18n",
+		  "supportedLocales": ["en", "de"],
+		  "fallbackLocale": "en"
 		}
+	  },
+	  "tickets":{
+		"dataSource": "ticketService"		
 	  }
 	},
 	"rootView": {
-		"viewName": "ui5.walkthrough.view.App",
+		"viewName": "ticket-ui.view.App",
 		"type": "XML",
 		"id": "app"
 	},
@@ -57,6 +76,48 @@
 				"uri": "css/style.css"
 			}
 		]
-	}	
+	},
+	
+	"routing": {
+		"config": {
+		"routerClass": "sap.m.routing.Router",
+		"viewType": "XML",
+		"path": "ticket-ui.view",
+		"controlId": "App",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "overview",
+          "target": "TicketOverview"
+        },
+        {
+          "pattern": "ticket/{ticketId}",
+          "name": "details",
+          "target": "TicketDetails"
+        },
+        {
+          "pattern": "create",
+          "name": "create",
+          "target": "TicketCreate"
+        }
+      ],
+      "targets": {
+        "TicketOverview": {
+			"viewId": "TicketOverviewId",
+          "viewName": "TicketOverview"
+        },
+        "TicketDetails": {
+          "viewId": "TicketDetailsId",
+			"viewName": "TicketDetails"
+        },
+        "TicketCreate": {
+			"viewId": "TicketCreateId",
+			"viewName": "TicketCreate"
+        }
+      }
+    }
   }
 }
