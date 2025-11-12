@@ -1,5 +1,7 @@
-﻿using TicketManagement.Application.Events;
+﻿using AutoMapper;
+using TicketManagement.Application.Events;
 using TicketManagement.Application.Interfaces;
+using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Application.Events;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
@@ -12,12 +14,16 @@ namespace TicketManagement.Application.Services
         private readonly IAppLogger _logger;
         private readonly ITicketRepository _ticketRepository;
         private readonly IEventPublisher _eventPublisher;
+        private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public TicketService( ITicketRepository ticketRepository, IEventPublisher eventPublisher, IAppLogger logger)
+        public TicketService( ITicketRepository ticketRepository, IEventPublisher eventPublisher, IAppLogger logger, IMapper mapper, IUserService userService)
         {
             _ticketRepository = ticketRepository;
             _eventPublisher = eventPublisher;
             _logger = logger;
+            _mapper = mapper;
+            _userService = userService;
         }
 
         public async Task<IEnumerable<Ticket>> GetAllTicketsAsync()
@@ -61,12 +67,12 @@ namespace TicketManagement.Application.Services
             }
         }
 
-        public async Task<Ticket> CreateTicketAsync(Ticket ticket, string userId)
+        public async Task<Ticket> CreateTicketAsync(TicketDto dto)
         {
            try
            {
                 // Implementation for creating a ticket goes here.
-               
+                var ticket = _mapper.Map<Ticket>(dto);
                 await _ticketRepository.AddTicket(ticket);
                 
                 var ticketCreatedEvent = new TicketCreatedEvent{
@@ -74,7 +80,7 @@ namespace TicketManagement.Application.Services
                     OldValue = null,
                     NewValue = ticket.Title,
                     ChangedAt = DateTime.Now,
-                    ChangedBy = userId
+                    ChangedBy = _userService.GetCurrentUser()
                 };
                 await _eventPublisher.PublishEventAsync(ticketCreatedEvent);
                 return ticket;

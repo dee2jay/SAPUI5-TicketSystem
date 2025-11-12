@@ -6,5 +6,6 @@ namespace TicketManagement.Application.Interfaces
     {
         public Task<bool> UserExistsAsync(string userId);
         public Task<User> GetUserById(int userId);
+        string GetCurrentUser();
     }
 }

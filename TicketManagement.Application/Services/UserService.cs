@@ -19,6 +19,11 @@ namespace TicketManagement.Application.Services
         {
             throw new NotImplementedException();
         }
+
+        public string GetCurrentUser()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
