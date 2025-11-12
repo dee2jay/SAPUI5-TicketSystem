@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using TicketManagement.Application.Dispatcher;
 using TicketManagement.Application.EventHandlers;
 using TicketManagement.Application.Interfaces;
+using TicketManagement.Application.Mapping;
 using TicketManagement.Application.Publisher;
 using TicketManagement.Application.Services;
 using TicketManagementSystem.Infrastructure.Interface;
@@ -23,10 +25,12 @@ builder.Services.AddScoped<TicketUpdatedEventHandler>();
 // === Event Publisher & Dispatcher ===
 builder.Services.AddScoped<EventPublisher>();
 builder.Services.AddScoped<IEventPublisher>(sp => sp.GetRequiredService<EventPublisher>());
-
 builder.Services.AddScoped<IEventDispatcher, EventDispatcher>();
 
+builder.Services.AddAutoMapper(profile => profile.AddProfile(typeof(TicketMappingProfile)));
+
 // === Services ===
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 
 // === Database Context ===

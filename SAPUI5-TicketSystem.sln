@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketManagementSystem.Doma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketManagementSystem.Infrastructure", "TicketSystem.Infrastructure\TicketManagementSystem.Infrastructure.csproj", "{BC6AA38F-F027-43F8-A38C-007370FBF8DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketManagement.Application", "TicketManagement.Application\TicketManagement.Application.csproj", "{99A4B2F8-B208-46BC-B358-05E0FA4E3BA8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicketManagementSystem.Application", "TicketManagement.Application\TicketManagementSystem.Application.csproj", "{99A4B2F8-B208-46BC-B358-05E0FA4E3BA8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

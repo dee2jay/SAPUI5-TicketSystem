@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Sockets;
 using TicketManagement.Application.Interfaces;
+using TicketManagementSystem.Application.Dtos;
+using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
 using TicketSystem.Domain.Models;
@@ -32,13 +34,18 @@ namespace TicketManagementSystem.API.Controllers
         }
 
         [HttpPost(Name = "AddTicket")]
-        public async Task<IActionResult> AddTicket([FromBody] Ticket ticket, string user)
+        public async Task<IActionResult> AddTicket([FromBody] TicketDto dto)
         {
             try
             {
-                ticket.Author = user;
-                await ticketService.CreateTicketAsync(ticket, user);
-                return CreatedAtAction(nameof(AddTicket), new { id = ticket.Id }, ticket);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var ticket = await ticketService.CreateTicketAsync(dto);
+                ticket.Author = userService.GetCurrentUser();
+                return CreatedAtAction(nameof(AddTicket), new { id = ticket.Id }, ticket.Author);
             }
             catch (TimeoutException ex)
             {
