@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ErrorOr;
+using TicketManagementSystem.Domain.Models;
 using TicketSystem.Domain.Models;
 
 namespace TicketManagementSystem.Infrastructure.Interface

@@ -1,0 +1,12 @@
+html[dir="ltr"] .lenzing .CustomButton.sapMBtn {
+   margin-right: 0.125rem
+}
+
+html[dir="rtl"] .lenzing .CustomButton.sapMBtn {
+   margin-left: 0.125rem
+}
+
+.lenzing .CustomText {
+   display: inline-block;
+   font-weight: bold;
+}

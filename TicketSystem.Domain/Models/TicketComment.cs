@@ -10,7 +10,7 @@ namespace TicketSystem.Domain.Models
     public class TicketComment
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public int TicketId { get; set; }
         public string? Author { get; set; }
         public string? Text { get; set; }
