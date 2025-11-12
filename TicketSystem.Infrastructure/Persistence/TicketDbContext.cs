@@ -12,6 +12,14 @@ namespace TicketManagementSystem.Infrastructure.Persistence
         public DbSet<TicketSystem.Domain.Models.TicketComment> TicketComments { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(@"Server=localhost\sqlexpress;Database=TicketSystemDB;Trusted_Connection=True;Encrypt=True;TrustServerCertificate=True;");
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Ticket>()
