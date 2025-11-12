@@ -10,6 +10,6 @@ namespace TicketManagementSystem.Infrastructure.Interface
     {
         Task LogInfo(string message, string? source = null);
         Task LogWarning(string message, string? source = null);
-        Task LogError(string message, Exception ex, string? source, string stackTrace);
+        Task LogError(string message, Exception? ex, string? source, string stackTrace);
     }
 }

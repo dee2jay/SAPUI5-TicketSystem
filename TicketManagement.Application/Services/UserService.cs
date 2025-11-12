@@ -22,7 +22,7 @@ namespace TicketManagement.Application.Services
 
         public string GetCurrentUser()
         {
-            throw new NotImplementedException();
+            return "hardcodedUser";
         }
     }
 
