@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TicketManagementSystem.Domain.Models
+namespace TicketManagementSystem.Domain.Models;
+
+public class User
 {
-    public class User
-    {
-    }
 }

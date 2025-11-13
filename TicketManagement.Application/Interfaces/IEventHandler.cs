@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace TicketManagementSystem.Application.Interfaces;
 
-namespace TicketManagement.Application.Interfaces
+public interface IEventHandler<in TEvent> where TEvent : IDomainEvent
 {
-    public interface IEventHandler<TEvent>
-    {
-        Task HandleAsync(TEvent @event);
-    }
+    Task HandleAsync(TEvent @event);
 }

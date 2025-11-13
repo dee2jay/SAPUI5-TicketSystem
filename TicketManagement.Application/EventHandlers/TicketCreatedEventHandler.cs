@@ -1,35 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicketManagement.Application.Events;
-using TicketManagement.Application.Interfaces;
+﻿using TicketManagementSystem.Application.Events;
+using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
+using TicketManagementSystem.Infrastructure.Interface;
 using TicketManagementSystem.Infrastructure.Logging;
 
-namespace TicketManagement.Application.EventHandlers
+namespace TicketManagementSystem.Application.EventHandlers;
+
+public class TicketCreatedEventHandler : IEventHandler<TicketCreatedEvent>
 {
-    public class TicketCreatedEventHandler : IEventHandler<TicketCreatedEvent>
+    private readonly IAppLogger _logger;
+    public TicketCreatedEventHandler(MongoLogger logger)
     {
-        private readonly MongoLogger _logger;
-        public TicketCreatedEventHandler(MongoLogger logger)
-        {
-            _logger = logger;
-        }
+        _logger = logger;
+    }
 
-        public async Task HandleAsync(TicketCreatedEvent @event)
+    public async Task HandleAsync(TicketCreatedEvent @event)
+    {
+        var logEntry = new TicketChangeLog
         {
-            var logEntry = new TicketChangeLog
-            {
-                TicketId = @event.TicketId,
-                OldValue = @event.OldValue,
-                NewValue = @event.NewValue,
-                ChangedAt = @event.ChangedAt,
-                ChangedBy = @event.ChangedBy
-            };
+            Title = @event.NewValue ?? "New Ticket Created",
+            TicketId = @event.TicketId,
+            OldValue = @event.OldValue,
+            NewValue = @event.NewValue,
+            ChangedAt = @event.ChangedAt,
+            ChangedBy = @event.ChangedBy
+        };
+        var message =
+            $"{logEntry.Title}: TicketId: {logEntry.TicketId}, TimeStamp: {logEntry.ChangedAt}, User: {logEntry.ChangedBy}";
 
-            await _logger.LogChangeAsync(logEntry);
-        }
+        await _logger.LogInfo(message);
+        //send Mail
+        //log send mail
     }
 }

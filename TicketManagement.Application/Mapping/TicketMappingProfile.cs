@@ -7,19 +7,18 @@ using AutoMapper;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Domain.Models;
 
-namespace TicketManagement.Application.Mapping
+namespace TicketManagement.Application.Mapping;
+
+public class TicketMappingProfile : Profile
 {
-    public class TicketMappingProfile : Profile
+    public TicketMappingProfile()
     {
-        public TicketMappingProfile()
-        {
-            CreateMap<TicketDto, Ticket>().ConstructUsing(dto => new Ticket(
-                dto.Category,
-                dto.Location,
-                dto.CostCenter,
-                dto.OrderNumber,
-                dto.Title,
-                dto.Description));
-        }
+        CreateMap<TicketDto, Ticket>().ConstructUsing(dto => new Ticket(
+            dto.Category,
+            dto.Location,
+            dto.CostCenter,
+            dto.OrderNumber,
+            dto.Title,
+            dto.Description));
     }
 }

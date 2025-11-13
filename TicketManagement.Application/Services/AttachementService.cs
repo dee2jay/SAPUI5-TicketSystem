@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicketManagement.Application.Interfaces;
+﻿using TicketManagementSystem.Application.Interfaces;
 
-namespace TicketManagement.Application.Services
+namespace TicketManagementSystem.Application.Services;
+
+internal class AttachementService : IAttachmentService
 {
-    internal class AttachementService : IAttachmentService
-    {
-    }
 }

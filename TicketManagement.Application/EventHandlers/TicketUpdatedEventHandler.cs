@@ -1,30 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicketManagement.Application.Interfaces;
-using TicketManagementSystem.Application.Events;
+﻿using TicketManagementSystem.Application.Events;
+using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
-using TicketManagementSystem.Infrastructure.Logging;
+using TicketManagementSystem.Infrastructure.Interface;
 
-namespace TicketManagement.Application.EventHandlers
+namespace TicketManagementSystem.Application.EventHandlers;
+
+public class TicketUpdatedEventHandler(IAppLogger logger) : IEventHandler<TicketUpdatedEvent>
 {
-    public class TicketUpdatedEventHandler(MongoLogger logger) : IEventHandler<TicketUpdatedEvent>
+    public async Task HandleAsync(TicketUpdatedEvent @event)
     {
-        public async Task HandleAsync(TicketUpdatedEvent @event)
+        var logEntry = new TicketChangeLog
         {
-            var logEntry = new TicketChangeLog
-            {
-                TicketId = @event.TicketId,
-                Property = @event.Property,
-                OldValue = @event.OldValue,
-                NewValue = @event.NewValue,
-                ChangedAt = @event.ChangedAt,
-                ChangedBy = @event.ChangedBy
-            };
+            Title = $"Ticket Updated: {@event.Property}",
+            TicketId = @event.TicketId,
+            Property = @event.Property,
+            OldValue = @event.OldValue,
+            NewValue = @event.NewValue,
+            ChangedAt = @event.ChangedAt,
+            ChangedBy = @event.ChangedBy
+        };
 
-            await logger.LogChangeAsync(logEntry);
-        }
+        var message =
+            $"{logEntry.Title}: TicketId: {logEntry.TicketId}, OldValue: {logEntry.OldValue}, NewValue: {logEntry.NewValue}, TimeStamp: {logEntry.ChangedAt}, User: {logEntry.ChangedBy}";
+
+        await logger.LogInfo(message);
+        //send Mail
+        //log send mail
     }
 }

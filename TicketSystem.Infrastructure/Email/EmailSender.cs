@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TicketManagementSystem.Infrastructure.Email
+namespace TicketManagementSystem.Infrastructure.Email;
+
+internal class EmailSender
 {
-    internal class EmailSender
-    {
-    }
 }

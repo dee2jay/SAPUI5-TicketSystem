@@ -1,13 +1,14 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
-using TicketManagement.Application.Dispatcher;
-using TicketManagement.Application.EventHandlers;
 using TicketManagement.Application.Interfaces;
 using TicketManagement.Application.Mapping;
-using TicketManagement.Application.Publisher;
-using TicketManagement.Application.Services;
+using TicketManagementSystem.Application.Dispatcher;
+using TicketManagementSystem.Application.EventHandlers;
+using TicketManagementSystem.Application.Events;
+using TicketManagementSystem.Application.Interfaces;
+using TicketManagementSystem.Application.Publisher;
+using TicketManagementSystem.Application.Services;
 using TicketManagementSystem.Infrastructure.Interface;
 using TicketManagementSystem.Infrastructure.Logging;
 using TicketManagementSystem.Infrastructure.Persistence;
@@ -19,8 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 
 // === Event Handlers ===
-builder.Services.AddScoped<TicketCreatedEventHandler>();
-builder.Services.AddScoped<TicketUpdatedEventHandler>();
+builder.Services.AddScoped<IEventHandler<TicketCreatedEvent>, TicketCreatedEventHandler>();
+builder.Services.AddScoped<IEventHandler<TicketUpdatedEvent>,TicketUpdatedEventHandler>();
 
 // === Event Publisher & Dispatcher ===
 builder.Services.AddScoped<EventPublisher>();

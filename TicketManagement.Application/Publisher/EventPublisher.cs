@@ -1,20 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using TicketManagement.Application.Dispatcher;
-using TicketManagement.Application.Interfaces;
+﻿using Microsoft.Extensions.DependencyInjection;
+using TicketManagementSystem.Application.Interfaces;
 
-namespace TicketManagement.Application.Publisher
+namespace TicketManagementSystem.Application.Publisher;
+
+public class EventPublisher : IEventPublisher
 {
-    public class EventPublisher(IEventDispatcher eventDispatcher) : IEventPublisher
+    private readonly IServiceProvider _serviceProvider;
+
+    public EventPublisher(IServiceProvider serviceProvider)
     {
-        public async Task PublishEventAsync<TEvent>(TEvent @event) where TEvent : IDomainEvent
+        _serviceProvider = serviceProvider;
+    }
+
+    public async Task PublishEventAsync<TEvent>(TEvent @event) where TEvent : IDomainEvent
+    {
+        var handlers = _serviceProvider.GetServices<IEventHandler<TEvent>>();
+        foreach (var handler in handlers)
         {
-            // Dispatch the event using the EventDispatcher
-            await eventDispatcher.DispatchAsync(@event);
+            await handler.HandleAsync(@event);
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿namespace TicketManagement.Application.Interfaces
+﻿
+using TicketManagement.Application.Interfaces;
+
+namespace TicketManagementSystem.Application.Interfaces;
+
+public interface IEventDispatcher
 {
-    public interface IEventDispatcher
-    {
-        Task DispatchAsync<TEvent>(TEvent @event) where TEvent : IDomainEvent;
-    }
+    Task DispatchAsync<TEvent>(TEvent @event) where TEvent : IDomainEvent;
 }

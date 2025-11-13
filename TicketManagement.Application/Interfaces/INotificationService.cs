@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TicketManagement.Application.Interfaces
+namespace TicketManagement.Application.Interfaces;
+
+internal interface INotificationService
 {
-    internal interface INotificationService
-    {
-    }
 }

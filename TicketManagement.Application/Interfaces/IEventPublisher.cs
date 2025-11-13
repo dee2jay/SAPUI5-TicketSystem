@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace TicketManagementSystem.Application.Interfaces;
 
-namespace TicketManagement.Application.Interfaces
+public interface IEventPublisher
 {
-    public interface IEventPublisher
-    {
-        Task PublishEventAsync<TEvent>(TEvent @event) where TEvent : IDomainEvent;
-    }
+    Task PublishEventAsync<TEvent>(TEvent @event) where TEvent : IDomainEvent;
 }

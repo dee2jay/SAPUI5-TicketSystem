@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TicketManagementSystem.Infrastructure.Persistence.Repository
+namespace TicketManagementSystem.Infrastructure.Persistence.Repository;
+
+internal class AttachmentRepository
 {
-    internal class AttachmentRepository
-    {
-    }
 }

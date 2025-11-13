@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace TicketManagementSystem.Domain.Enums;
 
-namespace TicketSystem.Domain.Enums
+public enum TicketStatus
 {
-    public enum TicketStatus
-    {
-        New,
-        Open,
-        InProgress,
-        Closed
-    }
+    New,
+    Open,
+    InProgress,
+    Closed
 }

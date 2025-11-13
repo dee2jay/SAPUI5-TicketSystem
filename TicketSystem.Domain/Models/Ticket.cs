@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TicketSystem.Domain.Enums;
+using TicketManagementSystem.Domain.Enums;
 using TicketSystem.Domain.Models;
 
 namespace TicketManagementSystem.Domain.Models;
@@ -22,11 +22,6 @@ public class Ticket
     public string OrderNumber { get; set; }
     public ICollection<TicketAttachment> Attachments { get; set; } = [];
     public ICollection<TicketComment> Comments { get; set; } = [];
-
-    private Ticket()
-    {
-        
-    }
 
     public Ticket(string category, string location, string costCenter, string orderNumber, string title, string description)
     {

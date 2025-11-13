@@ -6,32 +6,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TicketManagementSystem.Infrastructure.DbModels
+namespace TicketManagementSystem.Infrastructure.DbModels;
+
+public class LogEntry
 {
-    public class LogEntry
-    {
-        [BsonId]
-        public ObjectId Id { get; set; }
+    [BsonId]
+    public ObjectId Id { get; set; }
 
-        [BsonElement("timestamp")]
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+    [BsonElement("timestamp")]
+    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
         
-        [BsonElement("level")]
-        public string Level { get; set; } = "Info";
+    [BsonElement("level")]
+    public string Level { get; set; } = "Info";
         
-        [BsonElement("message")]
-        public string Message { get; set; } = string.Empty;
+    [BsonElement("message")]
+    public string Message { get; set; } = string.Empty;
         
-        [BsonElement("source")]
-        public string? Source { get; set; }
+    [BsonElement("source")]
+    public string? Source { get; set; }
         
-        [BsonElement("stackTrace")]
-        public string StackTrace { get; set; } = string.Empty;
+    [BsonElement("stackTrace")]
+    public string StackTrace { get; set; } = string.Empty;
 
-        [BsonElement("details")]
-        public string? Details { get; set; }
+    [BsonElement("details")]
+    public string? Details { get; set; }
 
-        [BsonElement("userId")]
-        public string? UserId { get; set; }
-    }
+    [BsonElement("userId")]
+    public string? UserId { get; set; }
 }

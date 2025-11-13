@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TicketManagementSystem.Infrastructure.BackgroundJobs
+namespace TicketManagementSystem.Infrastructure.BackgroundJobs;
+
+internal class EmailJob
 {
-    internal class EmailJob
-    {
-    }
 }

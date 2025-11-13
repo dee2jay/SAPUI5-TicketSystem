@@ -1,29 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicketManagement.Application.Interfaces;
+﻿using TicketManagement.Application.Interfaces;
+using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
 
-namespace TicketManagement.Application.Services
+namespace TicketManagementSystem.Application.Services;
+
+public class UserService : IUserService
 {
-    public class UserService : IUserService
+    public Task<bool> UserExistsAsync(string userId)
     {
-        public Task<bool> UserExistsAsync(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> GetUserById(int userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetCurrentUser()
-        {
-            return "hardcodedUser";
-        }
+        throw new NotImplementedException();
     }
 
+    public Task<User> GetUserById(int userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public string GetCurrentUser()
+    {
+        return "hardcodedUser";
+    }
 }

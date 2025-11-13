@@ -1,11 +1,10 @@
 ﻿using TicketManagementSystem.Domain.Models;
 
-namespace TicketManagement.Application.Interfaces
+namespace TicketManagementSystem.Application.Interfaces;
+
+public interface IUserService
 {
-    public interface IUserService
-    {
-        public Task<bool> UserExistsAsync(string userId);
-        public Task<User> GetUserById(int userId);
-        string GetCurrentUser();
-    }
+    public Task<bool> UserExistsAsync(string userId);
+    public Task<User> GetUserById(int userId);
+    string GetCurrentUser();
 }

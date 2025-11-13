@@ -1,36 +1,35 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TicketManagementSystem.Domain.Models;
 
-namespace TicketManagementSystem.Infrastructure.Persistence
+namespace TicketManagementSystem.Infrastructure.Persistence;
+
+public class TicketDbContext : DbContext
 {
-    public class TicketDbContext : DbContext
+    public TicketDbContext(DbContextOptions<TicketDbContext> options) : base(options)
     {
-        public TicketDbContext(DbContextOptions<TicketDbContext> options) : base(options)
-        {
-        }
-        public DbSet<TicketSystem.Domain.Models.TicketAttachment> TicketAttachments { get; set; }
-        public DbSet<TicketSystem.Domain.Models.TicketComment> TicketComments { get; set; }
-        public DbSet<Ticket> Tickets { get; set; }
+    }
+    public DbSet<TicketSystem.Domain.Models.TicketAttachment> TicketAttachments { get; set; }
+    public DbSet<TicketComment> TicketComments { get; set; }
+    public DbSet<Ticket> Tickets { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(@"Server=localhost\sqlexpress;Database=TicketSystemDB;Trusted_Connection=True;Encrypt=True;TrustServerCertificate=True;");
-            }
+            optionsBuilder.UseSqlServer(@"Server=localhost\sqlexpress;Database=TicketSystemDB;Trusted_Connection=True;Encrypt=True;TrustServerCertificate=True;");
         }
+    }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Ticket>()
-                .HasMany(t => t.Comments)
-                .WithOne()
-                .HasForeignKey(c => c.TicketId);
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Ticket>()
+            .HasMany(t => t.Comments)
+            .WithOne()
+            .HasForeignKey(c => c.TicketId);
             
-            modelBuilder.Entity<Ticket>()
-                .HasMany(t => t.Attachments)
-                .WithOne()
-                .HasForeignKey(a => a.TicketId);
-        }
+        modelBuilder.Entity<Ticket>()
+            .HasMany(t => t.Attachments)
+            .WithOne()
+            .HasForeignKey(a => a.TicketId);
     }
 }
