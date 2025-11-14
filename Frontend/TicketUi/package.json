@@ -1,0 +1,11 @@
+{
+    "name": "ui5.ticketui",
+    "version": "1.0.0",
+    "description": "A simple ticket management UI5 application",
+    "scripts": {
+        "start": "ui5 serve -o index.html"
+    },
+    "devDependencies": {
+        "@ui5/cli": "^4.0.34"
+    }
+}

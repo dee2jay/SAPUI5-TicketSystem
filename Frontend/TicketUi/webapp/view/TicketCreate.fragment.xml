@@ -1,0 +1,31 @@
+<Dialog
+  title="{i18n>titleTicketCreation}"
+  xmlns="sap.m"
+  xmlns:l="sap.ui.layout.form">
+  <content>
+    <l:SimpleForm  editable="true" layout="ResponsiveGridLayout" class="sapUiResponsiveMargin" >
+      <Label  text="{i18n>labelCategory}"/>
+      <Input  value="{newTicket>Category}" placeholder="Category"/>
+      <Label  text="{i18n>labelLocation}"/>
+      <Input  value="{newTicket>Location}" placeholder="Location"/>
+      <Label  text="{i18n>labelCostCenter}"/>
+      <Input  value="{newTicket>CostCenter}" placeholder="Cost Center"/>
+      <Label  text="{i18n>labelOrderNr}"/>
+      <Input  value="{newTicket>OrderNumber}" placeholder="Order Number"/>
+      <Label text="{i18n>labelTitle}"/>
+      <Input  value="{newTicket>Title}" placeholder="Title"/>
+      <Panel 
+        headerText="{i18n>labelDescription}">
+        <TextArea 
+          value="{newTicket>Description}" 
+          placeholder="Description" 
+          rows="5" 
+          width="100%" />
+      </Panel>      
+    </l:SimpleForm>
+  </content>
+
+  <buttons>
+    <Button  text="{i18n>buttonCreate}" type="Emphasized" press=".onConfirmCreate"/>
+  </buttons>
+</Dialog>

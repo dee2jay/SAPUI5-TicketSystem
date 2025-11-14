@@ -1,0 +1,28 @@
+<Dialog 
+  xmlns:core="sap.ui.core"
+  xmlns="sap.m"
+  title="{i18n>settingsTitle}" >
+  <content>     
+  <VBox class="sapUiSmallMargin">
+  <Label text="{i18n>labelTheme}" />
+      <Select >
+        <items>
+          <core:Item key="{i18n>appConfigKeyLight}" text="{i18n>appConfigOptionLight}"/>
+          <core:Item key="{i18n>appConfigKeyDark}" text="{i18n>appConfigOptionDark}"/>
+        </items>
+      </Select>
+      <Label text="{i18n>labelLang}" />
+      <Select >
+        <items>
+          <core:Item key="{i18n>appConfigKeyEnglish}" text="{i18n>appConfigOptionEnglish}"/>
+          <core:Item key="{i18n>appConfigKeyGerman}" text="{i18n>appConfigOptionGerman}"/>
+        </items>
+      </Select>    
+    <Toolbar >
+    <ToolbarSpacer />
+        <Button text="{i18n>buttonSave}" press=".onSavePress" />
+        <Button text="{i18n>buttonCancel}" press=".onCancelSettingPress" />
+    </Toolbar>
+  </VBox> 
+      </content>
+</Dialog>

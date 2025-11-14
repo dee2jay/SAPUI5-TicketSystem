@@ -1,0 +1,57 @@
+{
+    "_version": "1.79.0",
+    "sap.app": {
+        "id": "ui5.ticketui",
+        "i18n": "i18n/i18n.properties",
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "type": "application",
+        "applicationVersion": {
+            "version": "1.0.0"
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        },
+        "icons": {
+            "icon": "sap-icon://ticket",
+            "phone": "icon/phone-icon.png",
+            "phone@2": "icon/phone-retina.png",
+      	    "tablet": "icon/tablet-icon.png",
+      	    "tablet@2": "icon/tablet-retina.png"
+        }
+    },
+    "sap.ui5": {
+        "rootView": {
+            "viewName": "ticketui.view.App",
+            "type": "XML",
+            "id": "app"
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "dependencies": {
+            "minUI5Version": "1.60.0",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.core": {},
+                "sap.ui.layout": {}
+            }
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "ticketui.i18n.i18n",
+                    "supportedLocales": ["en", "de"],
+                    "fallbackLocale": "en"
+                }
+            }
+        }
+    }
+}

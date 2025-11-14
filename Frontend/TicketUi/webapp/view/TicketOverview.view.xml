@@ -1,0 +1,45 @@
+<mvc:View  id="ticketOverviewView"   
+    controllerName="ui5.ticketui.controller.TicketOverview"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc">
+   <Panel 
+   headerText="{i18n>titleTicketOverview}"
+   class="sapUiResponsiveMargin"
+   width="auto">
+   <headerToolbar>
+        <Toolbar>
+        <Title text="{i18n>titleTicketOverview}"/>
+        <ToolbarSpacer  />
+        <Button text="{i18n>buttonNewTicket}" press=".onNewTicketButtonPress" icon="sap-icon://add"/>        
+        </Toolbar>
+        
+   </headerToolbar>
+   
+   <content>
+        <SearchField  width="100%" liveChange=".onSearchTickets"/>
+      <Table       
+        items="{Tickets>/}">
+        
+        <columns>
+          <Column ><Text  text="{i18n>columnNumber}"/></Column>
+          <Column ><Text  text="{i18n>columnCategory}"/></Column>
+          <Column ><Text  text="{i18n>columnLocation}"/></Column>
+          <Column ><Text  text="{i18n>columnStatus}"/></Column>
+          <Column ><Text  text="{i18n>columnPriority}"></Text></Column>
+          <Column ><Text text="{i18n>columnCreatedAt}"/></Column>
+          <Column ><Text  text="{i18n>columnCreatedBy}"/></Column>
+        </columns>
+        <items>
+          <ColumnListItem type="Navigation" press=".onTicketSelect">
+            <cells>
+              <Text  text="{Tickets>ID}"/>
+              <Text  text="{Tickets>Title}"/>
+              <Text  text="{Tickets>Status}"/>
+              <Text  text="{Tickets>CreatedAt}"/>
+            </cells>
+          </ColumnListItem>
+        </items>
+      </Table>
+   </content>
+   </Panel>
+</mvc:View>

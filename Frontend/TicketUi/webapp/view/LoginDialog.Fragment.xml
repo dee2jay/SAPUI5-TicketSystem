@@ -1,0 +1,23 @@
+<Dialog    
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc" 
+     title="{i18n>loginTitle}">
+
+    <content>
+            <VBox class="sapUiSmallMargin">
+                <Label text="{i18n>labelUsername}" labelFor="usernameInput"/>
+                <Input id="usernameInput" placeholder="{i18n>textUsername}"/>
+                
+                <Label text="{i18n>labelPassword}" labelFor="passwordInput" class="sapUiSmallMarginTop"/>
+                <Input id="passwordInput" type="Password" placeholder="{i18n>textPassword}"/>
+                
+                <Toolbar>
+                    <ToolbarSpacer/>
+                    <Button text="{i18n>buttonSubmit}" type="Emphasized" press=".onDoLogin"/>
+                    <Button text="{i18n>buttonCancel}" press=".onCancelLogin"/>                    
+                </Toolbar>
+                
+            </VBox>
+        </content>    
+
+   </Dialog>

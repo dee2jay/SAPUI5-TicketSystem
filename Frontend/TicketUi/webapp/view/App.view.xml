@@ -1,0 +1,20 @@
+<mvc:View
+    
+    controllerName="ui5.ticketui.controller.App" 
+   xmlns="sap.m"
+   xmlns:mvc="sap.ui.core.mvc">
+
+   <Shell>    
+       <App id="app">
+       <Page  title="{i18n>appTitle}" showHeader="true" enableScrolling="true">
+            <headerContent>
+                <Button text="{i18n>buttonLogin}"  press=".onLoginPress" icon="sap-icon://person-placeholder"/>
+                <Button text="{i18n>buttonSettings}" press=".onSettingsPress" icon="sap-icon://action-settings"/>               
+            </headerContent>
+            <content>          
+                <mvc:XMLView  viewName="ui5.ticketui.view.TicketOverview"></mvc:XMLView>
+            </content>
+        </Page>
+     </App>
+    </Shell> 
+</mvc:View>
