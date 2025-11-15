@@ -2,36 +2,38 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",   
     "sap/ui/model/resource/ResourceModel",
     "sap/ui/model/json/JSONModel",
-    "sap/ui/core/Fragment"
-], (Controller, ResourceModel, JSONModel, Fragment) => {
+    "sap/ui/core/Fragment",
+	"ui5/ticketui/service/TicketService"
+], (Controller,
+	ResourceModel,
+	JSONModel,
+	Fragment,
+	TicketService) => {
     "use strict";
 
     return Controller.extend("ui5.ticketui.controller.TicketOverview", {
-        onInit: async function () {            
-            return new Promise((resolve, reject) => {
-                // const oModel = new JSONModel();
-                // this.getView().setModel(oModel, "ticketsModel");
-                // this._loadTickets().then(resolve).catch(reject);
-            });             
+        onInit: function () {             
+              
+              this._loadTickets();            
         },
-
         
-
         _loadTickets: async function () {
             try {
-                const response = await fetch("/api/tickets");
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                const tickets = await response.json();
-                this.getView().getModel("ticketsModel").setData({ tickets: tickets });
+                const tickets = await TicketService.getAllTickets();
+                this.getView().setModel(new JSONModel({tickets}), "ticketsModel")
+
             } catch (error) {
                 console.error("Failed to load tickets:", error);
             }
         },
 
         onNewTicketButtonPress: function () {
+
+            //const oTicket = TicketModel.createEmptyTicket()
             let that = this;
+            
+            //const oModel = new sap.ui.model.json.JSONModel(oTicket);
+            //this.getView().setModel(oModel, "newTicket");
 
             if (!this._ticketCreate) {
                 Fragment.load({
@@ -47,17 +49,46 @@ sap.ui.define([
             }
         },
 
-        onSearchTickets: function (oEvent) {
+        onCreateButtonPress: async function(){
+            const newTicket = this.getView().getModel("newTicket").getData();
+            try {
+                    await TicketService.createTicket(newTicket);
+                    sap.m.MessageToast.show("Ticket created successfully");
+                    this._oCreateDialog.close();
+                    this._loadTickets(); // reload list
+            } catch (err) {
+                sap.m.MessageToast.show("Error creating ticket");
+            }
+        },
+
+        onSearchFieldsLiveChange: function (oEvent) {
             const sQuery = oEvent.getParameter("query");
             const aFilters = [];  
         },
 
-        onTicketSelect: function (oEvent) {
-            // const oSelectedItem = oEvent.getParameter("listItem");
-            // const oContext = oSelectedItem.getBindingContext("ticketsModel");
-            // const sTicketId = oContext.getProperty("id");
-            // const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-            //oRouter.navTo("TicketDetails", { ticketId: sTicketId });
+        onColumnListItemPress: function (oEvent) {
+           const oselecteditem = oevent.getparameter("listitem");
+           const ocontext = oselecteditem.getbindingcontext("ticketsmodel");
+           const sticketid = ocontext.getproperty("id");
+           const orouter = sap.ui.core.uicomponent.getrouterfor(this);
+           orouter.navto("details", { ticketid: sticketid });
+        },
+
+         onSavePress: function () {
+            const oView = this.getView();
+            const oThemeSelect = oView.byId("themeSelect");
+            const oLangSelect = oView.byId("langSelect");
+            const sSelectedTheme = oThemeSelect.getSelectedKey();
+            const sSelectedLang = oLangSelect.getSelectedKey();
+            
+            // Save the selected theme and language to local storage or backend
+            localStorage.setItem("appTheme", sSelectedTheme);
+            localStorage.setItem("appLanguage", sSelectedLang);
+        },
+
+        onCancelPress: function () {
+            this.getView().byId("themeSelect").setSelectedKey(localStorage.getItem("appTheme") || "Light");
+            this.getView().byId("langSelect").setSelectedKey(localStorage.getItem("appLanguage") || "English");
         }
     });
 });

@@ -23,6 +23,6 @@
   </content>
 
   <buttons>
-    <Button  text="{i18n>buttonCreate}" type="Emphasized" press=".onConfirmCreate"/>
+    <Button  text="{i18n>buttonCreate}" type="Emphasized" press=".onCreateButtonPress"/>
   </buttons>
 </Dialog>

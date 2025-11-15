@@ -16,7 +16,7 @@ sap.ui.define([
             this._loginDialog = null;
         },
 
-        onLoginPress: function (){       
+        onLoginButtonPress: function (){       
            let that = this;
 
             if (!this._loginDialog) {
@@ -53,7 +53,7 @@ sap.ui.define([
             this._configDialog.close();
         },
 
-        onSettingsPress: function () {
+        onSettingsButtonPress: function () {
            let that = this;
 
             if (!this._configDialog) {

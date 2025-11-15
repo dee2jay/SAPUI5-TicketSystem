@@ -1,0 +1,39 @@
+<mvc:View
+  id="idDetailsView"
+  controllerName="ui5.ticketui.controller.TicketDetails"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  displayBlock="true">
+
+  <Page title="{i18n>titleTicketDetails}">
+    <content>
+      <ObjectHeader 
+        title="{Tickets>Title}"
+        number="{Tickets>ID}"
+        numberUnit="Ticket-ID"
+        intro="{Tickets>Status}" />
+  
+      <Panel  headerText="Beschreibung">
+        <Text  text="{Tickets>Description}" />
+      </Panel>
+
+      <Panel headerText="Kommentare">
+        <List items="{Comments>/}">
+          <StandardListItem  title="{Comments>User}" description="{Comments>Text}" info="{Comments>Date}"/>
+        </List>
+        <HBox >
+          <Input  placeholder="Kommentar hinzufügen..." width="80%"/>
+          <Button icon="sap-icon://send" />
+        </HBox>
+      </Panel>
+<Toolbar >
+  <ToolbarSpacer />
+  <Button text="{i18n>buttonHistory}" press=".onHistoryButtonPress"/>
+  <Button text="{i18n>buttonPrint}" press=".onPrintButtonPress"/>
+  <Button text="{i18n>buttonSave}" press=".onSaveButtonPress"/>
+  <Button text="{i18n>buttonCancel}" press=".onCancelButtonPress"/>
+</Toolbar>
+    </content>
+  </Page>
+  
+</mvc:View>

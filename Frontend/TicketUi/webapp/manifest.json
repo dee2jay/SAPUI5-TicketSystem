@@ -8,6 +8,15 @@
         "type": "application",
         "applicationVersion": {
             "version": "1.0.0"
+        },
+        "dataSources": {
+            "ticketRemote":{
+                "uri": "V2/Tickets",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "2.0"
+                }
+            }
         }
     },
     "sap.ui": {
@@ -51,8 +60,11 @@
                     "supportedLocales": ["en", "de"],
                     "fallbackLocale": "en"
                 }
-            }
-        },
+            },
+            "tickets":{
+                "dataSource": "ticketRemote"
+            }              
+        },        
         "routing": {
             "config": {
                 "routerClass": "sap.m.routing.Router",
@@ -80,8 +92,8 @@
                 "name": "Overview"
             },
             "detail": {
-                "id": "detail",
-                "name": "Detail"
+                "id": "idDetailsView",
+                "name": "TicketDetails"
             }
         }
         }
