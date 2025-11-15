@@ -50,6 +50,8 @@ public class TicketService : ITicketService
         {
             // Implementation for assigning ticket to user goes here.
             var ticket = await _ticketRepository.GetTicketById(ticketId);
+            var user = await _userService.GetUserById(Convert.ToInt32(userId));
+
             if (ticket.IsError)
             {
                 await _logger.LogWarning($"Ticket with ID {ticketId} not found.", nameof(TicketService));

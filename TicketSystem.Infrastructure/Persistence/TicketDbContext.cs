@@ -11,6 +11,7 @@ public class TicketDbContext : DbContext
     public DbSet<TicketSystem.Domain.Models.TicketAttachment> TicketAttachments { get; set; }
     public DbSet<TicketComment> TicketComments { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
