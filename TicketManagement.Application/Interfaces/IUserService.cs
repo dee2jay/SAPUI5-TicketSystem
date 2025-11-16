@@ -10,4 +10,5 @@ public interface IUserService
     public Task<User> UpdateUser(User user);
     public Task<bool> RemoveUser(User user);
     string GetCurrentUser();
+    Task<User?> GetUserById(int userId);
 }

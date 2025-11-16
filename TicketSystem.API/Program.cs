@@ -18,10 +18,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // === Repositories ===
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // === Event Handlers ===
 builder.Services.AddScoped<IEventHandler<TicketCreatedEvent>, TicketCreatedEventHandler>();
 builder.Services.AddScoped<IEventHandler<TicketUpdatedEvent>,TicketUpdatedEventHandler>();
+builder.Services.AddScoped<IEventHandler<UserCreatedEvent>, UserCreatedEventHandler>();
 
 // === Event Publisher & Dispatcher ===
 builder.Services.AddScoped<EventPublisher>();

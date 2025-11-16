@@ -37,7 +37,7 @@ public class UserService : IUserService
         {
             await _logger.LogError(e.Message, e, "Database", e.StackTrace!);
         }
-       
+        return [];
     }
 
     public async Task<User> AddUser(UserDto dto)
@@ -69,5 +69,22 @@ public class UserService : IUserService
     public string GetCurrentUser()
     {
         return "hardcodedUser";
+    }
+
+    public async Task<User?> GetUserById(int userId)
+    {
+        try
+        {
+            var user = await _userRepository.GetUserById(userId);
+            if (!user.IsError)
+            {
+                return user.Value;
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message, e, nameof(UserService), e.StackTrace!);
+        }
+        return null;
     }
 }
