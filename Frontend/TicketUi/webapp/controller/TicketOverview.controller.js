@@ -13,14 +13,17 @@ sap.ui.define([
 
     return Controller.extend("ui5.ticketui.controller.TicketOverview", {
         onInit: function () {             
-              
-              this._loadTickets();            
+            
+            const oModel = new JSONModel({ tickets: [] });
+            this.getView().setModel(oModel, "ticketsModel");
+
+            this._loadTickets();            
         },
         
         _loadTickets: async function () {
             try {
                 const tickets = await TicketService.getAllTickets();
-                this.getView().setModel(new JSONModel({tickets}), "ticketsModel")
+                this.getView().getModel("ticketsModel").setProperty("/tickets", tickets);
 
             } catch (error) {
                 console.error("Failed to load tickets:", error);
@@ -67,11 +70,11 @@ sap.ui.define([
         },
 
         onColumnListItemPress: function (oEvent) {
-           const oselecteditem = oevent.getparameter("listitem");
-           const ocontext = oselecteditem.getbindingcontext("ticketsmodel");
-           const sticketid = ocontext.getproperty("id");
-           const orouter = sap.ui.core.uicomponent.getrouterfor(this);
-           orouter.navto("details", { ticketid: sticketid });
+           const oSelectedItem = oEvent.getParameter("listItem");
+           const oContext = oSelectedItem.getBindingContext("ticketsModel");
+           const sTicketId = oContext.getProperty("id");
+           const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+           oRouter.navTo("details", { ticketId: sTicketId });
         },
 
          onSavePress: function () {

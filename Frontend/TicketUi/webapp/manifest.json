@@ -8,16 +8,7 @@
         "type": "application",
         "applicationVersion": {
             "version": "1.0.0"
-        },
-        "dataSources": {
-            "ticketRemote":{
-                "uri": "V2/Tickets",
-                "type": "OData",
-                "settings": {
-                    "odataVersion": "2.0"
-                }
-            }
-        }
+        }        
     },
     "sap.ui": {
         "technology": "UI5",
@@ -60,10 +51,7 @@
                     "supportedLocales": ["en", "de"],
                     "fallbackLocale": "en"
                 }
-            },
-            "tickets":{
-                "dataSource": "ticketRemote"
-            }              
+            }             
         },        
         "routing": {
             "config": {

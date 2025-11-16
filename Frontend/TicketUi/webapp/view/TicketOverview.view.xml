@@ -18,7 +18,7 @@
    <content>
         <SearchField  width="100%" liveChange=".onSearchFieldsLiveChange"/>
       <Table       
-        items="{Tickets>/}">
+        items="{ticketsModel>/tickets>}">
         
         <columns>
           <Column ><Text  text="{i18n>columnNumber}"/></Column>
@@ -32,10 +32,10 @@
         <items>
           <ColumnListItem type="Navigation" press=".onColumnListItemPress">
             <cells>
-              <Text  text="{Tickets>ID}"/>
-              <Text  text="{Tickets>Title}"/>
-              <Text  text="{Tickets>Status}"/>
-              <Text  text="{Tickets>CreatedAt}"/>
+              <Text  text="{ticketsModel>ID}"/>
+              <Text  text="{ticketsModel>Title}"/>
+              <Text  text="{ticketsModel>Status}"/>
+              <Text  text="{ticketsModel>CreatedAt}"/>
             </cells>
           </ColumnListItem>
         </items>
