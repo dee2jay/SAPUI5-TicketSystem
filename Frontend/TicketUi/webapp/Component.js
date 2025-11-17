@@ -10,19 +10,28 @@ sap.ui.define([
             "manifest": "json",
             "interfaces": ["sap.ui.core.IAsyncContentCreation"],
             "rootView": {
-                "viewName": "ticket-ui.view.App",
+                "viewName": "ticketui.view.App",
                 "type": "XML",
                 "id": "app",
                 "async": true
             }
         },
         
-        init() {
+        init: function() {
             UIComponent.prototype.init.apply(this, arguments);
 
             const i18nModel = new ResourceModel({
                 bundleName: "ticket.ui.i18n.i18n"
-            }, "i18n");           
+            }, "i18n");
+            
+            //Model Ticket
+            var oTicketModel = new JSONModel();
+            oTicketModel.loadData("/api/tickets");
+            this.setModel(oTicketModel, "ticketsModel")
+
+            //Model Comments
+            var oCommentModel = new JSONModel({ comments: [] });            
+            this.setModel(oCommentModel, "CommentsModel")
             
             this.getRouter().initialize();            
         }

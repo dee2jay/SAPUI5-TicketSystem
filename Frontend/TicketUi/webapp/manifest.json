@@ -60,7 +60,8 @@
                 "viewType": "XML",
                 "path": "ui5.ticketui.view",
                 "controlId": "app",
-                "controlAggregation": "pages"
+                "controlAggregation": "pages",
+                "async": true
             },
         "routes":[
              {
@@ -70,7 +71,7 @@
             },
             {
             "pattern": "detail",
-            "name": "detail",
+            "name": "tickets/{ID}",
             "target": "detail"
             }
         ],
