@@ -8,7 +8,23 @@ sap.ui.define([
 	return Controller.extend("ui5.ticketui.controller.TicketDetails", {
 
         onInit: function() {
-            
+             this.getOwnerComponent()
+        .getRouter()
+        .getRoute("TicketDetail")
+        .attachPatternMatched(this._onMatched, this);
+        },
+
+        _onMatched(oEvent){
+            const id = oEvent.getParameter("arguments").ticketId;
+
+            // Load ticket
+            const oDetailModel = new JSONModel();
+            oDetailModel.loadData(`/api/tickets/${id}`);
+            this.getView().setModel(oDetailModel, "detailModel");
+
+            // load comments
+            const oCommentsModel = this.getOwnerComponent().getModel("commentsModel");
+            oCommentsModel.loadData(`/api/tickets/${id}/comments`);
         },
 
        onHistoryButtonPress: function(){

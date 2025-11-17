@@ -70,28 +70,9 @@ sap.ui.define([
         },
 
         onColumnListItemPress: function (oEvent) {
-           const oSelectedItem = oEvent.getParameter("listItem");
-           const oContext = oSelectedItem.getBindingContext("ticketsModel");
-           const sTicketId = oContext.getProperty("id");
-           const oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-           oRouter.navTo("details", { ticketId: sTicketId });
-        },
+           const id = oEvent.getSource().getBindingContext("ticketsModel").getProperty("ID)");
 
-         onSavePress: function () {
-            const oView = this.getView();
-            const oThemeSelect = oView.byId("themeSelect");
-            const oLangSelect = oView.byId("langSelect");
-            const sSelectedTheme = oThemeSelect.getSelectedKey();
-            const sSelectedLang = oLangSelect.getSelectedKey();
-            
-            // Save the selected theme and language to local storage or backend
-            localStorage.setItem("appTheme", sSelectedTheme);
-            localStorage.setItem("appLanguage", sSelectedLang);
-        },
-
-        onCancelPress: function () {
-            this.getView().byId("themeSelect").setSelectedKey(localStorage.getItem("appTheme") || "Light");
-            this.getView().byId("langSelect").setSelectedKey(localStorage.getItem("appLanguage") || "English");
+           this.getOwnerComponent().getRouter().navTo("details", { ticketId: id });
         }
     });
 });

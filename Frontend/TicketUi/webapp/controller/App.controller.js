@@ -68,6 +68,24 @@ sap.ui.define([
             } else {
                 this._configDialog.open();
             }
+        },
+
+        onSaveButtonPress: function () {
+            const oView = this.getView();
+            const oThemeSelect = oView.byId("themeSelect");
+            const oLangSelect = oView.byId("langSelect");
+            const sSelectedTheme = oThemeSelect.getSelectedKey();
+            const sSelectedLang = oLangSelect.getSelectedKey();
+            
+            // Save the selected theme and language to local storage or backend
+            localStorage.setItem("appTheme", sSelectedTheme);
+            localStorage.setItem("appLanguage", sSelectedLang);
+        },
+
+        onCancelButtonPress: function () {
+            this.getView().byId("themeSelect").setSelectedKey(localStorage.getItem("appTheme") || "Light");
+            this.getView().byId("langSelect").setSelectedKey(localStorage.getItem("appLanguage") || "English");
+            this._oCreateDialog.close();
         }
     });
 });
