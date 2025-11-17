@@ -31,11 +31,14 @@
         </columns>
         <items>
           <ColumnListItem type="Navigation" press=".onColumnListItemPress">
-            <cells>
-              <Text  text="{ticketsModel>ID}"/>
-              <Text  text="{ticketsModel>Title}"/>
-              <Text  text="{ticketsModel>Status}"/>
-              <Text  text="{ticketsModel>CreatedAt}"/>
+            <cells>              
+              <Text text="{ticketsModel>ID}" />
+              <Text text="{ticketsModel>Category}" />
+              <Text text="{ticketsModel>Location}" />
+              <Text text="{ticketsModel>Status}" />
+              <Text text="{ticketsModel>Priority}" />
+              <Text text="{ticketsModel>CreatedAt}" />
+              <Text text="{ticketsModel>CreatedBy}" />
             </cells>
           </ColumnListItem>
         </items>

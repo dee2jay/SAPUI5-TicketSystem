@@ -20,8 +20,8 @@
       </Select>    
     <Toolbar >
     <ToolbarSpacer />
-        <Button text="{i18n>buttonSave}" press=".onSavePress" />
-        <Button text="{i18n>buttonCancel}" press=".onCancelSettingPress" />
+        <Button text="{i18n>buttonSave}" press=".onSaveButtonPress" />
+        <Button text="{i18n>buttonCancel}" press=".onCancelButtonPress" />
     </Toolbar>
   </VBox> 
       </content>
