@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Application.Interfaces;
+using TicketManagementSystem.Domain.Enums;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
 using TicketSystem.Domain.Models;
@@ -81,16 +82,74 @@ public class TicketsController(ITicketService ticketService, IAppLogger mongoLog
         return StatusCode(500, "Internal issue is occured");
     }
 
-    [HttpPut("{ticketId}/close", Name = "CloseTicket")]
-    public void CloseTicket(int ticketId)
+    [HttpPut("/changepriority", Name = "ChangePriority")]
+    public async Task<IActionResult> ChangePriority([FromBody] int ticketId, TicketPriority priority)
     {
-        ticketService.CloseTicketAsync(ticketId);
+        try
+        {
+            var currentTicket = await ticketService.GetTicketById(ticketId);
+            if (currentTicket != null)
+            {
+                var currentPriority = currentTicket?.Priority;
+                if (currentPriority == priority)
+                {
+                    return Empty;
+                }
+
+                var newTicket = currentTicket;
+                newTicket!.Priority = priority;
+                await ticketService.UpdateTicketAsync(ticketId, newTicket);
+
+                return CreatedAtAction(nameof(ChangePriority), new { id = ticketId, 
+                    oldPriority = $"{currentPriority.ToString()}", 
+                    newPriority = $"{newTicket.Priority.ToString()}" });
+            }
+            return StatusCode(204, $"No Content for the Ticket with Id{ticketId}");
+
+        }
+        catch (Exception e)
+        {
+            await mongoLogger.LogError(e.Message, e, nameof(TicketsController), e.StackTrace!);
+        }
+
+        return Empty;
+    }
+
+
+    [HttpPut("{ticketId}/close", Name = "CloseTicket")]
+    public async Task<IActionResult> CloseTicket(int ticketId)
+    {
+        try
+        {
+            await ticketService.CloseTicketAsync(ticketId);
+            return Ok(new { message = $"Ticket {ticketId} closed successfully." });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new{
+                error= "Server Internal Issue",
+                details= e.Message
+                });
+        }
     }
 
     [HttpPut("{ticketId}/addComment", Name = "CommentTicket")]
-    public void CommentTicket(int ticketId, [FromBody] TicketComment comment)
+    public async Task<IActionResult> CommentTicket(int ticketId, [FromBody] TicketComment comment)
     {
-        ticketService.AddCommentToTicketAsync(ticketId, comment);
+        try
+        {
+            await ticketService.AddCommentToTicketAsync(ticketId, comment);
+            return Ok(new { TicketId = ticketId, AddedCommant = comment });
+        }
+        catch (Exception e)
+        {
+            mongoLogger.LogError(e.Message, e, nameof(TicketsController), e.StackTrace!);
+            return StatusCode(500, new
+            {
+                error = e.Message,
+                Details = e.StackTrace
+            });
+        }
     }
 
     [HttpPut("{ticketId}/addAttachment", Name = "AttachToTicket")]

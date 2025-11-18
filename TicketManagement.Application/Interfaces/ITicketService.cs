@@ -13,4 +13,6 @@ public interface ITicketService
     public Task<IEnumerable<Ticket>> GetAllTicketsAsync();
     public Task AddCommentToTicketAsync(int ticketId, TicketComment comment);
     public Task AddAttachmentToTicketAsync(int ticketId, TicketAttachment attachment);
+    public Task<Ticket?> GetTicketById(int ticketId);
+
 }

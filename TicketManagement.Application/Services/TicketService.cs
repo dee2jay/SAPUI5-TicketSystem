@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ErrorOr;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Application.Events;
 using TicketManagementSystem.Application.Interfaces;
@@ -215,7 +216,25 @@ public class TicketService : ITicketService
                     ex.StackTrace);
         }
     }
-        
+
+    public async Task<Ticket?> GetTicketById(int ticketId)
+    {
+        try
+        {
+            var existingTicket = await _ticketRepository.GetTicketById(ticketId);
+            if (!existingTicket.IsError)
+            {
+                return existingTicket.Value;
+            }
+        }
+        catch (Exception e)
+        {
+            await _logger.LogError(e.Message, e, "Database", e.StackTrace!);
+        }
+
+        return null;
+    }
+
     private async Task RaiseChangeCollectionChangeAsync<T>(string collectionName,
         IEnumerable<T>? oldCollection,
         IEnumerable<T>? newCollection,

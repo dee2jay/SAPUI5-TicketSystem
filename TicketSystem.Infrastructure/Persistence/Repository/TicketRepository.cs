@@ -30,10 +30,18 @@ public sealed class TicketRepository(ILogger<TicketRepository> logger, TicketDbC
     }
 
     public async Task UpdateTicket(Ticket ticket) 
-    { 
-        _dbcontext.Tickets.Update(ticket);
-        await _dbcontext.SaveChangesAsync();
-        _logger.LogInformation($"Ticket with ID {ticket.Id} updated.");
+    {
+        try
+        {
+            _dbcontext.Tickets.Update(ticket);
+            await _dbcontext.SaveChangesAsync();
+            _logger.LogInformation($"Ticket with ID {ticket.Id} updated.");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message, e);
+        }
+        
     }
     public async Task<ErrorOr<IEnumerable<Ticket>>> GetAllTickets()
     {
