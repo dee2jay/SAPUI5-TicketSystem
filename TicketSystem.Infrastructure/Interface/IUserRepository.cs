@@ -13,7 +13,9 @@ namespace TicketManagementSystem.Infrastructure.Interface
         Task<ErrorOr<IEnumerable<User>>> GetAllUsers();
         Task AddUser(User user);
         Task<ErrorOr<User>> GetUserById(int userId);
-        Task UpdateUser(int userId);
+        Task<ErrorOr<User>> GetUserByEmail(string email);
+        Task<ErrorOr<User>> GetUserByUsername(string username);
+        Task UpdateUser(User user);
         Task RemoveUser(int userId);
     }
 }

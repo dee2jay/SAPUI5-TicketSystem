@@ -1,11 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ErrorOr;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using ErrorOr;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
 
@@ -33,9 +35,17 @@ public class UserRepository : IUserRepository
         return Error.NotFound(description: $"No Tickets found");
     }
 
-    public Task AddUser(User user)
+    public async Task AddUser(User user)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _dbcontext.Users.AddAsync(user);
+            await _dbcontext.SaveChangesAsync();
+        }
+        catch (DbException e)
+        {
+            _logger.LogError(e.Message);
+        }
     }
 
     public async Task<ErrorOr<User>> GetUserById(int userId)
@@ -49,9 +59,32 @@ public class UserRepository : IUserRepository
         return Error.NotFound(description: $"User with ID {userId} not found.");
     }
 
-    public Task UpdateUser(int userId)
+    public async Task<ErrorOr<User>> GetUserByUsername(string username)
     {
-        throw new NotImplementedException();
+        var user = await _dbcontext.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if (user != null)
+        {
+            return user;
+        }
+        _logger.LogWarning($"User with the username {username} not found.");
+        return Error.NotFound(description: $"User with the username {username} not found.");
+    }
+    public async Task<ErrorOr<User>> GetUserByEmail(string email)
+    {
+        var user = await _dbcontext.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (user != null)
+        {
+            return user;
+        }
+        _logger.LogWarning($"User with the Email {email} not found.");
+        return Error.NotFound(description: $"User with the Email {email} not found.");
+    }
+
+    public async Task UpdateUser(User user)
+    {
+        _dbcontext.Users.Update(user);
+        await _dbcontext.SaveChangesAsync();
+        _logger.LogInformation($"User with Email {user.Email} has been updated.");
     }
 
     public async Task RemoveUser(int userId)
@@ -59,7 +92,7 @@ public class UserRepository : IUserRepository
         var user = await _dbcontext.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (user != null)
         {
-            var test = await CloseConnectionByUser(userId);
+            var test = await CloseConnectionByUser(user);
 
             if (test)
             {
@@ -70,8 +103,12 @@ public class UserRepository : IUserRepository
         _logger.LogWarning($"User with ID {userId} not found.");
     }
 
-    private async Task<bool> CloseConnectionByUser(int userId)
+    private async Task<bool> CloseConnectionByUser(User user)
     {
-        throw new NotImplementedException();
+        if (user.UserConnected)
+        {
+            user.UserConnected = false;
+        }
+        return true;
     }
 }

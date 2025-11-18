@@ -15,7 +15,7 @@ public class MongoLogger : IAppLogger
 {
     private readonly IMongoCollection<LogEntry> _logs;
         
-    public MongoLogger(string connectionString, string? databaseName)
+    public MongoLogger(string? connectionString, string? databaseName)
     {
         if (string.IsNullOrWhiteSpace(connectionString))
         {
