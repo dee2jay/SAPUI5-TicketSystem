@@ -2,8 +2,13 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/resource/ResourceModel",
     "sap/ui/core/Fragment",
-    "sap/m/MessageToast"
-], function (Controller, ResourceModel, Fragment, MessageToast) {
+    "sap/m/MessageToast",
+    "ui5/ticketui/service/AuthService"
+], function (Controller,
+	ResourceModel,
+	Fragment,
+	MessageToast,
+	AuthService) {
     "use strict";
 
     return Controller.extend("ui5.ticketui.controller.App", {
@@ -21,7 +26,8 @@ sap.ui.define([
            let that = this;
 
             if (!this._loginDialog) {
-                Fragment.load({
+                this._loginDialog = Fragment.load({
+                    id: this.getView().getId(),
                     name: "ui5.ticketui.view.LoginDialog",
                     controller: this
                 }).then(function (oDialog) {
@@ -29,6 +35,8 @@ sap.ui.define([
                     that.getView().addDependent(oDialog);
                     oDialog.open();
                 });
+
+                this.getView().addDependent(this._loginDialog);
             } else {
                 this._loginDialog.open();
             }
@@ -36,25 +44,29 @@ sap.ui.define([
         },       
         
 
-        onButtonSubmitPress: async function () {           
-
+        onButtonSubmitPress: async function () {        
 
             try{
-                const oResult = await UserService.login((this.byId("loginDialog")).byId("username").getValue(), (this.byId("loginDialog")).byId("password").getValue());
+                const viewId = this.getView().getId();
                 
-                MessageToast.show("Login success!");
+                const username = Fragment.byId(viewId, "username").getValue();
+                
+                const password = Fragment.byId(viewId, "password").getValue();
 
-                // Load current user
-        const me = await UserService.getCurrentUser();
-        this.getOwnerComponent().setModel(new JSONModel(me), "userModel");
+                console.log("USERNAME =", username);
+                console.log("PASSWORD =", password);
+                
+                const oResult = await AuthService.login(username, password);
+                
+                MessageToast.show("Login success!");        
 
-        this.getRouter().navTo("Overview");
+        this.getOwnerComponent().getRouter().navTo("Overview");
             
 
             this._loginDialog.close();
-            }catch{
-                MessageToast.show("Login failed");
-                this._loginDialog.close();
+            }catch(e){
+                MessageToast.show("Login failed");                
+                console.error(e);
             }
         },
 

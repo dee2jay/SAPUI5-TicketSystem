@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
     "sap/ui/model/resource/ResourceModel",
-    "sap/ui/model/json/JSONModel"
-], function(UIComponent, ResourceModel, JSONModel) {
+    "sap/ui/model/json/JSONModel",
+    "ui5/ticketui/service/TokenService"
+], function(UIComponent, ResourceModel, JSONModel, TokenService) {
 	"use strict";
 
 	return UIComponent.extend("ui5.ticketui.Component", {
@@ -23,6 +24,8 @@ sap.ui.define([
             const i18nModel = new ResourceModel({
                 bundleName: "ticket.ui.i18n.i18n"
             }, "i18n");
+
+            sap.ui.getCore().setModel(TokenService.getModel(), "auth");
             
             //Model Ticket
             var oTicketModel = new JSONModel();
