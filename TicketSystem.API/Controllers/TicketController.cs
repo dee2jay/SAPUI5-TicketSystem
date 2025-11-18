@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
@@ -11,8 +12,9 @@ namespace TicketManagementSystem.API.Controllers;
 [Route("api/[controller]")]
 public class TicketsController(ITicketService ticketService, IAppLogger mongoLogger, IUserService userService) : ControllerBase
 {
+    [Authorize]
     [HttpGet(Name = "GetTickets")]
-    public async Task<IActionResult?> GetTickets()
+    public async Task<IActionResult?> GetTickets(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -31,8 +33,9 @@ public class TicketsController(ITicketService ticketService, IAppLogger mongoLog
         return null;
     }
 
+    [Authorize]
     [HttpPost(Name = "AddTicket")]
-    public async Task<IActionResult> AddTicket([FromBody] TicketDto dto)
+    public async Task<IActionResult> AddTicket([FromBody] TicketDto dto, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -67,12 +70,12 @@ public class TicketsController(ITicketService ticketService, IAppLogger mongoLog
         }
         catch (TimeoutException ex)
         {
-            mongoLogger.LogError($"{StatusCode(408, "Timeout occured")}", ex, nameof(AssignTicket), ex.StackTrace!);
+            await mongoLogger.LogError($"{StatusCode(408, "Timeout occured")}", ex, nameof(AssignTicket), ex.StackTrace!);
             return StatusCode(408, $"Timeout occurred: {ex.Message}");
         }
         catch (Exception e)
         {
-            mongoLogger.LogError(e.Message, e, nameof(AssignTicket), e.StackTrace!);
+            await mongoLogger.LogError(e.Message, e, nameof(AssignTicket), e.StackTrace!);
         }
 
         return StatusCode(500, "Internal issue is occured");
