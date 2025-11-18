@@ -74,10 +74,10 @@ public class TicketService : ITicketService
         {
             // Implementation for creating a ticket goes here.
             var ticket = _mapper.Map<Ticket>(dto);
-            ticket.Author = _userService.GetCurrentUser();
             ticket.Status = TicketStatus.New;
             ticket.Priority = TicketPriority.Normal;
             ticket.UpdatedAt = ticket.CreatedAt;
+            ticket.Author = await _userService.GetCurrentUser();
             await _ticketRepository.AddTicket(ticket);
                 
             var ticketCreatedEvent = new TicketCreatedEvent{

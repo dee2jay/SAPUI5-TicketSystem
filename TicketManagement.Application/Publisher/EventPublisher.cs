@@ -5,19 +5,15 @@ namespace TicketManagementSystem.Application.Publisher;
 
 public class EventPublisher : IEventPublisher
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IEventDispatcher _dispatcher;
 
-    public EventPublisher(IServiceProvider serviceProvider)
+    public EventPublisher(IEventDispatcher dispatcher)
     {
-        _serviceProvider = serviceProvider;
+        _dispatcher = dispatcher;
     }
 
     public async Task PublishEventAsync<TEvent>(TEvent @event) where TEvent : IDomainEvent
     {
-        var handlers = _serviceProvider.GetServices<IEventHandler<TEvent>>();
-        foreach (var handler in handlers)
-        {
-            await handler.HandleAsync(@event);
-        }
+        await _dispatcher.DispatchAsync(@event);
     }
 }

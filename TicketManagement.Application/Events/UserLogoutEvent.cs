@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TicketManagementSystem.Application.Interfaces;
-using TicketManagementSystem.Domain.Models;
 
 namespace TicketManagementSystem.Application.Events;
 
-public record UserCreatedEvent(string Vorname, string Name, string Username, string Email, DateTime Timestamp)
-    : IDomainEvent;
+public record UserLogoutEvent(string Email, string Username, DateTime Timestamp) : IDomainEvent;

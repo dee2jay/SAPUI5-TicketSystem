@@ -1,90 +1,52 @@
-﻿using AutoMapper;
-using ErrorOr;
-using System.Net.Sockets;
-using TicketManagement.Application.Interfaces;
+﻿using Microsoft.AspNetCore.Http;
+using System.Net.Http;
+using TicketManagementSystem.Application.Command;
+using TicketManagementSystem.Application.Commands;
 using TicketManagementSystem.Application.Dtos;
-using TicketManagementSystem.Application.Events;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
+
 
 namespace TicketManagementSystem.Application.Services;
 
 public class UserService : IUserService
 {
+    private readonly ICommandHandler<RegisterUserCommand, User> _registerHandler;
+    private readonly ICommandHandler<LoginUserCommand, string> _loginHandler;
+    private readonly ICommandHandlerBase<LogoutUserCommand> _logoutHandler;
+    private readonly IHttpContextAccessor _httpContext;
     private readonly IUserRepository _userRepository;
-    private readonly IAppLogger _logger;
-    private readonly IMapper _mapper;
-    public UserService(IUserRepository userRepository, IAppLogger logger, IMapper mapper)
+
+    public UserService(ICommandHandler<RegisterUserCommand, User> registerHandler, 
+        ICommandHandler<LoginUserCommand, string> loginHandler, 
+        ICommandHandlerBase<LogoutUserCommand> logoutHandler, IHttpContextAccessor httpContext, IUserRepository userRepository)
     {
+        _registerHandler = registerHandler;
+        _loginHandler = loginHandler;
+        _logoutHandler = logoutHandler;
+        _httpContext = httpContext;
         _userRepository = userRepository;
-        _logger = logger;
-        _mapper = mapper;
     }
 
-    public async Task<IEnumerable<User>> GetUsersAsync()
+    public Task<User> RegisterUserAsync(UserDto dto)
+        => _registerHandler.Handle(new RegisterUserCommand(dto.Vorname,dto.Name, dto.Username, dto.Email, dto.Password));
+
+    public Task<string> LoginUserAsync(LoginUserDto dto)
+        => _loginHandler.Handle(new LoginUserCommand(dto.Email, dto.Password));
+
+    public Task LogoutUserAsync(string email)
+        => _logoutHandler.Handle(new LogoutUserCommand(email));
+
+    public async Task<string> GetCurrentUser()
     {
-        try
-        {
-            var existingUserList = await _userRepository.GetAllUsers();
-            if (!existingUserList.IsError)
-            {
-                return existingUserList.Value;
-            }
-            await _logger.LogWarning("No Users found.", nameof(UserService));
-        }
-        catch (Exception e)
-        {
-            await _logger.LogError(e.Message, e, "Database", e.StackTrace!);
-        }
-        return [];
+        var username = _httpContext.HttpContext?.User?.Identity?.Name;
+        var user = await _userRepository.GetUserByUsername(username!);
+        return !user.IsError ? user.Value.Email : null!;
     }
 
-    public async Task<User> AddUser(UserDto dto)
-    {
-        var user = _mapper.Map<User>(dto);
-        
-        await _userRepository.AddUser(user);
-        var userCreatedEvent = new UserCreatedEvent
-        {
-            UserId = user.Id,
-            OldValue = null,
-            NewValue = user.UserName,
-            ChangedAt = DateTime.Now,
-            ChangedBy = GetCurrentUser()
-        };
-        return user;
-    }
-
-    public Task<User> UpdateUser(User user)
+    public Task<User?> GetUserById(int toInt32)
     {
         throw new NotImplementedException();
-    }
-
-    public Task<bool> RemoveUser(User user)
-    {
-        throw new NotImplementedException();
-    }
-
-    public string GetCurrentUser()
-    {
-        return "hardcodedUser";
-    }
-
-    public async Task<User?> GetUserById(int userId)
-    {
-        try
-        {
-            var user = await _userRepository.GetUserById(userId);
-            if (!user.IsError)
-            {
-                return user.Value;
-            }
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e.Message, e, nameof(UserService), e.StackTrace!);
-        }
-        return null;
     }
 }
