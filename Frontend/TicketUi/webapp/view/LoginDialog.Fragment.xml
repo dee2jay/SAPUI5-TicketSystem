@@ -13,7 +13,7 @@
                 
                 <Toolbar>
                     <ToolbarSpacer/>
-                    <Button text="{i18n>buttonSubmit}" type="Emphasized" press=".onDoLogin"/>
+                    <Button text="{i18n>buttonSubmit}" type="Emphasized" press=".onButtonSubmitPress"/>
                     <Button text="{i18n>buttonCancel}" press=".onCancelLogin"/>                    
                 </Toolbar>
                 

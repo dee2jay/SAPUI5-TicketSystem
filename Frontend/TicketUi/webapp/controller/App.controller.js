@@ -1,8 +1,9 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/resource/ResourceModel",
-    "sap/ui/core/Fragment"
-], function (Controller, ResourceModel, Fragment) {
+    "sap/ui/core/Fragment",
+    "sap/m/MessageToast"
+], function (Controller, ResourceModel, Fragment, MessageToast) {
     "use strict";
 
     return Controller.extend("ui5.ticketui.controller.App", {
@@ -35,18 +36,33 @@ sap.ui.define([
         },       
         
 
-        onDoLogin: function () {
-            const username = this.byId("username").getValue();
-            const password = this.byId("password").getValue();
+        onButtonSubmitPress: async function () {
+            const oUsername = this.byId("username").getValue();
+            const oPassword = this.byId("password").getValue();
 
-            console.log("User:", username);
-            console.log("Password:", password);
+
+            try{
+                const oResult = await UserService.login(oUsername, oPassword);
+                
+                MessageToast.show("Login success!");
+
+                // Load current user
+        const me = await UserService.getCurrentUser();
+        this.getOwnerComponent().setModel(new JSONModel(me), "userModel");
+
+        this.getRouter().navTo("Overview");
+            
 
             this._loginDialog.close();
+            }catch{
+                MessageToast.show("Login failed");
+                this._loginDialog.close();
+            }
         },
 
         onCancelLogin: function () {
             this._loginDialog.close();
+            MessageToast.show("Login aborted");
         },
 
          onCancelSettingPress: function () {
