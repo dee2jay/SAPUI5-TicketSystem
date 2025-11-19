@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Domain.Models;
 
-namespace TicketManagement.Application.Mapping;
+namespace TicketManagementSystem.Application.Mapping;
 
 public class TicketMappingProfile : Profile
 {
     public TicketMappingProfile()
     {
-        CreateMap<TicketDto, Ticket>().ConstructUsing(dto => new Ticket(
-            dto.Category,
-            dto.Location,
-            dto.CostCenter,
-            dto.OrderNumber,
-            dto.Title,
-            dto.Description));
+        CreateMap<TicketDto, Ticket>().ConstructUsing(dto => new Ticket
+        {
+            Category = dto.Category,
+            Location = dto.Location,
+            CostCenter = dto.CostCenter,
+            OrderNumber = dto.OrderNumber,
+            Title = dto.Title,
+            Description = dto.Description,
+            CreatedAt = DateTime.UtcNow
+        });
     }
 }

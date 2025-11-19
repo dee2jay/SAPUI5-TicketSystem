@@ -1,6 +1,4 @@
 ﻿
-using TicketManagement.Application.Interfaces;
-
 namespace TicketManagementSystem.Application.Interfaces;
 
 public interface IEventDispatcher

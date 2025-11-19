@@ -74,4 +74,11 @@ public class MongoLogger : IAppLogger
         };
         await _logs.InsertOneAsync(entry);
     }
+
+
+    public ValueTask DisposeAsync()
+    {
+        GC.SuppressFinalize(this);
+        return ValueTask.CompletedTask;
+    }
 }

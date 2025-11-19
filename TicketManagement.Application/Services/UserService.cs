@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Net.Http;
-using TicketManagementSystem.Application.Command;
-using TicketManagementSystem.Application.Commands;
+using TicketManagementSystem.Application.Command.UserCommands;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
@@ -45,8 +44,14 @@ public class UserService : IUserService
         return !user.IsError ? user.Value.Email : null!;
     }
 
-    public Task<User?> GetUserById(int toInt32)
+    public Task<User?> GetUserById(int id)
     {
         throw new NotImplementedException();
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        GC.SuppressFinalize(this);
+        return ValueTask.CompletedTask;
     }
 }

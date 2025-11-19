@@ -1,0 +1,17 @@
+﻿using TicketManagementSystem.Domain.Enums;
+
+namespace TicketManagementSystem.Application.Dtos;
+
+public class TicketUpdateDto
+{
+    public string? Title { get; set; }
+    public string? Category { get; set; }
+    public TicketStatus Status { get; set; }
+    public TicketPriority Priority { get; set; }
+    public string? AssignedTo { get; set; }
+
+    public List<TicketCommentDto>? NewComments { get; set; } = [];
+    public List<TicketAttachmentDto>? NewAttachments { get; set; } = [];
+
+    public byte[] RowVersion { get; set; }
+}

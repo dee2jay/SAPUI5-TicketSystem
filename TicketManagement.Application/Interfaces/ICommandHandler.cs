@@ -8,5 +8,5 @@ namespace TicketManagementSystem.Application.Interfaces;
 
 public interface ICommandHandler<TCommand, TResult> : ICommandHandlerBase<TCommand>
 {
-    Task<TResult> Handle(TCommand command);
+    new Task<TResult> Handle(TCommand command);
 }

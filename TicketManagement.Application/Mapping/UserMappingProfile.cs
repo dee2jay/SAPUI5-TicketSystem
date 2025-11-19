@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using TicketManagementSystem.Application.Commands;
+using TicketManagementSystem.Application.Command.UserCommands;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Domain.Models;
 

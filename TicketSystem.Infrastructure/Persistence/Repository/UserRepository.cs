@@ -103,12 +103,12 @@ public class UserRepository : IUserRepository
         _logger.LogWarning($"User with ID {userId} not found.");
     }
 
-    private async Task<bool> CloseConnectionByUser(User user)
+    private Task<bool> CloseConnectionByUser(User user)
     {
         if (user.UserConnected)
         {
             user.UserConnected = false;
         }
-        return true;
+        return Task.FromResult(true);
     }
 }

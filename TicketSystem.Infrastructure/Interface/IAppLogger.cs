@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TicketManagementSystem.Infrastructure.Interface;
 
-public interface IAppLogger
+public interface IAppLogger : IAsyncDisposable
 {
     Task LogInfo(string message, string? source = null);
     Task LogWarning(string message, string? source = null);

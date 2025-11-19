@@ -33,7 +33,6 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            await _logger.LogError(e.Message, e, nameof(UserService), e.StackTrace!);
             return BadRequest(new { message = e.Message });
         }
     }

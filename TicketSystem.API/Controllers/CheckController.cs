@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
+namespace TicketManagementSystem.API.Controllers;
+
 [ApiController]
 [Route("[controller]")]
 public class CheckController : ControllerBase

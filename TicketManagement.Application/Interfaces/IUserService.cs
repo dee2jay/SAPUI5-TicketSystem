@@ -8,7 +8,7 @@ using TicketManagementSystem.Domain.Models;
 
 namespace TicketManagementSystem.Application.Interfaces
 {
-    public interface IUserService
+    public interface IUserService : IAsyncDisposable
     {
         Task<User> RegisterUserAsync(UserDto dto);
         Task<string> LoginUserAsync(LoginUserDto dto);

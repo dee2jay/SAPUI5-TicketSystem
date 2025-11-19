@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TicketManagementSystem.Domain.Enums;
-using TicketSystem.Domain.Models;
 
 namespace TicketManagementSystem.Domain.Models;
 
@@ -20,19 +19,15 @@ public class Ticket
     public string CostCenter { get; set; } = string.Empty;
     public string? AssignedTo { get; set; }
     public string OrderNumber { get; set; }
+
+    public int? UserId { get; set; }
+    public User? User { get; set; }
+
     public ICollection<TicketAttachment> Attachments { get; set; } = [];
     public ICollection<TicketComment> Comments { get; set; } = [];
+    public List<History> Histories { get; set; } = new();
 
-    public Ticket(string category, string location, string costCenter, string orderNumber, string title, string description)
-    {
-        Category = category;
-        Location = location;
-        CostCenter = costCenter;
-        OrderNumber = orderNumber;
-        Title = title;
-        Description = description;
-        CreatedAt = DateTime.UtcNow;
-    }
-
+    [Timestamp]
+    public byte[] RowVersion { get; set; }
     
 }

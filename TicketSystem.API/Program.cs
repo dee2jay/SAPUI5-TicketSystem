@@ -2,14 +2,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
-using TicketManagement.Application.Mapping;
 using TicketManagementSystem.API.OptionsSetup;
-using TicketManagementSystem.Application.Command;
-using TicketManagementSystem.Application.CommandHandler;
-using TicketManagementSystem.Application.Commands;
+using TicketManagementSystem.Application.Command.UserCommands;
+using TicketManagementSystem.Application.CommandHandler.UserCommandHandlers;
 using TicketManagementSystem.Application.Dispatcher;
-using TicketManagementSystem.Application.EventHandlers;
-using TicketManagementSystem.Application.Events;
+using TicketManagementSystem.Application.EventHandlers.TicketEventHandlers;
+using TicketManagementSystem.Application.EventHandlers.UserEventHandler;
+using TicketManagementSystem.Application.Events.TicketEvents;
+using TicketManagementSystem.Application.Events.UserEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Application.Mapping;
 using TicketManagementSystem.Application.Publisher;
@@ -27,18 +27,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-// === Event Handlers ===
+// === Command Handler and Event Handlers===
 builder.Services.AddScoped<IEventHandler<TicketCreatedEvent>, TicketCreatedEventHandler>();
 builder.Services.AddScoped<IEventHandler<TicketUpdatedEvent>,TicketUpdatedEventHandler>();
-builder.Services.AddScoped<IEventHandler<UserCreatedEvent>, RegisterUserEventHandler>();
-builder.Services.AddScoped<ICommandHandler<RegisterUserCommand, User>, UserRegisterCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<LoginUserCommand, string>, UserLoginCommandHandler>();
-builder.Services.AddScoped<ICommandHandlerBase<LogoutUserCommand>, UserLogoutCommandHandler>();
 builder.Services.AddScoped<IEventHandler<TicketCreatedEvent>, TicketCreatedEventHandler>();
-builder.Services.AddScoped<IEventHandler<TicketUpdatedEvent>, TicketUpdatedEventHandler>();
+
 builder.Services.AddScoped<IEventHandler<UserCreatedEvent>, RegisterUserEventHandler>();
 builder.Services.AddScoped<IEventHandler<UserLoginEvent>, LoginUserEventHandler>();
 builder.Services.AddScoped<IEventHandler<UserLogoutEvent>, LogoutUserEventHandler>();
+
+
+builder.Services.AddScoped<ICommandHandler<RegisterUserCommand, User>, UserRegisterCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<LoginUserCommand, string>, UserLoginCommandHandler>();
+builder.Services.AddScoped<ICommandHandlerBase<LogoutUserCommand>, UserLogoutCommandHandler>();
 
 
 // === Event Publisher & Dispatcher ===

@@ -13,8 +13,13 @@ public class User
     public int Id { get; set; }
     public string Vorname { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
+    public required string Email { get; set; }
+    public required string Username { get; set; } = string.Empty;
+    public required string Password { get; set; } = string.Empty;
     public bool UserConnected { get; set; }
+    
+    public List<Ticket> Tickets { get; set; } = [];
+
+    public List<TicketAttachment> Attachments { get; set; } = [];
+    public List<TicketComment> Comments { get; set; } = [];
 }

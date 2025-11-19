@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using TicketManagement.Application.Interfaces;
 using TicketManagementSystem.Application.Interfaces;
 
 namespace TicketManagementSystem.Application.Dispatcher;
