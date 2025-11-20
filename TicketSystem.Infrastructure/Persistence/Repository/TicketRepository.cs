@@ -29,6 +29,7 @@ public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbcontex
         var ticket = await dbcontext.Tickets
             .Include(t =>t.Comments)
             .Include(t=>t.Attachments)
+            .Include(t =>t.Histories.OrderByDescending(h => h.Timestamp))
             .FirstOrDefaultAsync(t => t.Id == ticketId, ct);
         
         if (ticket != null)
@@ -44,28 +45,88 @@ public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbcontex
         try
         {
             await logger.LogInfo($"Ticket with ID {ticket.Id} updated.");
-            dbcontext.Tickets.Update(ticket);
 
             try
             {
+                dbcontext.Tickets.Update(ticket);
                 await dbcontext.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException e)
             {
                 throw new Exception("The ticket was modified by another user. Please reload the page.");
             }
-            
     
         }
         catch (Exception e)
         {
-            logger.LogError(e.Message, e, nameof(TicketRepository), e.StackTrace!);
+            await logger.LogError(e.Message, e, nameof(TicketRepository), e.StackTrace!);
         }
         
     }
-    public async Task<ErrorOr<IEnumerable<Ticket>>> GetAllTickets()
+
+    public async  Task<ErrorOr<IEnumerable<TicketAttachment>>> GetAttachmentsByTicketId(int ticketId, CancellationToken ct)
     {
-        var ticketList = await dbcontext.Tickets.ToListAsync();
+        try
+        {
+            var attachments = await dbcontext.TicketAttachments. 
+                Where(ta => ta.TicketId == ticketId).ToListAsync(ct);
+            if (attachments.Count > 0)
+            {
+                return attachments;
+            }
+            return Error.NotFound(description: $"No history found for the Ticket with ID {ticketId}.");
+        }
+        catch (Exception e)
+        {
+            await logger.LogError(e.Message, e, nameof(TicketRepository), e.StackTrace!);
+        }
+
+        return default;
+    }
+
+    public async Task<ErrorOr<IEnumerable<TicketComment>>> GetCommentsByTicketId(int ticketId, CancellationToken ct)
+    {
+        try
+        {
+            var comments = await dbcontext.TicketComments.
+                Where(tc => tc.TicketId == ticketId).ToListAsync(ct);
+            if (comments.Count > 0)
+            {
+                return comments;
+            }
+            return Error.NotFound(description: $"No history found for the Ticket with ID {ticketId}.");
+        }
+        catch (Exception e)
+        {
+            await logger.LogError(e.Message, e, nameof(TicketRepository), e.StackTrace!);
+        }
+
+        return default;
+    }
+
+    public async Task<ErrorOr<IEnumerable<History>>> GetHistoryByTicketId(int ticketId, CancellationToken ct)
+    {
+        try
+        {
+            var historyList = await dbcontext.TicketHistories.
+                Where(h => h.TicketId == ticketId).ToListAsync(ct);
+            if (historyList.Count > 0)
+            {
+                return historyList;
+            }
+            return Error.NotFound(description: $"No history found for the Ticket with ID {ticketId}.");
+        }
+        catch (Exception e)
+        {
+            await logger.LogError(e.Message, e, nameof(TicketRepository), e.StackTrace!);
+        }
+
+        return default;
+    }
+
+    public async Task<ErrorOr<IEnumerable<Ticket>>> GetAllTickets(CancellationToken ct)
+    {
+        var ticketList = await dbcontext.Tickets.ToListAsync(ct);
         if (ticketList.Count > 0)
         {
             return ticketList;

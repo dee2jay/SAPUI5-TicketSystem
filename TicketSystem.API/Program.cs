@@ -30,7 +30,11 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // === Command Handler and Event Handlers===
 builder.Services.AddScoped<IEventHandler<TicketCreatedEvent>, TicketCreatedEventHandler>();
 builder.Services.AddScoped<IEventHandler<TicketUpdatedEvent>,TicketUpdatedEventHandler>();
-builder.Services.AddScoped<IEventHandler<TicketCreatedEvent>, TicketCreatedEventHandler>();
+builder.Services.AddScoped<IEventHandler<AttachmentAddedToTicketEvent>, AttachmentAddedToTicketEventHandler>();
+builder.Services.AddScoped<IEventHandler<CommentAddedToTicketEvent>, CommentAddedTicketEventHandler>();
+builder.Services.AddScoped<IEventHandler<TicketPriorityChangedEvent>, TicketPriorityChangedEventHandler>();
+builder.Services.AddScoped<IEventHandler<TicketStatusChangedEvent>, TicketStatusChangedEventHandler>();
+
 
 builder.Services.AddScoped<IEventHandler<UserCreatedEvent>, RegisterUserEventHandler>();
 builder.Services.AddScoped<IEventHandler<UserLoginEvent>, LoginUserEventHandler>();

@@ -37,11 +37,11 @@ public class UserService : IUserService
     public Task LogoutUserAsync(string email)
         => _logoutHandler.Handle(new LogoutUserCommand(email));
 
-    public async Task<string> GetCurrentUser()
+    public async Task<User> GetCurrentUser()
     {
         var username = _httpContext.HttpContext?.User?.Identity?.Name;
         var user = await _userRepository.GetUserByUsername(username!);
-        return !user.IsError ? user.Value.Email : null!;
+        return !user.IsError ? user.Value : null!;
     }
 
     public Task<User?> GetUserById(int id)

@@ -1,4 +1,6 @@
-﻿using TicketManagementSystem.Domain.Enums;
+﻿using System.Text.Json.Serialization;
+using TicketManagementSystem.Domain.Enums;
+using TicketManagementSystem.Domain.Models;
 
 namespace TicketManagementSystem.Application.Dtos;
 
@@ -12,6 +14,7 @@ public class TicketUpdateDto
 
     public List<TicketCommentDto>? NewComments { get; set; } = [];
     public List<TicketAttachmentDto>? NewAttachments { get; set; } = [];
-
+    public List<HistoryDto> Histories { get; set; } = [];
+    
     public byte[] RowVersion { get; set; }
 }

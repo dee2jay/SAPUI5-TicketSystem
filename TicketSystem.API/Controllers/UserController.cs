@@ -62,7 +62,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         var user = await _userService.GetCurrentUser();
-        await _userService.LogoutUserAsync(user);
+        await _userService.LogoutUserAsync(user.Email);
         
         return Ok(new
         {

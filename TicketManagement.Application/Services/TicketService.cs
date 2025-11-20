@@ -34,7 +34,7 @@ public class TicketService : ITicketService
         {
             ct.ThrowIfCancellationRequested();
             
-            var tickets = await _ticketRepository.GetAllTickets();
+            var tickets = await _ticketRepository.GetAllTickets(CancellationToken.None);
             if (!tickets.IsError)
             {
                 return tickets.Value;
@@ -74,7 +74,7 @@ public class TicketService : ITicketService
         }
     }
 
-    public async Task<Ticket> CreateTicketAsync(TicketDto dto, CancellationToken ct)
+    public async Task<TicketDto> CreateTicketAsync(TicketDto dto, CancellationToken ct)
     {
         await using var logger = _serviceProvider.GetRequiredService<IAppLogger>();
         await using var userService = _serviceProvider.GetRequiredService<IUserService>();
@@ -95,7 +95,7 @@ public class TicketService : ITicketService
             }
             else
             {
-                ticket.Author = user;
+                ticket.Author = user.Name;
             }
             await _ticketRepository.AddTicket(ticket);
                 
@@ -105,7 +105,7 @@ public class TicketService : ITicketService
                 ChangedBy = ticket.Author
             };
             await _eventPublisher.PublishEventAsync(ticketCreatedEvent);
-            return ticket;
+            return dto;
         }
         catch (Exception ex)
         {
@@ -122,7 +122,9 @@ public class TicketService : ITicketService
         await using var logger = _serviceProvider.GetRequiredService<IAppLogger>();
         await using var userService = _serviceProvider.GetRequiredService<IUserService>();
 
-        var user = await userService.GetCurrentUser();
+        var currentUser = await userService.GetCurrentUser();
+        
+
         var propertyList = new List<string>();
 
         var result = await _ticketRepository.GetTicketById(ticketId, ct);
@@ -136,7 +138,7 @@ public class TicketService : ITicketService
         if (dto.Priority != currentTicket.Priority)
         {
             await _eventPublisher.PublishEventAsync(
-                new TicketPriorityChangedEvent(currentTicket, dto.Priority, user));
+                new TicketPriorityChangedEvent(currentTicket, dto.Priority, currentUser.Name));
             propertyList.Add("Priority");
             currentTicket.Priority = dto.Priority;
         }
@@ -144,7 +146,7 @@ public class TicketService : ITicketService
         if (dto.Status != currentTicket.Status)
         {
             await _eventPublisher.PublishEventAsync(
-                new TicketStatusChangedEvent(currentTicket, user, dto.Status)
+                new TicketStatusChangedEvent(currentTicket, currentUser.Name, dto.Status)
                 );
             propertyList.Add("Status");
             currentTicket.Status = dto.Status;
@@ -153,7 +155,7 @@ public class TicketService : ITicketService
         if ( dto.AssignedTo != null && dto.AssignedTo != currentTicket.AssignedTo)
         {
             await _eventPublisher.PublishEventAsync(
-                new TicketOwnerChangedEvent(currentTicket, dto.AssignedTo, user)
+                new TicketOwnerChangedEvent(currentTicket, dto.AssignedTo, currentUser.Name)
                 );
             propertyList.Add("AssignTo");
             currentTicket.AssignedTo = dto.AssignedTo;
@@ -164,11 +166,17 @@ public class TicketService : ITicketService
             foreach (var commentDto in dto.NewComments)
             {
                 ct.ThrowIfCancellationRequested();
-                var comment = new TicketComment { Text = commentDto.Text, CreatedAt = DateTime.Now, Author = commentDto.Author };
+                var comment = new TicketComment
+                    { Text = commentDto.Text, 
+                        CreatedAt = DateTime.Now,
+                        Author = commentDto.Author,
+                        User = currentUser,
+                        UserId = currentUser.Id
+                    };
                 currentTicket.Comments.Add(comment);
                 propertyList.Add("Comments");
                 await _eventPublisher.PublishEventAsync(
-                    new CommentAddedToTicketEvent(ticketId, comment.Text!, user));
+                    new CommentAddedToTicketEvent(ticketId, comment.Text!, currentUser.Name));
             }
         }
 
@@ -177,17 +185,24 @@ public class TicketService : ITicketService
             foreach (var attachmentDto in dto.NewAttachments)
             {
                 ct.ThrowIfCancellationRequested();
-                var attachment = new TicketAttachment { FileName = attachmentDto.FileName, Url = attachmentDto.Url, Data = attachmentDto.Data, UploadedAt = DateTime.Now };
+                var attachment = new TicketAttachment
+                {
+                    FileName = attachmentDto.FileName, 
+                    Url = attachmentDto.Url, 
+                    Data = attachmentDto.Data,
+                    User = currentUser,
+                    UserId = currentUser.Id
+                };
                 currentTicket.Attachments.Add(attachment);
                 propertyList.Add("Attachment");
                 await _eventPublisher.PublishEventAsync(
-                    new AttachmentAddedToTicketEvent(ticketId, attachment.FileName, user));
+                    new AttachmentAddedToTicketEvent(ticketId, attachment.FileName, currentUser.Name));
             }
         }
 
         await _ticketRepository.UpdateTicket(currentTicket);
 
-        await _eventPublisher.PublishEventAsync(new TicketUpdatedEvent(ticketId, propertyList,user));
+        await _eventPublisher.PublishEventAsync(new TicketUpdatedEvent(ticketId, propertyList,currentUser.Name));
     }
 
     public async Task<Ticket?> GetTicketById(int ticketId, CancellationToken ct)
@@ -207,5 +222,59 @@ public class TicketService : ITicketService
         }
 
         return null;
+    }
+
+    public async Task<IEnumerable<TicketAttachment>> GetAttachmentsByTicketId(int ticketId, CancellationToken ct)
+    {
+        await using var logger = _serviceProvider.GetRequiredService<IAppLogger>();
+        try
+        {
+            var result = await _ticketRepository.GetAttachmentsByTicketId(ticketId, ct);
+            if (!result.IsError)
+            {
+                return result.Value;
+            }
+        }
+        catch (Exception e)
+        {
+            await logger.LogError(e.Message, e, "Database", e.StackTrace!);
+        }
+        return [];
+    }
+
+    public async Task<IEnumerable<TicketComment>> GetCommentsByTicketId(int ticketId, CancellationToken ct)
+    {
+        await using var logger = _serviceProvider.GetRequiredService<IAppLogger>();
+        try
+        {
+            var result = await _ticketRepository.GetCommentsByTicketId(ticketId, ct);
+            if (!result.IsError)
+            {
+                return result.Value;
+            }
+        }
+        catch (Exception e)
+        {
+            await logger.LogError(e.Message, e, "Database", e.StackTrace!);
+        }
+        return [];
+    }
+
+    public async Task<IEnumerable<History>> GetHistoryByTicketId(int ticketId, CancellationToken ct)
+    {
+        await using var logger = _serviceProvider.GetRequiredService<IAppLogger>();
+        try
+        {
+            var result = await _ticketRepository.GetHistoryByTicketId(ticketId, ct);
+            if (!result.IsError)
+            {
+                return result.Value;
+            }
+        }
+        catch (Exception e)
+        {
+            await logger.LogError(e.Message, e, "Database", e.StackTrace!);
+        }
+        return [];
     }
 }

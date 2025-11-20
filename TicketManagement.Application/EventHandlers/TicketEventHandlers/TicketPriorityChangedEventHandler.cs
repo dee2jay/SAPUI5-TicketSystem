@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,35 +8,48 @@ using TicketManagementSystem.Application.Events.TicketEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
+using TicketManagementSystem.Infrastructure.Persistence;
 
 namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers;
 
-public  class TicketPriorityChangedEventHandler: IEventHandler<TicketPriorityChangedEvent>
+public class TicketPriorityChangedEventHandler(IAppLogger logger, IServiceProvider serviceProvider) : IEventHandler<TicketPriorityChangedEvent>
 {
-    private readonly IAppLogger _logger;
-
-    public TicketPriorityChangedEventHandler(IAppLogger logger)
-    {
-        _logger = logger;
-    }
-
     public async Task HandleAsync(TicketPriorityChangedEvent @event)
     {
-        var logEntry = new TicketChangeLog
+        try
         {
-            Title = "Priority Changed",
-            TicketId = @event.Ticket.Id,
-            Property = nameof(@event.Ticket.Priority),
-            Value = nameof(@event.NewPriority),
-            ChangedAt = @event.OccuredOn,
-            ChangedBy = @event.User
-        };
-        var message =
-            $"TimeStamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId -> {logEntry.TicketId}, " +
-            $"Changed by -> {logEntry.ChangedBy}";
+            var logEntry = new TicketChangeLog
+            {
+                Title = "Priority Changed",
+                TicketId = @event.Ticket.Id,
+                Property = nameof(@event.Ticket.Priority),
+                Value = nameof(@event.NewPriority),
+                ChangedAt = @event.OccuredOn,
+                ChangedBy = @event.User
+            };
+            var message =
+                $"TimeStamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId -> {logEntry.TicketId}, " +
+                $"Changed by -> {logEntry.ChangedBy}";
 
-        await _logger.LogInfo(message);
-        //send Mail
-        //log send mail
+            await logger.LogInfo(message);
+
+            //History
+            await using var dbContext = serviceProvider.GetRequiredService<TicketDbContext>();
+            dbContext.TicketHistories.Add(
+                new History
+                {
+                    TicketId = @event.Ticket.Id,
+                    Action = message,
+                    Timestamp = @event.OccuredOn
+                });
+            
+            //send Mail
+            //log send mail
+        }
+        catch (Exception e)
+        {
+            await logger.LogError(e.Message, e, nameof(TicketPriorityChangedEventHandler), e.StackTrace!);
+        }
+        
     }
 }

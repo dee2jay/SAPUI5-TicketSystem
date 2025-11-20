@@ -13,7 +13,7 @@ namespace TicketManagementSystem.Application.Interfaces
         Task<User> RegisterUserAsync(UserDto dto);
         Task<string> LoginUserAsync(LoginUserDto dto);
         Task LogoutUserAsync(string email);
-        public Task<string> GetCurrentUser();
+        public Task<User> GetCurrentUser();
         Task<User?> GetUserById(int toInt32);
     }
 }

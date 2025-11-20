@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,35 +8,48 @@ using TicketManagementSystem.Application.Events.TicketEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
+using TicketManagementSystem.Infrastructure.Persistence;
 
 namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers
 {
-    public class AttachmentAddedToTicketEventHandler : IEventHandler<AttachmentAddedToTicketEvent>
+    public class AttachmentAddedToTicketEventHandler(IAppLogger logger, IServiceProvider serviceProvider) : IEventHandler<AttachmentAddedToTicketEvent>
     {
-        private readonly IAppLogger _logger;
-
-        public AttachmentAddedToTicketEventHandler(IAppLogger logger)
-        {
-            _logger = logger;
-        }
-
         public async Task HandleAsync(AttachmentAddedToTicketEvent @event)
         {
-            var logEntry = new TicketChangeLog
+            try
             {
-                Title = "New Attachment added to Ticket",
-                TicketId = @event.TicketId,
-                Property = "Attachments",
-                Value = @event.AttachmentName,
-                ChangedAt = @event.OccuredOn,
-                ChangedBy = @event.User
-            };
-            var message =
-                $"TimeStamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId -> {logEntry.TicketId},  User -> {logEntry.ChangedBy}";
+                var logEntry = new TicketChangeLog
+                {
+                    Title = "New Attachment added to Ticket",
+                    TicketId = @event.TicketId,
+                    Property = "Attachments",
+                    Value = @event.AttachmentName,
+                    ChangedAt = @event.OccuredOn,
+                    ChangedBy = @event.User
+                };
+                var message =
+                    $"TimeStamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId -> {logEntry.TicketId},  User -> {logEntry.ChangedBy}";
 
-            await _logger.LogInfo(message);
-            //send Mail
-            //log send mail
+                await logger.LogInfo(message);
+
+                //History
+                var dbContext = serviceProvider.GetRequiredService<TicketDbContext>();
+                dbContext.TicketHistories.Add(
+                    new History
+                    {
+                        TicketId = @event.TicketId,
+                        Action = message,
+                        Timestamp = @event.OccuredOn
+                    });
+                
+                //send Mail
+                //log send mail
+            }
+            catch (Exception e)
+            {
+                await logger.LogError(e.Message, e, nameof(AttachmentAddedToTicketEventHandler), e.StackTrace!);
+            }
+           
         }
     }
 }

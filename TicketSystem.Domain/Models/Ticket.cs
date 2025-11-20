@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using TicketManagementSystem.Domain.Enums;
 
 namespace TicketManagementSystem.Domain.Models;
@@ -27,6 +28,7 @@ public class Ticket
     public ICollection<TicketComment> Comments { get; set; } = [];
     public List<History> Histories { get; set; } = new();
 
+    
     [Timestamp]
     public byte[] RowVersion { get; set; }
     

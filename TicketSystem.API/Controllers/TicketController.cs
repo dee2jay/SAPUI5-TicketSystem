@@ -11,7 +11,7 @@ namespace TicketManagementSystem.API.Controllers;
 public class TicketsController(ITicketService ticketService) : ControllerBase
 {
     private readonly CancellationToken _cancellationToken = CancellationToken.None;
-    //[Authorize]
+    [Authorize]
     [HttpGet(Name = "GetTickets")]
     public async Task<IActionResult?> GetTickets(CancellationToken cancellationToken = default)
     {
@@ -29,7 +29,7 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
             return StatusCode(500, new { message = e.Message });
         }
     }
-    //[Authorize]
+    [Authorize]
     [HttpGet("{ticketId}", Name = "GetTicket")]
     public async Task<IActionResult> GetTicket(int ticketId)
     {
@@ -52,7 +52,7 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
 
     }
 
-    //[Authorize]
+    [Authorize]
     [HttpPost("/create",Name = "CreateTicket")]
     public async Task<IActionResult> AddTicket([FromBody] TicketDto dto, CancellationToken cancellationToken = default)
     {
@@ -63,8 +63,8 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
                 return BadRequest(ModelState);
             }
 
-            var ticket = await ticketService.CreateTicketAsync(dto, _cancellationToken);
-            return Ok(new { message = "Ticket created successfully!", Ticket = ticket });
+            var ticketDto = await ticketService.CreateTicketAsync(dto, _cancellationToken);
+            return Ok(new { message = "Ticket created successfully!", Ticket = ticketDto });
         }
         catch (TimeoutException ex)
         {
@@ -77,13 +77,28 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
     }
 
     [Authorize]
-    [HttpPut("{ticketId}", Name = "UpdateTicket")]
+    [HttpGet("{ticketId}/history", Name = "GetHistory")]
+    public async Task<IActionResult> GetHistoryFromTicket(int ticketId)
+    {
+        try
+        {
+            var historyData = await ticketService.GetHistoryByTicketId(ticketId, CancellationToken.None);
+            return Ok(new { message = "Request successfully executed!!!", TicketId = ticketId, History = historyData });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = e.Message });
+        }
+    }
+
+    [Authorize]
+    [HttpPut("{ticketId}/update", Name = "UpdateTicket")]
     public async Task<IActionResult> UpdateTicket(int ticketId, [FromBody] TicketUpdateDto dto, CancellationToken ct)
     {
         try
         {
             await ticketService.UpdateTicketAsync(ticketId, dto, ct);
-            return Ok(new { maessage = "Ticket changed successfully!" });
+            return Ok(new { message = "Ticket changed successfully!" });
         }
         catch (Exception e)
         {
