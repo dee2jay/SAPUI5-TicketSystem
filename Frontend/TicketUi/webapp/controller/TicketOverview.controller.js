@@ -1,29 +1,31 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",   
-    "sap/ui/model/resource/ResourceModel",
-    "sap/ui/model/json/JSONModel",
+    "sap/ui/core/mvc/Controller", 
     "sap/ui/core/Fragment",
-	"ui5/ticketui/service/TicketService"
-], (Controller,
-	ResourceModel,
-	JSONModel,
-	Fragment,
-	TicketService) => {
+	"ui5/ticketui/service/TicketService",
+    "sap/ui/model/json/JSONModel"
+], function (Controller,
+    Fragment,
+    TicketService,
+    JSONModel ) {
     "use strict";
 
     return Controller.extend("ui5.ticketui.controller.TicketOverview", {
-        onInit: function () {             
+        onInit:  function () {             
             
-            const oModel = new JSONModel({ tickets: [] });
-            this.getView().setModel(oModel, "ticketsModel");
-
-            this._loadTickets();            
+            const oModel = new JSONModel({ tickets: [] });        
+            this.getView().setModel(oModel, "ticketsModel");         
+            
+            this._loadTickets();             
+        
         },
         
         _loadTickets: async function () {
             try {
-                const tickets = await TicketService.getAllTickets();
-                this.getView().getModel("ticketsModel").setProperty("/tickets", tickets);
+                const tickets = await TicketService.getAllTickets();                
+                
+                this.getView().getModel("ticketsModel").setProperty("/", tickets);
+                this.getView().getModel("ticketsModel").getData();
+                console.log("Tickets set in model:", this.getView().getModel("ticketsModel").getData());                
 
             } catch (error) {
                 console.error("Failed to load tickets:", error);
@@ -70,9 +72,9 @@ sap.ui.define([
         },
 
         onColumnListItemPress: function (oEvent) {
-           const id = oEvent.getSource().getBindingContext("ticketsModel").getProperty("ID)");
+           const id = oEvent.getSource().getBindingContext("ticketsModel").getProperty("id");
 
-           this.getOwnerComponent().getRouter().navTo("details", { ticketId: id });
+           this.getOwnerComponent().getRouter().navTo("detail", { ticketId: id });
         }
     });
 });

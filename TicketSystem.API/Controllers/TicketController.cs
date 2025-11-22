@@ -11,7 +11,7 @@ namespace TicketManagementSystem.API.Controllers;
 public class TicketsController(ITicketService ticketService) : ControllerBase
 {
     private readonly CancellationToken _cancellationToken = CancellationToken.None;
-    [Authorize]
+    //[Authorize]
     [HttpGet(Name = "GetTickets")]
     public async Task<IActionResult?> GetTickets(CancellationToken cancellationToken = default)
     {

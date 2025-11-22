@@ -27,7 +27,7 @@
     },
     "sap.ui5": {
         "rootView": {
-            "viewName": "ticketui.view.App",
+            "viewName": "ui5.ticketui.view.App",
             "type": "XML",
             "id": "app"
         },
@@ -47,9 +47,18 @@
             "i18n": {
                 "type": "sap.ui.model.resource.ResourceModel",
                 "settings": {
-                    "bundleName": "ticketui.i18n.i18n",
+                    "bundleName": "ui5.ticketui.i18n.i18n",
                     "supportedLocales": ["en", "de"],
-                    "fallbackLocale": "en"
+                    "fallbackLocale": "en",
+                    "async": true
+                }
+            },
+            "ticketsModel": {
+                "type": "sap.ui.model.json.JSONModel",
+                "settings": {
+                    "data": {
+                        "tickets": []
+                    }
                 }
             }             
         },        

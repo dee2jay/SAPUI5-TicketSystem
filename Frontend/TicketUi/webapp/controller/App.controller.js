@@ -14,10 +14,13 @@ sap.ui.define([
     return Controller.extend("ui5.ticketui.controller.App", {
 
         onInit: function () {
-            const i18nModel = new ResourceModel({
-                bundleName: "ui5.ticketui.i18n.i18n"
-            });
-            this.getView().setModel(i18nModel, "i18n");
+             const i18nModel = new ResourceModel({
+                 bundleName: "ui5.ticketui.i18n.i18n",
+                 supportedLocales: ["en-US", "de-DE"],
+                 fallbackLocale: "en-US",
+                 async: true
+             });
+             this.getView().setModel(i18nModel, "i18n");
 
             this._loginDialog = null;
         },
@@ -26,17 +29,15 @@ sap.ui.define([
            let that = this;
 
             if (!this._loginDialog) {
-                this._loginDialog = Fragment.load({
-                    id: this.getView().getId(),
+                this._loginDialog = Fragment.load({    
+                    id: "loginDialogFragment",
                     name: "ui5.ticketui.view.LoginDialog",
                     controller: this
                 }).then(function (oDialog) {
                     that._loginDialog = oDialog;
                     that.getView().addDependent(oDialog);
                     oDialog.open();
-                });
-
-                this.getView().addDependent(this._loginDialog);
+                });                
             } else {
                 this._loginDialog.open();
             }
@@ -47,11 +48,9 @@ sap.ui.define([
         onButtonSubmitPress: async function () {        
 
             try{
-                const viewId = this.getView().getId();
                 
-                const username = Fragment.byId(viewId, "username").getValue();
-                
-                const password = Fragment.byId(viewId, "password").getValue();
+                const username = this._loginDialog.getContent()[0].getItems()[1].getValue();
+                const password = this._loginDialog.getContent()[0].getItems()[3].getValue();
 
                 console.log("USERNAME =", username);
                 console.log("PASSWORD =", password);

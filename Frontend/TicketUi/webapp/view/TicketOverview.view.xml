@@ -1,4 +1,4 @@
-<mvc:View  id="idTicketOverviewView"   
+<mvc:View    
     controllerName="ui5.ticketui.controller.TicketOverview"
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc">
@@ -17,28 +17,33 @@
    
    <content>
         <SearchField  width="100%" liveChange=".onSearchFieldsLiveChange"/>
-      <Table       
-        items="{ticketsModel>/tickets>}">
+      
+      <Table  items="{ticketsModel>/tickets}"
+              mode="SingleSelectMaster"
+              class="sapUiResponsiveMargin"
+              width="auto"
+              growing="true"
+              growingScrollToLoad="true">
         
         <columns>
           <Column ><Text  text="{i18n>columnNumber}"/></Column>
           <Column ><Text  text="{i18n>columnCategory}"/></Column>
           <Column ><Text  text="{i18n>columnLocation}"/></Column>
           <Column ><Text  text="{i18n>columnStatus}"/></Column>
-          <Column ><Text  text="{i18n>columnPriority}"></Text></Column>
+          <Column ><Text  text="{i18n>columnPriority}"/></Column>
           <Column ><Text text="{i18n>columnCreatedAt}"/></Column>
           <Column ><Text  text="{i18n>columnCreatedBy}"/></Column>
         </columns>
         <items>
-          <ColumnListItem type="Navigation" press=".onColumnListItemPress">
+          <ColumnListItem press=".onColumnListItemPress">
             <cells>              
-              <Text text="{ticketsModel>ID}" />
-              <Text text="{ticketsModel>Category}" />
-              <Text text="{ticketsModel>Location}" />
-              <Text text="{ticketsModel>Status}" />
-              <Text text="{ticketsModel>Priority}" />
-              <Text text="{ticketsModel>CreatedAt}" />
-              <Text text="{ticketsModel>CreatedBy}" />
+              <Text text="{ticketsModel>id}" />
+              <Text text="{ticketsModel>category}" />
+              <Text text="{ticketsModel>location}" />
+              <Text text="{ticketsModel>status}" />
+              <Text text="{ticketsModel>priority}" />
+              <Text text="{ticketsModel>createdAt}" />
+              <Text text="{ticketsModel>author}" />
             </cells>
           </ColumnListItem>
         </items>

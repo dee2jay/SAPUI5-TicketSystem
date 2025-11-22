@@ -5,7 +5,7 @@
   <content>
     <l:SimpleForm  editable="true" layout="ResponsiveGridLayout" class="sapUiResponsiveMargin"  width="auto">
       <Label  text="{i18n>labelCategory}"/>
-      <Input  value="{newTicket>Category}" placeholder="{i18n>labelCategory}"/>
+      <Input  value="{newTicket>Category}" placeholder="{i18n>labelCategory}" />
       <Label  text="{i18n>labelLocation}"/>
       <Input  value="{newTicket>Location}" placeholder="{i18n>labelLocation}"/>
       <Label  text="{i18n>labelCostCenter}"/>

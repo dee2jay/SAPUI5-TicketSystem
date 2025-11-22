@@ -31,7 +31,7 @@ sap.ui.define([], function () {
             return this.request("GET", endpoint, null, token);
         },
 
-        post(endpoint, body, token) {
+        post(endpoint, body, token ) {
             return this.request("POST", endpoint, body, token);
         }
     };

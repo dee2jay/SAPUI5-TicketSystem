@@ -7,10 +7,12 @@ sap.ui.define([
 
     return {
         async login(username, password) {
-            const res = await ApiService.post("/api/User/login", {
+            const endpoint = "/api/User/login";
+            
+            const res = await ApiService.post(endpoint, {
                 username,
                 password
-            });
+            }, TokenService.getToken());
 
             TokenService.setToken(res.token);
             return res;
