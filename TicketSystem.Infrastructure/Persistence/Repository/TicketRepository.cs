@@ -53,6 +53,7 @@ public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbcontex
             }
             catch (DbUpdateConcurrencyException e)
             {
+                await logger.LogWarning(e.Message, e.Source);
                 throw new Exception("The ticket was modified by another user. Please reload the page.");
             }
     

@@ -4,7 +4,7 @@ using TicketManagementSystem.Domain.Models;
 
 namespace TicketManagementSystem.Application.Events.TicketEvents;
 
-public record TicketStatusChangedEvent(Ticket Ticket, string User, TicketStatus NewStatus) : IDomainEvent
+public record TicketStatusChangedEvent(Ticket Ticket, TicketStatus OldStatus, TicketStatus NewStatus, string AssignedTo, User ChangeBy) : IDomainEvent
 {
     public DateTime OccuredOn { get; } = DateTime.UtcNow;
 }

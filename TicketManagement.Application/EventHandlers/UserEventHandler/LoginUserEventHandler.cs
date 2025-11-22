@@ -19,7 +19,7 @@ namespace TicketManagementSystem.Application.EventHandlers.UserEventHandler
             _logger = logger;
         }
 
-        public async Task HandleAsync(UserLoginEvent @event)
+        public async Task HandleAsync(UserLoginEvent @event, CancellationToken ct)
         {
             var logEntry = new UserChangeLog
             {

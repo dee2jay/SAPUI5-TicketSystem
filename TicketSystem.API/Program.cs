@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using TicketManagementSystem.API.OptionsSetup;
@@ -15,6 +16,8 @@ using TicketManagementSystem.Application.Mapping;
 using TicketManagementSystem.Application.Publisher;
 using TicketManagementSystem.Application.Security;
 using TicketManagementSystem.Application.Services;
+using TicketManagementSystem.Application.Services.AssignmentService;
+using TicketManagementSystem.Application.Services.MailService;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
 using TicketManagementSystem.Infrastructure.Logging;
@@ -23,17 +26,20 @@ using TicketManagementSystem.Infrastructure.Persistence.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// === Authentication Configurations ===
+builder.Services.ConfigureOptions<JwtOptionsSetup>();
+builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+
+// === Assignment Rules Configurations ===
+builder.Services.ConfigureOptions<AssignmentRulesOptionsSetup>();
+
 // === Repositories ===
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-// === Command Handler and Event Handlers===
-builder.Services.AddScoped<IEventHandler<TicketCreatedEvent>, TicketCreatedEventHandler>();
-builder.Services.AddScoped<IEventHandler<TicketUpdatedEvent>,TicketUpdatedEventHandler>();
-builder.Services.AddScoped<IEventHandler<AttachmentAddedToTicketEvent>, AttachmentAddedToTicketEventHandler>();
-builder.Services.AddScoped<IEventHandler<CommentAddedToTicketEvent>, CommentAddedTicketEventHandler>();
-builder.Services.AddScoped<IEventHandler<TicketPriorityChangedEvent>, TicketPriorityChangedEventHandler>();
-builder.Services.AddScoped<IEventHandler<TicketStatusChangedEvent>, TicketStatusChangedEventHandler>();
+
 
 
 builder.Services.AddScoped<IEventHandler<UserCreatedEvent>, RegisterUserEventHandler>();
@@ -56,10 +62,22 @@ builder.Services.AddAutoMapper(profile => profile.AddProfile(typeof(TicketMappin
 builder.Services.AddAutoMapper(profile => profile.AddProfile(typeof(UserMappingProfile)));
 
 // === Services ===
+builder.Services.AddScoped<ITicketAssignmentService, TicketAssignmentService>();
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+builder.Services.AddScoped<ISmtpSettingsProvider, SmtpSettingProvider>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
-builder.Services.AddScoped<IJwtProvider, JwtProvider>();
-//builder.Services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+// === Command Handler and Event Handlers===
+builder.Services.AddScoped<IEventHandler<TicketCreatedEvent>, TicketCreatedEventHandler>();
+builder.Services.AddScoped<IEventHandler<TicketUpdatedEvent>, TicketUpdatedEventHandler>();
+builder.Services.AddScoped<IEventHandler<AttachmentAddedToTicketEvent>, AttachmentAddedToTicketEventHandler>();
+builder.Services.AddScoped<IEventHandler<CommentAddedToTicketEvent>, CommentAddedTicketEventHandler>();
+builder.Services.AddScoped<IEventHandler<TicketPriorityChangedEvent>, TicketPriorityChangedEventHandler>();
+builder.Services.AddScoped<IEventHandler<TicketStatusChangedEvent>, TicketStatusChangedEventHandler>();
+builder.Services.AddScoped<IEventHandler<TicketOwnerChangedEvent>, TicketOwnerChangedEventHandler>();
+
 
 // === Database Context ===
 builder.Services.AddDbContext<TicketDbContext>(
@@ -97,11 +115,6 @@ builder.Services.AddAuthorization();
 // === Controllers ===
 builder.Services.AddControllers();
 
-// === Authentication ===
-builder.Services.ConfigureOptions<JwtOptionsSetup>();
-builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
 // === Swagger / OpenAPI ===
 builder.Services.AddEndpointsApiExplorer();

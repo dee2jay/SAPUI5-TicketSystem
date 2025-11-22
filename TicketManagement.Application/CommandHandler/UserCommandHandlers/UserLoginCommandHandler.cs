@@ -32,12 +32,12 @@ namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers
             _jwtProvider = jwtProvider;
         }
 
-        Task ICommandHandlerBase<LoginUserCommand>.Handle(LoginUserCommand command)
+        Task ICommandHandlerBase<LoginUserCommand>.Handle(LoginUserCommand command, CancellationToken ct)
         {
-            return Handle(command);
+            return Handle(command, ct);
         }
 
-        public async Task<string> Handle(LoginUserCommand command)
+        public async Task<string> Handle(LoginUserCommand command, CancellationToken ct)
         {
             var user = await _userRepo.GetUserByEmail(command.Email);
             if (!user.IsError)
@@ -49,7 +49,7 @@ namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers
 
             var userLoginEvent = new UserLoginEvent(user.Value.Email, user.Value.Username);
             await _userRepo.UpdateUser(user.Value);
-            await _eventPublisher.PublishEventAsync(userLoginEvent);
+            await _eventPublisher.PublishEventAsync(userLoginEvent, CancellationToken.None);
 
             return _jwtProvider.Generate(user.Value);
         }

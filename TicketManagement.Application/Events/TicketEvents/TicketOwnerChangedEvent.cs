@@ -8,7 +8,7 @@ using TicketManagementSystem.Domain.Models;
 
 namespace TicketManagementSystem.Application.Events.TicketEvents;
 
-public record TicketOwnerChangedEvent(Ticket Ticket, string NewAssignedUser, string User) : IDomainEvent
+public record TicketOwnerChangedEvent(Ticket Ticket, string OldAssignedUser , string NewAssignedUser, string ChangeBy) : IDomainEvent
 {
     public DateTime OccuredOn { get; } = DateTime.Now;
 }

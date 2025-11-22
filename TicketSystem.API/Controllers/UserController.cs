@@ -14,6 +14,7 @@ public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IAppLogger _logger;
+    private readonly CancellationTokenSource _tokenSource = new();
 
     public UserController(IUserRepository userRepo, IAppLogger logger, IUserService userService)
     {
@@ -27,7 +28,8 @@ public class UserController : ControllerBase
     {
         try
         {
-            var user = await _userService.RegisterUserAsync(dto);
+            _tokenSource.Token.ThrowIfCancellationRequested();
+            var user = await _userService.RegisterUserAsync(dto, _tokenSource.Token);
             
             return Ok(new { user.Id, UserName = user.Username, user.Email });
         }
@@ -43,7 +45,8 @@ public class UserController : ControllerBase
     {
         try
         {
-            var token = await _userService.LoginUserAsync(dto);
+            _tokenSource.Token.ThrowIfCancellationRequested();
+            var token = await _userService.LoginUserAsync(dto, _tokenSource.Token);
 
             if (string.IsNullOrEmpty(token))
             {

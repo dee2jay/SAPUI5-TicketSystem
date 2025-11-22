@@ -14,7 +14,7 @@ namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers
 {
     public class CommentAddedTicketEventHandler(IAppLogger logger, IServiceProvider serviceProvider) : IEventHandler<CommentAddedToTicketEvent>
     {
-        public async Task HandleAsync(CommentAddedToTicketEvent @event)
+        public async Task HandleAsync(CommentAddedToTicketEvent @event, CancellationToken ct)
         {
             try
             {
@@ -23,14 +23,13 @@ namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers
                     Title = "New Comment added to Ticket",
                     TicketId = @event.TicketId,
                     Property = "Comments",
-                    Value = @event.Text,
+                    OldValue = null,
+                    NewValue =  @event.Text,
                     ChangedAt = @event.OccuredOn,
                     ChangedBy = @event.User
                 };
                 var message =
                     $"TimeStamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId -> {logEntry.TicketId},  User -> {logEntry.ChangedBy}";
-
-                await logger.LogInfo(message);
                 
                 //History
                 var dbContext = serviceProvider.GetRequiredService<TicketDbContext>();
@@ -41,15 +40,12 @@ namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers
                         Action = message,
                         Timestamp = @event.OccuredOn
                     });
-            
+                await logger.LogInfo(message);
             }
             catch (Exception e)
             {
                 await logger.LogError(e.Message, e, nameof(CommentAddedTicketEventHandler), e.StackTrace!);
             }
-            
-            //send Mail
-            //log send mail
         }
     }
 }

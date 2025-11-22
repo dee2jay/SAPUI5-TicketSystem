@@ -3,7 +3,7 @@
 public enum TicketPriority
 {
     Low,
-    Normal,
+    Medium,
     High,
     Critical
 }

@@ -23,14 +23,16 @@ namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers
         private readonly IUserRepository _userRepo;
         private readonly IMapper _mapper;
         private readonly IEventPublisher _eventPublisher;
-        public UserRegisterCommandHandler(IUserRepository userRepo, IMapper mapper, IEventPublisher eventPublisher)
+        private readonly IAppLogger _logger;
+        public UserRegisterCommandHandler(IUserRepository userRepo, IMapper mapper, IEventPublisher eventPublisher, IAppLogger logger)
         {
             _userRepo = userRepo;
             _mapper = mapper;
             _eventPublisher = eventPublisher;
+            _logger = logger;
         }
 
-        public async Task<User> Handle(RegisterUserCommand command)
+        public async Task<User> Handle(RegisterUserCommand command, CancellationToken ct)
         {
             var user = new User
             {
@@ -50,15 +52,24 @@ namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers
                 command.Email,
                 command.Username,
                 DateTime.Now);
-
-            await _userRepo.AddUser(user);
-            await _eventPublisher.PublishEventAsync(userRegisterEvent);
-            return user;
+            try
+            {
+                ct.ThrowIfCancellationRequested();
+                await _userRepo.AddUser(user);
+                await _eventPublisher.PublishEventAsync(userRegisterEvent,ct );
+                return user;
+            }
+            catch (Exception e)
+            {
+                await _logger.LogError(e.Message, e, e.Source, e.StackTrace!);
+                return null!;
+            }
+            
         }
 
-        Task ICommandHandlerBase<RegisterUserCommand>.Handle(RegisterUserCommand command)
+        Task ICommandHandlerBase<RegisterUserCommand>.Handle(RegisterUserCommand command, CancellationToken ct)
         {
-            return Handle(command);
+            return Handle(command, ct);
         }
     }
 }

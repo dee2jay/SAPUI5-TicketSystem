@@ -28,14 +28,21 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
 
-    public Task<User> RegisterUserAsync(UserDto dto)
-        => _registerHandler.Handle(new RegisterUserCommand(dto.Vorname,dto.Name, dto.Username, dto.Email, dto.Password));
+    public Task<User> RegisterUserAsync(UserDto dto, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        return _registerHandler.Handle(new RegisterUserCommand(dto.Vorname, dto.Name, dto.Username, dto.Email, dto.Password),
+            ct);
+    }
 
-    public Task<string> LoginUserAsync(LoginUserDto dto)
-        => _loginHandler.Handle(new LoginUserCommand(dto.Email, dto.Password));
+    public Task<string> LoginUserAsync(LoginUserDto dto, CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+        return _loginHandler.Handle(new LoginUserCommand(dto.Email, dto.Password), ct);
+    }
 
     public Task LogoutUserAsync(string email)
-        => _logoutHandler.Handle(new LogoutUserCommand(email));
+        => _logoutHandler.Handle(new LogoutUserCommand(email), CancellationToken.None);
 
     public async Task<User> GetCurrentUser()
     {

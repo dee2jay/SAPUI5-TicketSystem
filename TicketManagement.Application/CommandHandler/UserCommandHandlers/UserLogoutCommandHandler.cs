@@ -25,7 +25,7 @@ namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers
             _eventPublisher = eventPublisher;
         }
 
-        public async Task Handle(LogoutUserCommand cmd)
+        public async Task Handle(LogoutUserCommand cmd, CancellationToken ct)
         {
             var user = await _userRepo.GetUserByEmail(cmd.Email);
             if (!user.IsError)
@@ -33,7 +33,7 @@ namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers
                 user.Value.UserConnected = false;
 
                 await _userRepo.UpdateUser(user.Value);
-                await _eventPublisher.PublishEventAsync(new UserLogoutEvent(user.Value.Email, user.Value.Username));
+                await _eventPublisher.PublishEventAsync(new UserLogoutEvent(user.Value.Email, user.Value.Username), CancellationToken.None);
             }
         }
     }

@@ -12,8 +12,8 @@ public class EventPublisher : IEventPublisher
         _dispatcher = dispatcher;
     }
 
-    public async Task PublishEventAsync<TEvent>(TEvent @event) where TEvent : IDomainEvent
+    public async Task PublishEventAsync<TEvent>(TEvent @event, CancellationToken ct) where TEvent : IDomainEvent
     {
-        await _dispatcher.DispatchAsync(@event);
+        await _dispatcher.DispatchAsync(@event, ct);
     }
 }

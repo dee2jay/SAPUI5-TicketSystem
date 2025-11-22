@@ -4,7 +4,7 @@ using TicketManagementSystem.Domain.Models;
 
 namespace TicketManagementSystem.Application.Events.TicketEvents;
 
-public record TicketPriorityChangedEvent(Ticket Ticket, TicketPriority NewPriority, string User) : IDomainEvent
+public record TicketPriorityChangedEvent(Ticket Ticket, TicketPriority OldPriority, TicketPriority NewPriority, User ChangeBy) : IDomainEvent
 {
     public DateTime OccuredOn { get; } = DateTime.Now;
 }

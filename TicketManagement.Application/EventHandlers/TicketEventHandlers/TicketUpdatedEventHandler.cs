@@ -7,33 +7,38 @@ using TicketManagementSystem.Infrastructure.Persistence;
 
 namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers;
 
-public class TicketUpdatedEventHandler(IAppLogger logger, IServiceProvider serviceProvider) : IEventHandler<TicketUpdatedEvent>
+public class TicketUpdatedEventHandler(IAppLogger logger, INotificationService notificationService) : IEventHandler<TicketUpdatedEvent>
 {
-    public async Task HandleAsync(TicketUpdatedEvent @event)
+    public async Task HandleAsync(TicketUpdatedEvent @event, CancellationToken ct)
     {
         try
         {
-            var logEntry = new TicketChangeLog
+            foreach (var message in @event.Changes.Select(change => new TicketChangeLog
+                     {
+                         Title = "Ticket Updated",
+                         TicketId = @event.TicketId,
+                         Property = change.Key,
+                         OldValue = change.Value.OldValue!.ToString(),
+                         NewValue = change.Value.NewValue!.ToString(),
+                         ChangedAt = @event.OccuredOn,
+                         ChangedBy = @event.UpdatedBy
+                     }).Select(logEntry => $"Timestamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId: {logEntry.TicketId}, " +
+                                           $"OldValue: {logEntry.OldValue}, " +
+                                           $"NewValue: {logEntry.NewValue}, " +
+                                           $"Updated by {logEntry.ChangedBy}"))
             {
-                Title = "Ticket Updated",
-                TicketId = @event.TicketId,
-                Property = nameof(@event.PropertyList),
-                Value = string.Join(";", @event.PropertyList.Select(p => p)),
-                ChangedAt = @event.OccuredOn,
-                ChangedBy = @event.User
-            };
-
-            var message =
-                $"Timestamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId: {logEntry.TicketId}, " +
-                $"Value: {logEntry.Value}, User: {logEntry.ChangedBy}";
-
-            await logger.LogInfo(message);
-            
+                await logger.LogInfo(message);
+            }
         }
         catch (Exception e)
         {
             await logger.LogError(e.Message, e, nameof(TicketUpdatedEventHandler), e.StackTrace!);
         }
         
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await logger.DisposeAsync();
     }
 }

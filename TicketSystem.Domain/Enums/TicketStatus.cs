@@ -2,9 +2,9 @@
 
 public enum TicketStatus
 {
-    New,
-    Open,
-    InProgress,
-    Closed,
-    Standby
+    Open, 
+    InProgress, 
+    Waiting, 
+    Closed, 
+    Rejected
 }

@@ -11,7 +11,8 @@ public class TicketChangeLog
     public string? Title { get; set; }
     public int TicketId{get; set;}
     public string Property { get; set; } = string.Empty;
-    public string? Value { get; set; }
+    public string? OldValue { get; set; }
+    public string? NewValue { get; set; }
     public DateTime ChangedAt { get; set; }
     public string ChangedBy { get; set; } = string.Empty;
 }

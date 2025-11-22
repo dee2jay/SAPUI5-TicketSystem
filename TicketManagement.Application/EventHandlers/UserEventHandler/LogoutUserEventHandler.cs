@@ -19,7 +19,7 @@ public class LogoutUserEventHandler : IEventHandler<UserLogoutEvent>
         _logger = logger;
     }
 
-    public async Task HandleAsync(UserLogoutEvent @event)
+    public async Task HandleAsync(UserLogoutEvent @event, CancellationToken ct)
     {
         var logEntry = new UserChangeLog
         {

@@ -2,7 +2,7 @@
 
 namespace TicketManagementSystem.Application.Events.TicketEvents;
 
-public record TicketUpdatedEvent(int TicketId, List<string> PropertyList,string User) : IDomainEvent
+public record TicketUpdatedEvent(int TicketId, string UpdatedBy, Dictionary<string, (object? OldValue, object? NewValue)> Changes) : IDomainEvent
 {
     public DateTime OccuredOn { get; } = DateTime.Now;
 }

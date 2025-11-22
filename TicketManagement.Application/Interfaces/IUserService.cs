@@ -10,8 +10,8 @@ namespace TicketManagementSystem.Application.Interfaces
 {
     public interface IUserService : IAsyncDisposable
     {
-        Task<User> RegisterUserAsync(UserDto dto);
-        Task<string> LoginUserAsync(LoginUserDto dto);
+        Task<User> RegisterUserAsync(UserDto dto, CancellationToken ct);
+        Task<string> LoginUserAsync(LoginUserDto dto, CancellationToken ct);
         Task LogoutUserAsync(string email);
         public Task<User> GetCurrentUser();
         Task<User?> GetUserById(int toInt32);

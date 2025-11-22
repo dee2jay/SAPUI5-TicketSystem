@@ -10,26 +10,26 @@ namespace TicketManagementSystem.Application.Services.MailService
 {
     public class SmtpEmailSender : IEmailSender
     {
-        public async Task SendEmailAsync(EmailContent email, CancellationToken cancellationToken = default)
+        public Task SendEmailAsync(EmailContent email, CancellationToken cancellationToken = default)
         {
-            using (var mail = new MailMessage
-                   {
-                       From = email.From!,
-                       Subject = email.Subject,
-                       Body = email.Body,
-                       IsBodyHtml = email.IsBodyHtml
-                   })
+            var mail = new MailMessage
             {
-                foreach (var address in email.To)
-                {
-                    mail.To.Add(address);
-                }
+                From = email.From!,
+                Subject = email.Subject,
+                Body = email.Body,
+                IsBodyHtml = email.IsBodyHtml
+            };
+            foreach (var address in email.To)
+            {
+                mail.To.Add(address);
             }
 
             using (var smtp = new SmtpClient())
             {
-                
+                 smtp.Send(mail);
             }
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -13,13 +13,15 @@ namespace TicketManagementSystem.Application.EventHandlers.UserEventHandler;
 public class RegisterUserEventHandler : IEventHandler<UserCreatedEvent>
 {
     private readonly IAppLogger _logger;
+    private readonly INotificationService _notificationService;
 
-    public RegisterUserEventHandler(IAppLogger logger)
+    public RegisterUserEventHandler(IAppLogger logger, INotificationService notificationService)
     {
         _logger = logger;
+        _notificationService = notificationService;
     }
 
-    public async Task HandleAsync(UserCreatedEvent @event)
+    public async Task HandleAsync(UserCreatedEvent @event, CancellationToken ct)
     {
         var logEntry = new UserChangeLog
         {
@@ -33,7 +35,11 @@ public class RegisterUserEventHandler : IEventHandler<UserCreatedEvent>
             $" TimeStamp -> {logEntry.ChangedAt},{logEntry.Title}: Email -> {logEntry.NewValue}";
 
         await _logger.LogInfo(message);
-        //send Mail 
+        
+        //send Mail
+        await _notificationService.NotifyUserCreatedAsync(@event, ct);
+        
         //log send mail
+        await _logger.LogInfo($"Email sent to {@event.Email}", nameof(RegisterUserEventHandler));
     }
 }

@@ -16,7 +16,7 @@ namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers;
 
 public class TicketStatusChangedEventHandler(IAppLogger logger, IServiceProvider serviceProvider) : IEventHandler<TicketStatusChangedEvent>
 {
-    public async Task HandleAsync(TicketStatusChangedEvent @event)
+    public async Task HandleAsync(TicketStatusChangedEvent @event, CancellationToken ct)
     {
         try
         {
@@ -25,7 +25,8 @@ public class TicketStatusChangedEventHandler(IAppLogger logger, IServiceProvider
                 TicketStatus.Open => "Ticket Opened",
                 TicketStatus.InProgress => "Ticket in Progress",
                 TicketStatus.Closed => "Ticket Closed",
-                TicketStatus.Standby => "Ticket in Standby",
+                TicketStatus.Rejected => "Ticket Rejected",
+                TicketStatus.Waiting => "Ticket Waiting",
                 _ => "Unknown Status"
             };
 
@@ -34,13 +35,15 @@ public class TicketStatusChangedEventHandler(IAppLogger logger, IServiceProvider
                 Title = title,
                 TicketId = @event.Ticket.Id,
                 Property = nameof(@event.Ticket.Status),
-                Value = nameof(@event.NewStatus),
+                OldValue = nameof(@event.OldStatus),
+                NewValue = nameof(@event.NewStatus),
                 ChangedAt = DateTime.Now,
-                ChangedBy = @event.User
+                ChangedBy = $"{@event.ChangeBy.Username}"
             };
             var message =
                 $"TimeStamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId -> {logEntry.TicketId}, " +
-                $"Value -> {logEntry.Value}, Changed by -> {logEntry.ChangedBy}";
+                $"Property -> {logEntry.Property}, OldValue -> {logEntry.OldValue}, " +
+                $"NewValue -> {logEntry.NewValue}, Changed by -> {logEntry.ChangedBy}";
 
             await logger.LogInfo(message);
 

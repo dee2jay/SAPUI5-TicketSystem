@@ -14,7 +14,7 @@ namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers
 {
     public class AttachmentAddedToTicketEventHandler(IAppLogger logger, IServiceProvider serviceProvider) : IEventHandler<AttachmentAddedToTicketEvent>
     {
-        public async Task HandleAsync(AttachmentAddedToTicketEvent @event)
+        public async Task HandleAsync(AttachmentAddedToTicketEvent @event, CancellationToken ct)
         {
             try
             {
@@ -23,14 +23,13 @@ namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers
                     Title = "New Attachment added to Ticket",
                     TicketId = @event.TicketId,
                     Property = "Attachments",
-                    Value = @event.AttachmentName,
+                    OldValue = null,
+                    NewValue = @event.AttachmentName,
                     ChangedAt = @event.OccuredOn,
                     ChangedBy = @event.User
                 };
                 var message =
                     $"TimeStamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId -> {logEntry.TicketId},  User -> {logEntry.ChangedBy}";
-
-                await logger.LogInfo(message);
 
                 //History
                 var dbContext = serviceProvider.GetRequiredService<TicketDbContext>();
@@ -41,9 +40,7 @@ namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers
                         Action = message,
                         Timestamp = @event.OccuredOn
                     });
-                
-                //send Mail
-                //log send mail
+                await logger.LogInfo(message);
             }
             catch (Exception e)
             {

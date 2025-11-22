@@ -14,7 +14,7 @@ namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers;
 
 public class TicketPriorityChangedEventHandler(IAppLogger logger, IServiceProvider serviceProvider) : IEventHandler<TicketPriorityChangedEvent>
 {
-    public async Task HandleAsync(TicketPriorityChangedEvent @event)
+    public async Task HandleAsync(TicketPriorityChangedEvent @event, CancellationToken ct)
     {
         try
         {
@@ -23,9 +23,10 @@ public class TicketPriorityChangedEventHandler(IAppLogger logger, IServiceProvid
                 Title = "Priority Changed",
                 TicketId = @event.Ticket.Id,
                 Property = nameof(@event.Ticket.Priority),
-                Value = nameof(@event.NewPriority),
+                OldValue = nameof(@event.OldPriority),
+                NewValue = nameof(@event.NewPriority),
                 ChangedAt = @event.OccuredOn,
-                ChangedBy = @event.User
+                ChangedBy = $"{@event.ChangeBy.Username}"
             };
             var message =
                 $"TimeStamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId -> {logEntry.TicketId}, " +
