@@ -1,97 +1,64 @@
-<mvc:View
-    id="dashboardView"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:f="sap.f"
-    xmlns:tnt="sap.tnt"
-    displayBlock="true"
-    controllerName="ui5.ticketui.controller.Dashboard">
-
-    <Page>
-        <customHeader>
-            <Toolbar>
-              <Button icon="sap-icon://menu" press=".onToggleSideNav"/>
-              <Title text="Dashboard" />
-              <ToolbarSpacer/>              
-            </Toolbar>
-        </customHeader>
-        <content>
-            <HBox fitContainer="true">
-              <tnt:SideNavigation id="sideNav" expanded="true" width="250px" itemSelect="onNavSelect">
-
-                <tnt:NavigationList id="navList">
-
-                    <tnt:NavigationListItem 
-                        id="navDashboard"
-                        text="Dashboard" 
-                        icon="sap-icon://home"
-                        select=".onNavSelect" 
-                        key="dashboard" />
-
-                    <tnt:NavigationListItem 
-                        id="navTickets"
-                        text="Tickets" 
-                        icon="sap-icon://document-text"
-                        select=".onNavSelect"
-                        key="tickets" />
-
-                    <tnt:NavigationListItem 
-                        id="navSettings"
-                        text="{i18n>settingsTitle}" 
-                        icon="sap-icon://action-settings"
-                        select=".onNavSelect"
-                        key="settings" />
-
-                </tnt:NavigationList>
-
-            </tnt:SideNavigation> 
-            <VBox class="sapUiSmallMargin">
-
-                <HBox justifyContent="SpaceAround">
-                    <ObjectStatus title="{i18n>openTickets}" text="12" state="Warning" />
-                    <ObjectStatus title="{i18n>resolvedTickets}" text="34" state="Success" />
-                    <ObjectStatus title="{i18n>pendingTickets}" text="5" state="Information" />
-                </HBox>
-
-                <Panel headerText="{i18n>recentActivities}" class="sapUiSmallMarginTop">
-                    <List>
-                        <StandardListItem title="Ticket #124 modified" info="{i18n>today}" />
-                        <StandardListItem title="New ticket #130" info="{i18n>yesterday}" />
-                        <StandardListItem title="User John created" info="{i18n>yesterday}" />
-                    </List>
+<mvc:View id="dashboardView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f" xmlns:tnt="sap.tnt" displayBlock="true" controllerName="ui5.ticketui.controller.Dashboard">
+	<Page>
+		<customHeader>
+			<Toolbar>
+				<Button icon="sap-icon://menu" press=".onToggleSideNav"/>
+				<Title text="Dashboard"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</customHeader>
+		<content>
+			<HBox fitContainer="true">
+				<tnt:SideNavigation id="sideNav" expanded="true" width="250px" itemSelect="onNavSelect">
+					<tnt:NavigationList id="navList">
+						<tnt:NavigationListItem id="navDashboard" text="Dashboard" icon="sap-icon://home" select=".onNavSelect" key="dashboard"/>
+						<tnt:NavigationListItem id="navTickets" text="Tickets" icon="sap-icon://document-text" select=".onNavSelect" key="tickets"/>
+						<tnt:NavigationListItem id="navSettings" text="{i18n>settingsTitle}" icon="sap-icon://action-settings" select=".onNavSelect" key="settings"/>
+                        <tnt:NavigationListItem id="navLogout" text="{i18n>buttonLogout}" icon="sap-icon://log" select=".onNavSelect" key="logout"/>
+					</tnt:NavigationList>
+				</tnt:SideNavigation>
+				<VBox class="sapUiSmallMargin">
+					<HBox justifyContent="SpaceAround">
+						<ObjectStatus title="{i18n>dashboardTicketsCreated}" text="12" state="Warning"/>
+						<ObjectStatus title="{i18n>dashboardTicketsClosed}" text="34" state="Success"/>
+						<ObjectStatus title="{i18n>dashboardTicketsInProgress}" text="5" state="Information"/>
+					</HBox>
+					<Panel headerText="{i18n>dashboardRecentTickets}" class="sapUiSmallMarginTop">
+                    
                 </Panel>
-
-                <Panel headerText="{i18n>ticketsInProgress}" class="sapUiSmallMarginTop">
-                    <Table>
-                        <columns>
-                            <Column><Text text="{i18n>ID}"/></Column>
-                            <Column><Text text="{i18n>title}"/></Column>
-                            <Column><Text text="{i18n>status}"/></Column>
-                        </columns>
-
-                        <items>
-                            <ColumnListItem>
-                                <cells>
-                                    <Text text="123" />
-                                    <Text text="Problème serveur" />
-                                    <ObjectStatus text="Open" state="Warning" />
-                                </cells>
-                            </ColumnListItem>
-
-                            <ColumnListItem>
-                                <cells>
-                                    <Text text="124" />
-                                    <Text text="Bug UI" />
-                                    <ObjectStatus text="In Progress" state="Information" />
-                                </cells>
-                            </ColumnListItem>
-                        </items>
-                    </Table>
-                </Panel>
-
-            </VBox> 
-            </HBox>
-        </content>
-    </Page>
-
+					<Panel headerText="{i18n>dashboardTicketsInProgress}" class="sapUiSmallMarginTop">
+						<Table>
+							<columns>
+								<Column>
+									<Text text="{i18n>columnNumber}"/>
+								</Column>
+								<Column>
+									<Text text="{i18n>columnTitle}"/>
+								</Column>
+								<Column>
+									<Text text="{i18n>columnStatus}"/>
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<cells>
+										<Text text="123"/>
+										<Text text="Problème serveur"/>
+										<ObjectStatus text="Open" state="Warning"/>
+									</cells>
+								</ColumnListItem>
+								<ColumnListItem>
+									<cells>
+										<Text text="124"/>
+										<Text text="Bug UI"/>
+										<ObjectStatus text="In Progress" state="Information"/>
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</Panel>
+				</VBox>
+			</HBox>
+		</content>
+	</Page>
 </mvc:View>

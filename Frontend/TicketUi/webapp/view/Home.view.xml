@@ -1,52 +1,38 @@
-<mvc:View
-    id="homeView"
-    controllerName="ui5.ticketui.controller.Home"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:tnt="sap.tnt"
-    xmlns:core="sap.ui.core">
-
-   <Page id="homePage">
-
-            <customHeader>
-                <Toolbar>
-                    <Button icon="sap-icon://menu" press=".onToggleSideNav"/>
-                    <Title text="{i18n>appTitle}" />
-                    <ToolbarSpacer/>
-                </Toolbar>
-            </customHeader>
-
-            <content>
-                <HBox fitContainer="true">                   
-                    <VBox id="contentArea" class="sapUiSmallMargin" width="100%">
-                      <Panel headerText="Welcome"
-                        class="sapUiResponsiveMargin"
-                        width="auto">
-                           <headerToolbar>
-                            <Toolbar>
-                              <Title text="{i18n>appWelcomeMessage}"/>
-                              <ToolbarSpacer  />                              
-                            </Toolbar>
-                          </headerToolbar>
-                      </Panel>
-                      <Panel class="sapUiResponsiveMargin"
-                        width="auto"> 
-                      <VBox class="sapUiSmallMargin">
-                            <Label text="{i18n>labelUsername}" labelFor="usernameInput"/>
-                            <Input id="usernameInput" placeholder="{i18n>textUsername}" value="{/username}"/>
-                            <Label text="{i18n>labelPassword}" labelFor="passwordInput" class="sapUiSmallMarginTop"/>
-                            <Input id="passwordInput" type="Password" placeholder="{i18n>textPassword}" value="{/password}"/>
-                            <HBox class="sapUiSmallMarginTop" justifyContent="End">
-                                <ToolbarSpacer/>
-                                <Button class="sapUiSmallMarginEnd" text="{i18n>buttonSubmit}" type="Emphasized" press=".onButtonSubmitPress"/>
-                                <Button class="sapUiSmallMarginEnd" text="{i18n>buttonCancel}" press=".onButtonCancelPress"/>
-                            </HBox>
-                       </VBox> 
-                      </Panel>
-                    </VBox>                            
-                </HBox>
-
-            </content>
-        </Page>
-
+<mvc:View id="homeView" controllerName="ui5.ticketui.controller.Home" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:tnt="sap.tnt" xmlns:core="sap.ui.core">
+	<Page id="homePage">
+		<customHeader>
+			<Toolbar>
+				<Button icon="sap-icon://menu" press=".onToggleSideNav"/>
+				<Title text="{i18n>appTitle}"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</customHeader>
+		<content>
+			<HBox fitContainer="true">
+				<VBox id="contentArea" class="sapUiSmallMargin" width="100%">
+					<Panel headerText="Welcome" class="sapUiResponsiveMargin" width="auto">
+						<headerToolbar>
+							<Toolbar>
+								<Title text="{i18n>appWelcomeMessage}"/>
+								<ToolbarSpacer/>
+							</Toolbar>
+						</headerToolbar>
+					</Panel>
+					<Panel class="sapUiResponsiveMargin" width="auto">
+						<VBox class="sapUiSmallMargin">
+							<Label text="{i18n>labelUsername}" labelFor="usernameInput"/>
+							<Input id="usernameInput" placeholder="{i18n>textUsername}" value="{/username}"/>
+							<Label text="{i18n>labelPassword}" labelFor="passwordInput" class="sapUiSmallMarginTop"/>
+							<Input id="passwordInput" type="Password" placeholder="{i18n>textPassword}" value="{/password}"/>
+							<HBox class="sapUiSmallMarginTop" justifyContent="End">
+								<ToolbarSpacer/>
+								<Button class="sapUiSmallMarginEnd" text="{i18n>buttonSubmit}" type="Emphasized" press=".onButtonSubmitPress"/>
+								<Button class="sapUiSmallMarginEnd" text="{i18n>buttonCancel}" press=".onButtonCancelPress"/>
+							</HBox>
+						</VBox>
+					</Panel>
+				</VBox>
+			</HBox>
+		</content>
+	</Page>
 </mvc:View>

@@ -2,8 +2,9 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "ui5/ticketui/service/TicketService",
     "sap/ui/core/Fragment",
-    "ui5/ticketui/util/formatter"
-], function(Controller, TicketService, Fragment, formatter) {
+    "ui5/ticketui/util/formatter",
+    "sap/m/MessageToast"
+], function(Controller, TicketService, Fragment, formatter, MessageToast) {
     "use strict";
     return Controller.extend("ui5.ticketui.controller.TicketOverview", {
         
@@ -60,11 +61,13 @@ sap.ui.define([
         },
 
         onSearchFieldsLiveChange: function (oEvent) {
-            const sQuery = oEvent.getParameter("query");
-            const aFilters = [];  
+            MessageToast.show("Searching...");
+            //const sQuery = oEvent.getParameter("query");
+            //const aFilters = [];  
         },
 
-        onTicketItemPress: function (oEvent) {
+        onViewDetailsButtonPress: function (oEvent) {
+            MessageToast.show("Navigating to ticket details...");
             const oItem = oEvent.getSource();
             const oContext = oItem.getBindingContext("ticketsModel");
             console.log("Context:", oContext);
@@ -94,6 +97,9 @@ sap.ui.define([
                     case "settings":
                         oNavList.setSelectedItem(this.byId("navSettings"));
                         this.getOwnerComponent().getRouter().navTo("settings");
+                        break;
+                    case "logout":
+                        this.getOwnerComponent().getRouter().navTo("home");
                         break;
                 } 
         }       

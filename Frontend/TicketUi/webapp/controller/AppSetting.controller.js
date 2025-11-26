@@ -33,6 +33,9 @@ sap.ui.define([
                 oNavList.setSelectedItem(this.byId("navSettings"));
                 this.getOwnerComponent().getRouter().navTo("settings");
                 break;
+            case "logout":
+                this.getOwnerComponent().getRouter().navTo("home");
+                break;
             }           
         },
 

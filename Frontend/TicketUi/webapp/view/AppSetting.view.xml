@@ -1,63 +1,39 @@
-<mvc:View
-    controllerName="ui5.ticketui.controller.AppSetting"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:tnt="sap.tnt"
-    xmlns:core="sap.ui.core">
-    <Page title="{i18n>settingsTitle}">
-        <content>
-            <HBox fitContainer="true">
-            <tnt:SideNavigation id="sideNav" expanded="true" width="250px" itemSelect=".onNavSelect">
-                <tnt:NavigationList id="navList">
-
-                    <tnt:NavigationListItem 
-                        text="Dashboard" 
-                        icon="sap-icon://home"
-                        select=".onNavSelect" 
-                        key="dashboard" />
-
-                    <tnt:NavigationListItem 
-                        text="Tickets" 
-                        icon="sap-icon://document-text"
-                        select=".onNavSelect"
-                        key="tickets" />
-
-                    <tnt:NavigationListItem 
-                        text="{i18n>settingsTitle}" 
-                        icon="sap-icon://action-settings"
-                        select=".onNavSelect"
-                        key="settings" />
-
-                </tnt:NavigationList>
-
-            </tnt:SideNavigation>
-            <VBox class="sapUiSmallMargin">
-                <Label text="{i18n>labelApiEndpoint}" labelFor="apiEndpointInput"/>
-                <Input id="apiEndpointInput" placeholder="{i18n>textApiEndpoint}" value="{/apiEndpoint}"/>
-
-                <Label text="{i18n>labelItemsPerPage}" labelFor="itemsPerPageInput" class="sapUiSmallMarginTop"/>
-                <Input id="itemsPerPageInput" type="Number" placeholder="{i18n>textItemsPerPage}" value="{/itemsPerPage}"/>
-                <Label text="{i18n>labelTheme}" />
-                <Select >
-                    <items>
-                    <core:Item key="{i18n>appConfigKeyLight}" text="{i18n>appConfigOptionLight}"/>
-                    <core:Item key="{i18n>appConfigKeyDark}" text="{i18n>appConfigOptionDark}"/>
-                    </items>
-                </Select>
-                <Label text="{i18n>labelLang}" />
-                <Select >
-                    <items>
-                    <core:Item key="{i18n>appConfigKeyEnglish}" text="{i18n>appConfigOptionEnglish}"/>
-                    <core:Item key="{i18n>appConfigKeyGerman}" text="{i18n>appConfigOptionGerman}"/>
-                    </items>
-                </Select>    
-            
-                <HBox class="sapUiSmallMarginTop">
-                    <Button text="{i18n>buttonSave}" type="Emphasized" press=".onSaveSettingsPress"/>
-                    <Button text="{i18n>buttonCancel}" press=".onCancelSettingsPress" class="sapUiSmallMarginBegin"/>
-                </HBox>
-            </VBox>
-            </HBox>
-        </content>
-    </Page>
+<mvc:View controllerName="ui5.ticketui.controller.AppSetting" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:tnt="sap.tnt" xmlns:core="sap.ui.core">
+	<Page title="{i18n>settingsTitle}">
+		<content>
+			<HBox fitContainer="true">
+				<tnt:SideNavigation id="sideNav" expanded="true" width="250px" itemSelect=".onNavSelect">
+					<tnt:NavigationList id="navList">
+						<tnt:NavigationListItem text="Dashboard" icon="sap-icon://home" select=".onNavSelect" key="dashboard"/>
+						<tnt:NavigationListItem text="Tickets" icon="sap-icon://document-text" select=".onNavSelect" key="tickets"/>
+						<tnt:NavigationListItem text="{i18n>settingsTitle}" icon="sap-icon://action-settings" select=".onNavSelect" key="settings"/>
+					</tnt:NavigationList>
+				</tnt:SideNavigation>
+				<VBox class="sapUiSmallMargin">
+					<Label text="{i18n>labelApiEndpoint}" labelFor="apiEndpointInput"/>
+					<Input id="apiEndpointInput" placeholder="{i18n>textApiEndpoint}" value="{/apiEndpoint}"/>
+					<Label text="{i18n>labelItemsPerPage}" labelFor="itemsPerPageInput" class="sapUiSmallMarginTop"/>
+					<Input id="itemsPerPageInput" type="Number" placeholder="{i18n>textItemsPerPage}" value="{/itemsPerPage}"/>
+					<Label text="{i18n>labelTheme}"/>
+					<Select>
+						<items>
+							<core:Item key="{i18n>appConfigKeyLight}" text="{i18n>appConfigOptionLight}"/>
+							<core:Item key="{i18n>appConfigKeyDark}" text="{i18n>appConfigOptionDark}"/>
+						</items>
+					</Select>
+					<Label text="{i18n>labelLang}"/>
+					<Select>
+						<items>
+							<core:Item key="{i18n>appConfigKeyEnglish}" text="{i18n>appConfigOptionEnglish}"/>
+							<core:Item key="{i18n>appConfigKeyGerman}" text="{i18n>appConfigOptionGerman}"/>
+						</items>
+					</Select>
+					<HBox class="sapUiSmallMarginTop">
+						<Button text="{i18n>buttonSave}" type="Emphasized" press=".onSaveSettingsPress"/>
+						<Button text="{i18n>buttonCancel}" press=".onCancelSettingsPress" class="sapUiSmallMarginBegin"/>
+					</HBox>
+				</VBox>
+			</HBox>
+		</content>
+	</Page>
 </mvc:View>

@@ -1,41 +1,50 @@
-<mvc:View
-  id="ticketDetailsView"
-  controllerName="ui5.ticketui.controller.TicketDetails"
-  xmlns:mvc="sap.ui.core.mvc"
-  xmlns="sap.m"
-  displayBlock="true">
-
-  <Page title="{i18n>titleTicketDetails}"
-  class="sapUiResponsiveMargin"
-  width="auto"
-  showNavButton="true"
-  navButtonPress=".onNavBack">
-    <content>
-    <ObjectHeader 
-        title="{Tickets>title}"        
-        intro="Ticket {Tickets>id}" />
-        
-      <Panel  headerText="Beschreibung">
-        <Text  text="{Tickets>Description}" />
-      </Panel>
-
-      <Panel headerText="Kommentare">
-        <List items="{Comments>/}">
-          <StandardListItem  title="{Comments>User}" description="{Comments>Text}" info="{Comments>Date}"/>
-        </List>
-        <HBox >
-          <Input  placeholder="Kommentar hinzufügen..." width="80%"/>
-          <Button icon="sap-icon://send" />
+<mvc:View id="ticketDetailsView" controllerName="ui5.ticketui.controller.TicketDetails" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" displayBlock="true">
+	<Page title="{i18n>titleTicketDetails}" showNavButton="true" navButtonPress=".onNavBack">
+		<Panel headerText="{Ticket}">
+      <HBox justifyContent="SpaceBetween" alignItems="Center" width="100%">
+        <VBox>          
+          <Text text="Ticket {ticketsModel>id}"/>
+        </VBox>        
+        <HBox gap="10px">
+<Select placeholder="Select Status" selectedKey="{ticketsModel>status}">
+						<items>
+							<core:Item key="Open" text="Open"/>
+							<core:Item key="InProgress" text="In Progress"/>
+							<core:Item key="Closed" text="Closed"/>
+              <core:Item key="Waiting" text="Waiting"/>
+						</items>
+					</Select>
+        <Select placeholder="Select Priority" selectedKey="{ticketsModel>priority}">        
+						<items>
+							<core:Item key="Low" text="Low"/>
+							<core:Item key="Medium" text="Medium"/>
+							<core:Item key="High" text="High"/>
+              <core:Item key="Critical" text="Critical"/>
+						</items>
+					</Select>
         </HBox>
-      </Panel>
-<Toolbar >
-  <ToolbarSpacer />
-  <Button text="{i18n>buttonHistory}" press=".onHistoryButtonPress"/>
-  <Button text="{i18n>buttonPrint}" press=".onPrintButtonPress"/>
-  <Button text="{i18n>buttonSave}" press=".onSaveButtonPress"/>
-  <Button text="{i18n>buttonCancel}" press=".onCancelButtonPress"/>
-</Toolbar>
-    </content>
-  </Page>
-  
+
+        
+      </HBox>
+    </Panel>
+		<Panel headerText="{i18n>descriptionTitle}">
+			<TextArea width="100%" rows="7" value="{ticketsModel>description}" editable="false"/>
+		</Panel>
+		<Panel headerText="{i18n>commentsTitle}" class="sapUiSmallMarginTop">
+			<List items="{ticketsModel>/comments}">
+				<StandardListItem title="{ticketsModel>User}" description="{ticketsModel>Text}" info="{ticketsModel>Date}"/>
+			</List>
+			<vBox>
+				<TextArea placeholder="Kommentar hinzufügen..." width="100%" rows="7"/>
+				<Button icon="sap-icon://paper-plane" text="Senden"/>
+			</vBox>
+		</Panel>
+		<Toolbar>
+			<Button text="{i18n>buttonHistory}" icon="sap-icon://history" type="Emphasized" press=".onHistoryButtonPress"/>
+			<Button text="{i18n>buttonPrint}" icon="sap-icon://print" type="Emphasized" press=".onPrintButtonPress"/>
+			<ToolbarSpacer/>
+			<Button text="{i18n>buttonSave}" icon="sap-icon://save" press=".onSaveButtonPress" type="Emphasized"/>
+			<Button text="{i18n>buttonCancel}" icon="sap-icon://cancel" press=".onCancelButtonPress" type="Emphasized"/>
+		</Toolbar>
+	</Page>
 </mvc:View>

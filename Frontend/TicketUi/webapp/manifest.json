@@ -86,9 +86,9 @@
                     "target": "tickets"
                 },
                 {
-                    "pattern": "ticketDetail/{ticketId}",
-                    "name": "ticketDetail",
-                    "target": "ticketDetail"
+                    "pattern": "ticketDetails/{ticketId}",
+                    "name": "ticketDetails",
+                    "target": "ticketDetails"
                 }
             ],
             "targets": {
@@ -125,7 +125,7 @@
                         },
                         "controlAggregation": "pages"                    
                     },
-                    "ticketDetail": {
+                    "ticketDetails": {
                         "viewName": "TicketDetails",
                         "viewId": "ticketDetailsView",
                         "controlId": "app",
