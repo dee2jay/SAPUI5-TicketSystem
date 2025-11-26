@@ -1,20 +1,12 @@
 <mvc:View
-    
-    controllerName="ui5.ticketui.controller.App" 
-   xmlns="sap.m"
-   xmlns:mvc="sap.ui.core.mvc">
+    controllerName="ui5.ticketui.controller.App"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:tnt="sap.tnt"
+    xmlns="sap.m">
 
-   <Shell>    
-       <App id="idApp">
-       <Page  title="{i18n>appTitle}">
-            <headerContent>
-                <Button text="{i18n>buttonLogin}"  press=".onLoginButtonPress" icon="sap-icon://person-placeholder"/>
-                <Button text="{i18n>buttonSettings}" press=".onSettingsButtonPress" icon="sap-icon://action-settings"/>               
-            </headerContent>
-            <content>          
-                <mvc:XMLView  viewName="ui5.ticketui.view.TicketOverview" />                           
-            </content>
-        </Page>
-     </App>
-    </Shell> 
+    <Shell>
+    <App id="app" />
+    </Shell>
+
+
 </mvc:View>

@@ -89,7 +89,9 @@ public class TicketService(
 
 
             var user = await userService.GetCurrentUser();
-            ticket.Author = user.Name;
+            ticket.Author = $"{user.Vorname} {user.Name}";
+            ticket.User = user;
+            ticket.UserId = user.Id;
             await ticketRepository.AddTicket(ticket);
 
             var ticketCreatedEvent = new TicketCreatedEvent(ticket.Id, ticket.Title, ticket.Author, ticket.AssignedTo!);

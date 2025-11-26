@@ -8,14 +8,25 @@ sap.ui.define([
     return {
         async login(username, password) {
             const endpoint = "/api/User/login";
-            
-            const res = await ApiService.post(endpoint, {
-                username,
-                password
-            }, TokenService.getToken());
 
-            TokenService.setToken(res.token);
-            return res;
+            try {
+                // Call API to login
+                const res = await ApiService.post(endpoint, {
+                    username,
+                    password
+                }, null);
+
+                // We only store the token if it has been received.
+                if (res && res.token) {
+                    TokenService.setToken(res.token);
+                }
+
+                return res;
+
+            } catch (e) {
+                // Rethrow the error so the controller can display it
+                throw new Error("Login failed: " + e.message);
+            }
         },
 
         logout() {

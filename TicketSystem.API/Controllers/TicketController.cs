@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ErrorOr;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Application.Interfaces;
@@ -29,8 +30,8 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
             return StatusCode(500, new { message = e.Message });
         }
     }
-    [Authorize]
-    [HttpGet("{ticketId}", Name = "GetTicket")]
+    //[Authorize]
+    [HttpGet("/ticket/{ticketId}", Name = "GetTicket")]
     public async Task<IActionResult> GetTicket(int ticketId)
     {
         try
@@ -54,7 +55,7 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
 
     [Authorize]
     [HttpPost("/create",Name = "CreateTicket")]
-    public async Task<IActionResult> AddTicket([FromBody] TicketDto dto, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> AddTicket([FromBody] TicketDto dto, CancellationToken cancellationToken)
     {
         try
         {
@@ -63,8 +64,9 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
                 return BadRequest(ModelState);
             }
 
-            var ticketDto = await ticketService.CreateTicketAsync(dto, _cancellationToken);
-            return Ok(new { message = "Ticket created successfully!", Ticket = ticketDto });
+            var ticketDto = await ticketService.CreateTicketAsync(dto, cancellationToken);
+            return ticketDto == null ? StatusCode(500, new { message = "Ticket could not be created." }) : 
+                Ok(new { message = "Ticket created successfully!", Ticket = ticketDto });
         }
         catch (TimeoutException ex)
         {
@@ -77,7 +79,7 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("{ticketId}/history", Name = "GetHistory")]
+    [HttpGet("/history/{ticketId}", Name = "GetHistory")]
     public async Task<IActionResult> GetHistoryFromTicket(int ticketId)
     {
         try
@@ -92,7 +94,7 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
     }
 
     [Authorize]
-    [HttpPut("{ticketId}/update", Name = "UpdateTicket")]
+    [HttpPut("/update/{ticketId}", Name = "UpdateTicket")]
     public async Task<IActionResult> UpdateTicket(int ticketId, [FromBody] TicketUpdateDto dto, CancellationToken ct)
     {
         try

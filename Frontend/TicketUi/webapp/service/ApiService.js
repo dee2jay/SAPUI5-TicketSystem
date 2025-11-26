@@ -13,15 +13,21 @@ sap.ui.define([], function () {
                 headers["Authorization"] = "Bearer " + token;
             }
 
-            const res = await fetch(BASE_URL + endpoint, {
-                method,
-                headers,
-                body: body ? JSON.stringify(body) : null
-            });
+            const options = { method, headers };
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            const res = await fetch(BASE_URL + endpoint, options);
 
             if (!res.ok) {
                 const error = await res.text();
                 throw new Error("HTTP " + res.status + ": " + error);
+            }
+
+            // Case OK but no content (204)
+            if (res.status === 204) {
+                return null;
             }
 
             return res.json();
@@ -31,8 +37,12 @@ sap.ui.define([], function () {
             return this.request("GET", endpoint, null, token);
         },
 
-        post(endpoint, body, token ) {
+        post(endpoint, body, token = null) {
             return this.request("POST", endpoint, body, token);
+        },
+
+        put(endpoint, body, token = null) {
+            return this.request("PUT", endpoint, body, token);
         }
     };
 });

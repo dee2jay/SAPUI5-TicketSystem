@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -113,7 +114,11 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthorization();
 
 // === Controllers ===
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(option =>
+    {
+        option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 
 // === Swagger / OpenAPI ===

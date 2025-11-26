@@ -1,18 +1,20 @@
 <mvc:View
-  id="idDetailsView"
+  id="ticketDetailsView"
   controllerName="ui5.ticketui.controller.TicketDetails"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m"
   displayBlock="true">
 
-  <Page title="{i18n>titleTicketDetails}">
+  <Page title="{i18n>titleTicketDetails}"
+  class="sapUiResponsiveMargin"
+  width="auto"
+  showNavButton="true"
+  navButtonPress=".onNavBack">
     <content>
-      <ObjectHeader 
-        title="{Tickets>Title}"
-        number="{Tickets>ID}"
-        numberUnit="Ticket-ID"
-        intro="{Tickets>Status}" />
-  
+    <ObjectHeader 
+        title="{Tickets>title}"        
+        intro="Ticket {Tickets>id}" />
+        
       <Panel  headerText="Beschreibung">
         <Text  text="{Tickets>Description}" />
       </Panel>

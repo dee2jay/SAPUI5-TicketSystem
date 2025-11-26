@@ -4,26 +4,6 @@ sap.ui.define([], function () {
     const BASE_URL = "https://localhost:7187/";
     
     return{
-        login: async function (username, password) {
-            const oResponse = await fetch('${BASE_URL}/User/login',{
-                method:"POST",
-                headers:{
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({username, password})
-            });
-            
-            if(!oResponse.ok){
-                throw new Error("Login failed");
-            }
-
-            const oData = await oResponse.json();
-            localStorage.setItem("token", oData.token);
-
-            return oData;
-            
-        },
-
         getCurrentUser: async function () {
             const oToken = localStorage.getItem("token");
 
@@ -41,7 +21,5 @@ sap.ui.define([], function () {
             return response.json();
 
         }
-    }
-
-    
+    }    
 });

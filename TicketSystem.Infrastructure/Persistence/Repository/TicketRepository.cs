@@ -127,7 +127,11 @@ public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbcontex
 
     public async Task<ErrorOr<IEnumerable<Ticket>>> GetAllTickets(CancellationToken ct)
     {
-        var ticketList = await dbcontext.Tickets.ToListAsync(ct);
+        var ticketList = await dbcontext.Tickets
+            .Include(t => t.Histories)
+            .Include(t=>t.Attachments)
+            .Include(t => t.Comments)
+            .ToListAsync(ct);
         if (ticketList.Count > 0)
         {
             return ticketList;

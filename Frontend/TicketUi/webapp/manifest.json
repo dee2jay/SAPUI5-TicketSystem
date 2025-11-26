@@ -1,46 +1,48 @@
 {
-    "_version": "1.79.0",
-    "sap.app": {
-        "id": "ui5.ticketui",
-        "i18n": "i18n/i18n.properties",
-        "title": "{{appTitle}}",
-        "description": "{{appDescription}}",
-        "type": "application",
-        "applicationVersion": {
-            "version": "1.0.0"
-        }        
+  "_version": "1.65.0",
+  "sap.app": {
+    "id": "ui5.ticketui",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "1.0.0"
     },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}"
+  },
     "sap.ui": {
         "technology": "UI5",
+        "supportedThemes": [
+        "sap_fiori_3",
+        "sap_belize",
+        "sap_belize_plus",
+        "sap_fiori_3_dark",
+        "sap_fiori_3_hcb",
+        "sap_fiori_3_hcw"
+        ],
         "deviceTypes": {
             "desktop": true,
             "tablet": true,
             "phone": true
-        },
-        "icons": {
-            "icon": "sap-icon://ticket",
-            "phone": "icon/phone-icon.png",
-            "phone@2": "icon/phone-retina.png",
-      	    "tablet": "icon/tablet-icon.png",
-      	    "tablet@2": "icon/tablet-retina.png"
         }
     },
     "sap.ui5": {
+        "flexEnabled": true,
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
         "rootView": {
             "viewName": "ui5.ticketui.view.App",
             "type": "XML",
             "id": "app"
         },
-        "contentDensities": {
-            "compact": true,
-            "cozy": true
-        },
         "dependencies": {
-            "minUI5Version": "1.60.0",
+            "minUI5Version": "1.65.0",
             "libs": {
                 "sap.m": {},
                 "sap.ui.core": {},
-                "sap.ui.layout": {}
+                "sap.tnt": {}
             }
         },
         "models": {
@@ -48,52 +50,104 @@
                 "type": "sap.ui.model.resource.ResourceModel",
                 "settings": {
                     "bundleName": "ui5.ticketui.i18n.i18n",
-                    "supportedLocales": ["en", "de"],
-                    "fallbackLocale": "en",
-                    "async": true
+                    "supportedLocales": ["","en_US", "de_DE"],
+                    "fallbackLocale": "en_US"
                 }
-            },
-            "ticketsModel": {
-                "type": "sap.ui.model.json.JSONModel",
-                "settings": {
-                    "data": {
-                        "tickets": []
-                    }
-                }
-            }             
-        },        
+            }
+        },
         "routing": {
-            "config": {
+            "config":{
                 "routerClass": "sap.m.routing.Router",
                 "type": "View",
                 "viewType": "XML",
-                "path": "ui5.ticketui.view",
-                "controlId": "app",
-                "controlAggregation": "pages",
-                "async": true
+                "path": "ui5.ticketui.view", 
+                "controlId": "app",               
+                "controlAggregation": "pages"
             },
-        "routes":[
-             {
-                "pattern": "",
-                "name": "overview",
-                "target": "overview"
-            },
-            {
-            "pattern": "detail",
-            "name": "tickets/{ID}",
-            "target": "detail"
-            }
-        ],
-        "targets": {
-            "overview": {
-                "id": "overview",
-                "name": "Overview"
-            },
-            "detail": {
-                "id": "idDetailsView",
-                "name": "TicketDetails"
-            }
-        }
+            "routes": [
+                {
+                    "pattern": "",
+                    "name": "home",
+                    "target": "home"
+                },
+                {
+                    "pattern": "dashboard",
+                    "name": "dashboard",
+                    "target": "dashboard"
+                },
+                {
+                    "pattern": "settings",
+                    "name": "settings",
+                    "target": "settings"
+                },
+                {
+                    "pattern": "tickets",
+                    "name": "tickets",
+                    "target": "tickets"
+                },
+                {
+                    "pattern": "ticketDetail/{ticketId}",
+                    "name": "ticketDetail",
+                    "target": "ticketDetail"
+                }
+            ],
+            "targets": {
+                    "home": {
+                        "viewName": "Home",
+                        "viewId": "homeView",
+                        "controlId": "app",
+                        "clearControlAggregation": true,
+                        "transition": "slide",
+                        "transitionParameters": {
+                            "direction": "right"
+                        }, 
+                        "controlAggregation": "pages"
+                    },
+                    "dashboard": {
+                        "viewName": "Dashboard",
+                        "viewId": "dashboardView",
+                        "controlId": "app",
+                        "clearControlAggregation": true,
+                        "transition": "slide",
+                        "transitionParameters": {
+                            "direction": "left"
+                        },
+                        "controlAggregation": "pages"                    
+                    },
+                    "tickets": {
+                        "viewName": "TicketOverview",
+                        "viewId": "ticketOverviewView",
+                        "controlId": "app",
+                        "clearControlAggregation": true,
+                        "transition": "slide",
+                        "transitionParameters": {
+                            "direction": "left"
+                        },
+                        "controlAggregation": "pages"                    
+                    },
+                    "ticketDetail": {
+                        "viewName": "TicketDetails",
+                        "viewId": "ticketDetailsView",
+                        "controlId": "app",
+                        "clearControlAggregation": true,
+                        "transition": "slide",
+                        "transitionParameters": {
+                            "direction": "left"
+                        },
+                        "controlAggregation": "pages"                    
+                    },
+                    "settings": {
+                        "viewName": "AppSetting",
+                        "viewId": "settings",
+                        "controlId": "app",
+                        "clearControlAggregation": true,
+                        "transition": "slide",
+                        "transitionParameters": {
+                            "direction": "left"
+                        },
+                        "controlAggregation": "pages"
+                    }
+                }
         }
     }
 }

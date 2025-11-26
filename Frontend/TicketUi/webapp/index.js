@@ -1,11 +1,13 @@
 sap.ui.define([
-    "sap/ui/core/mvc/XMLView"
-], (XMLView) => {
+    "sap/ui/core/ComponentContainer",
+], (ComponentContainer) => {
     "use strict";
+    new ComponentContainer({
+        name: "ui5.ticketui",
+        settings: {
+            id: "ticketui"
+        },
+        async: true
+    }).placeAt("content");    
     
-    XMLView.create({
-        viewName: "ui5.ticketui.view.App"
-    }).then(oView => {
-        oView.placeAt("content");
-    });
 });

@@ -1,53 +1,103 @@
-<mvc:View    
+<mvc:View 
+    id="ticketOverviewView"    
     controllerName="ui5.ticketui.controller.TicketOverview"
     xmlns="sap.m"
-    xmlns:mvc="sap.ui.core.mvc">
-   <Panel 
-   headerText="{i18n>titleTicketOverview}"
-   class="sapUiResponsiveMargin"
-   width="auto">
-   <headerToolbar>
-        <Toolbar>
-        <Title text="{i18n>titleTicketOverview}"/>
-        <ToolbarSpacer  />
-        <Button text="{i18n>buttonNewTicket}" press=".onNewTicketButtonPress" icon="sap-icon://add"/>        
-        </Toolbar>
-        
-   </headerToolbar>
-   
-   <content>
-        <SearchField  width="100%" liveChange=".onSearchFieldsLiveChange"/>
+    xmlns:tnt="sap.tnt"
+    xmlns:mvc="sap.ui.core.mvc">    
+    
+    <Page id="ticketOverviewPage">
+    <customHeader>
+      <Toolbar>
+              <Button icon="sap-icon://menu" press=".onToggleSideNav"/>
+              <Title text="Tickets" />
+              <ToolbarSpacer/>              
+          </Toolbar>
+    </customHeader>
+    <content>
+     <HBox fitContainer="true">
+
+                    <!-- MENU -->
+                    <tnt:SideNavigation id="sideNav" expanded="true" width="250px" itemSelect=".onNavSelect">
+
+                        <tnt:NavigationList id="navList">
+
+                            <tnt:NavigationListItem 
+                                id="navDashboard"
+                                text="Dashboard" 
+                                icon="sap-icon://home"
+                                select=".onNavSelect" 
+                                key="dashboard" />
+
+                            <tnt:NavigationListItem 
+                                id="navTickets"
+                                text="Tickets" 
+                                icon="sap-icon://document-text"
+                                select=".onNavSelect"
+                                key="tickets" />
+
+                            <tnt:NavigationListItem 
+                                id="navSettings"
+                                text="{i18n>settingsTitle}" 
+                                icon="sap-icon://action-settings"
+                                select=".onNavSelect"
+                                key="settings" />
+
+                        </tnt:NavigationList>
+
+                    </tnt:SideNavigation>
+
+                    <!-- CONTENT -->
+                    <VBox id="contentArea" class="sapUiSmallMargin" >
+                      <Panel headerText="{i18n>titleTicketOverview}"
+                        class="sapUiResponsiveMargin"
+                        width="auto">
+                           <headerToolbar>
+                            <Toolbar>
+                              <Title text="{i18n>titleTicketOverview}"/>
+                              <ToolbarSpacer  />
+                              <Button text="{i18n>buttonNewTicket}" type="Emphasized" press=".onNewTicketButtonPress" icon="sap-icon://add"/>        
+                            </Toolbar>
+                          </headerToolbar>
+                        <content>
+                          <SearchField  width="100%" liveChange=".onSearchFieldsLiveChange"/>
       
       <Table  items="{ticketsModel>/tickets}"
               mode="SingleSelectMaster"
               class="sapUiResponsiveMargin"
-              width="auto"
-              growing="true"
+              width="auto"  
+              growing="false"            
               growingScrollToLoad="true">
         
-        <columns>
+        <columns >
           <Column ><Text  text="{i18n>columnNumber}"/></Column>
           <Column ><Text  text="{i18n>columnCategory}"/></Column>
           <Column ><Text  text="{i18n>columnLocation}"/></Column>
           <Column ><Text  text="{i18n>columnStatus}"/></Column>
           <Column ><Text  text="{i18n>columnPriority}"/></Column>
           <Column ><Text text="{i18n>columnCreatedAt}"/></Column>
-          <Column ><Text  text="{i18n>columnCreatedBy}"/></Column>
+          <Column ><Text  text="{i18n>columnCreatedBy}"/></Column>          
         </columns>
-        <items>
-          <ColumnListItem press=".onColumnListItemPress">
+        <items> 
+          <ColumnListItem   type="Navigation" press=".onTicketItemPress">
             <cells>              
               <Text text="{ticketsModel>id}" />
               <Text text="{ticketsModel>category}" />
               <Text text="{ticketsModel>location}" />
               <Text text="{ticketsModel>status}" />
               <Text text="{ticketsModel>priority}" />
-              <Text text="{ticketsModel>createdAt}" />
-              <Text text="{ticketsModel>author}" />
+              <Text text="{path:'ticketsModel>createdAt', formatter:'.formatter.formatDate'}" />
+              <Text text="{ticketsModel>author}" />              
             </cells>
           </ColumnListItem>
         </items>
-      </Table>      
-   </content>
-   </Panel>
+      </Table> 
+                        </content>
+                      </Panel>
+                        
+                    </VBox>
+
+                </HBox>
+    </content>
+    </Page>
+   
 </mvc:View>

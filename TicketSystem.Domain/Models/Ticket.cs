@@ -12,7 +12,7 @@ public class Ticket
     public string Description { get; set; } = string.Empty;
     public string Author { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }       
+    public DateTime UpdatedAt { get; set; }
     public TicketStatus Status { get; set; }
     public TicketPriority Priority { get; set; }
     public string Category { get; set; } = string.Empty;

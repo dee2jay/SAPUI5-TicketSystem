@@ -9,11 +9,12 @@
         data-sap-ui-libs="sap.m"
         data-sap-ui-theme="sap_horizon"
         data-sap-ui-compat-version="edge"
-        data-sap-ui-async="true"
-        data-sap-ui-onInit="module:ui5/ticketui/index"
+        data-sap-ui-async="true"        
+        data-sap-ui-onInit="module:sap/ui/core/ComponentSupport"
         data-sap-ui-resourceroots='{"ui5.ticketui": "./"}'>
     </script>
 </head>
 <body class="sapUiBody" id="content">
+    <div data-sap-ui-component data-name="ui5.ticketui" data-id="container" data-settings='{"id" : "ui5.ticketui"}'></div>
 </body>
 </html>

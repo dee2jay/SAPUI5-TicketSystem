@@ -1,31 +1,28 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller", 
+    "sap/ui/core/mvc/Controller",
+    "ui5/ticketui/service/TicketService",
     "sap/ui/core/Fragment",
-	"ui5/ticketui/service/TicketService",
-    "sap/ui/model/json/JSONModel"
-], function (Controller,
-    Fragment,
-    TicketService,
-    JSONModel ) {
+    "ui5/ticketui/util/formatter"
+], function(Controller, TicketService, Fragment, formatter) {
     "use strict";
-
     return Controller.extend("ui5.ticketui.controller.TicketOverview", {
-        onInit:  function () {             
-            
-            const oModel = new JSONModel({ tickets: [] });        
-            this.getView().setModel(oModel, "ticketsModel");         
-            
-            this._loadTickets();             
+        
+        formatter: formatter,
+
+        onInit: function () {            
+            var oModel = this.getOwnerComponent().getModel("ticketsModel");
+            this.getView().setModel(oModel, "ticketsModel");
+
+            this._loadTickets();
         
         },
-        
-        _loadTickets: async function () {
+
+         _loadTickets: async function () {
             try {
                 const tickets = await TicketService.getAllTickets();                
                 
                 this.getView().getModel("ticketsModel").setProperty("/", tickets);
-                this.getView().getModel("ticketsModel").getData();
-                console.log("Tickets set in model:", this.getView().getModel("ticketsModel").getData());                
+                this.getView().getModel("ticketsModel").getData();                
 
             } catch (error) {
                 console.error("Failed to load tickets:", error);
@@ -33,12 +30,8 @@ sap.ui.define([
         },
 
         onNewTicketButtonPress: function () {
-
-            //const oTicket = TicketModel.createEmptyTicket()
-            let that = this;
             
-            //const oModel = new sap.ui.model.json.JSONModel(oTicket);
-            //this.getView().setModel(oModel, "newTicket");
+            let that = this;            
 
             if (!this._ticketCreate) {
                 Fragment.load({
@@ -71,10 +64,39 @@ sap.ui.define([
             const aFilters = [];  
         },
 
-        onColumnListItemPress: function (oEvent) {
-           const id = oEvent.getSource().getBindingContext("ticketsModel").getProperty("id");
+        onTicketItemPress: function (oEvent) {
+            const oItem = oEvent.getSource();
+            const oContext = oItem.getBindingContext("ticketsModel");
+            console.log("Context:", oContext);
+            const sTicketId = oContext.getProperty("id");
+            console.log("Navigating to ticket ID:", sTicketId);
+            this.getOwnerComponent().getRouter().navTo("ticketDetails", { ticketId: sTicketId });
+        },
 
-           this.getOwnerComponent().getRouter().navTo("detail", { ticketId: id });
-        }
+        onToggleSideNav: function () {
+            var oSideNav = this.byId("sideNav");
+            oSideNav.setExpanded(!oSideNav.getExpanded());
+        },
+
+        onNavSelect: function (oEvent) {
+        var oItem = oEvent.getParameter("item"); 
+            var key = oItem.getKey();
+            var oNavList = this.byId("navList");
+                switch (key) {
+                    case "dashboard": 
+                        oNavList.setSelectedItem(this.byId("navDashboard"));
+                        this.getOwnerComponent().getRouter().navTo("dashboard");
+                        break;
+                    case "tickets":    
+                        oNavList.setSelectedItem(this.byId("navTickets"));
+                        this.getOwnerComponent().getRouter().navTo("tickets");                  
+                        break;
+                    case "settings":
+                        oNavList.setSelectedItem(this.byId("navSettings"));
+                        this.getOwnerComponent().getRouter().navTo("settings");
+                        break;
+                } 
+        }       
+
     });
 });
