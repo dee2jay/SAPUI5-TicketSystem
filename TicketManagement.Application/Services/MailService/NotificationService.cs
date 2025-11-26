@@ -113,7 +113,7 @@ public class NotificationService(ISmtpSettingsProvider emailProvider, IAppLogger
 
         try
         {
-            await emailProvider.GenerateAndSendEmail(emailContent, CancellationToken.None);
+            await emailProvider.GenerateAndSendEmail(emailContent, ct);
             await logger.LogInfo("Email sent!!!", $"{nameof(NotificationService)} -> {nameof(NotifyTicketOwnerChanged)}");
         }
         catch (Exception e)
@@ -121,6 +121,26 @@ public class NotificationService(ISmtpSettingsProvider emailProvider, IAppLogger
             await logger.LogError(e.Message, e, e.Source, e.StackTrace!);
         }
     }
+
+    public async Task NotifyDueDateAdded(DueDateAddedToTicketEvent @event, CancellationToken ct)
+    {
+        var recipients = new List<string>() { @event.Ticket.Author, @event.Ticket.AssignedTo! };
+        var emailContent = new EmailContent() {
+            To = recipients,
+            Subject = $"Due date added to ticket: {@event.Ticket.Title}",
+            Body = $"<p>A due date of <strong>{@event.DueDate}</strong> has been added to the ticket <strong>{@event.Ticket.Title}</strong> by {@event.ChangeBy}.</p>"
+            };
+        try
+        {
+            await emailProvider.GenerateAndSendEmail(emailContent, ct);
+            await logger.LogInfo("Email sent!!!", $"{nameof(NotificationService)} -> {nameof(NotifyDueDateAdded)}");
+        }
+        catch (Exception e)
+        {
+            await logger.LogError(e.Message, e, e.Source, e.StackTrace!);
+        }
+    }
+
     public async Task NotifyTicketCreatedAsync(TicketCreatedEvent evt, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();

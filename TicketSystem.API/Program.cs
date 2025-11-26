@@ -78,6 +78,7 @@ builder.Services.AddScoped<IEventHandler<CommentAddedToTicketEvent>, CommentAdde
 builder.Services.AddScoped<IEventHandler<TicketPriorityChangedEvent>, TicketPriorityChangedEventHandler>();
 builder.Services.AddScoped<IEventHandler<TicketStatusChangedEvent>, TicketStatusChangedEventHandler>();
 builder.Services.AddScoped<IEventHandler<TicketOwnerChangedEvent>, TicketOwnerChangedEventHandler>();
+builder.Services.AddScoped<IEventHandler<DueDateAddedToTicketEvent>, DueDateAddedToTicketEventHandler>();
 
 
 // === Database Context ===

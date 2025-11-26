@@ -14,4 +14,5 @@ public interface INotificationService : IAsyncDisposable
     Task NotifyPriorityChangedAsync(Ticket ticket);
     Task NotifyStatusChangedAsync(TicketStatusChangedEvent evt, CancellationToken ct);
     Task NotifyTicketOwnerChanged(TicketOwnerChangedEvent evt, CancellationToken ct);
+    Task NotifyDueDateAdded(DueDateAddedToTicketEvent @event, CancellationToken ct);
 }
