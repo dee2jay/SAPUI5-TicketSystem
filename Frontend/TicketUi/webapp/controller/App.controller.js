@@ -10,16 +10,9 @@ sap.ui.define([
             
             
         },
-
-        onToggleSideNav: function () {
-            var oSideNav = this.getOwnerComponent().byId("sideNav");
-            oSideNav.setExpanded(!oSideNav.getExpanded());
-        },
-
         onNavSelect: function (oEvent) {
             var key = oEvent.getSource().getKey();
             this.getOwnerComponent().getRouter().navTo(key);
         }
-
     });
 });

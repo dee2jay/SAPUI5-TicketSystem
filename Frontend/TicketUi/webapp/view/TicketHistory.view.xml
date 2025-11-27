@@ -1,0 +1,38 @@
+<mvc:View xmlns:core="sap.ui.core"
+    id="ticketHistoryView"
+    controllerName="ui5.ticketui.controller.TicketHistory"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    displayBlock="true"
+    height="100%"
+    busyIndicatorDelay="0">
+
+    <Page id="idHistoryPage"
+          title="{i18n>titleTicketHistory}"
+          showNavButton="true"
+          navButtonPress=".onPageTicketHistoryNavButtonPress">
+
+        <content>
+
+            <List                        
+                items="{
+                    path: 'ticketsModel>/history'
+                }"
+                width="100%">
+
+                <CustomListItem>
+                    <VBox>      
+                    <!-- <core:Icon icon="sap-icon://activity-2" /> -->
+                    <Text  text="{ticketsModel>histories>timestamp}"/>
+                    <Text text="{ticketsModel>histories>action}"/>                                        
+                    </VBox>
+                </CustomListItem>
+                    
+                    
+            </List>
+
+        </content>       
+
+    </Page>
+</mvc:View>

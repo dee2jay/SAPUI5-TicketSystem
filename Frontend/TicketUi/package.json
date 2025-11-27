@@ -6,9 +6,9 @@
         "start": "ui5 serve -o index.html"
     },
     "devDependencies": {
-        "@ui5/cli": "^4.0.36"
+        "@ui5/cli": "^4.0.37"
     },
     "dependencies": {
-        "@sap/ux-ui5-tooling": "^1.19.5"
+        "@sap/ux-ui5-tooling": "^1.19.6"
     }
 }

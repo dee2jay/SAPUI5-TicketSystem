@@ -2,6 +2,7 @@
 using TicketManagementSystem.Application.Events.TicketEvents;
 using TicketManagementSystem.Application.Events.UserEvents;
 using TicketManagementSystem.Application.Interfaces;
+using TicketManagementSystem.Domain.Enums;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
 using TicketManagementSystem.Infrastructure.Migrations;
@@ -87,13 +88,17 @@ public class NotificationService(ISmtpSettingsProvider emailProvider, IAppLogger
             To = recipients,
             Subject = $"Update ticket: {evt.Ticket.Title}",
             Body = $"<p>The status of the ticket <strong>{evt.Ticket.Title}</strong>. has been changed from Status " +
-                   $"<strong>{evt.OldStatus}</strong> to <strong>{evt.NewStatus}</strong></p>"
+                   $"<strong>{evt.OldStatus}</strong> to <strong>{evt.NewStatus}</strong> by {evt.ChangeBy}</p>"
         };
 
         try
         {
-            await emailProvider.GenerateAndSendEmail(emailContent, CancellationToken.None);
-            await logger.LogInfo("Email sent!!!", $"{nameof(NotificationService)} -> {nameof(NotifyStatusChangedAsync)}");
+            if (evt.Ticket.Status == TicketStatus.Closed)
+            {
+                await emailProvider.GenerateAndSendEmail(emailContent, CancellationToken.None);
+                await logger.LogInfo("Email sent!!!", $"{nameof(NotificationService)} -> {nameof(NotifyStatusChangedAsync)}");
+            }
+            
         }
         catch (Exception e)
         {

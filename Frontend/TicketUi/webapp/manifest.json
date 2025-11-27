@@ -47,12 +47,13 @@
         },
         "models": {
             "i18n": {
-                "type": "sap.ui.model.resource.ResourceModel",
+                "type": "sap.ui.model.resource.ResourceModel",                
                 "settings": {
                     "bundleName": "ui5.ticketui.i18n.i18n",
-                    "supportedLocales": ["","en_US", "de_DE"],
-                    "fallbackLocale": "en_US"
-                }
+                    "async":"true",
+                    "supportedLocales": ["","en", "de"],
+                    "fallbackLocale": "en"
+                }                
             }
         },
         "routing": {
@@ -89,12 +90,17 @@
                     "pattern": "ticketDetails/{ticketId}",
                     "name": "ticketDetails",
                     "target": "ticketDetails"
+                },
+                {
+                    "pattern": "ticketDetails/{ticketId}/history",
+                    "name": "ticketHistory",
+                    "target": "ticketHistory"
                 }
             ],
             "targets": {
                     "home": {
                         "viewName": "Home",
-                        "viewId": "homeView",
+                        "viewId": "home",
                         "controlId": "app",
                         "clearControlAggregation": true,
                         "transition": "slide",
@@ -135,6 +141,17 @@
                             "direction": "left"
                         },
                         "controlAggregation": "pages"                    
+                    },
+                    "ticketHistory":{
+                        "viewName": "TicketHistory",
+                        "viewId": "ticketsHistoryView",
+                        "controlId": "app",
+                        "clearControlAggregation": true,
+                        "transition": "slide",
+                        "transitionParameters": {
+                            "direction": "left"
+                        },
+                        "controlAggregation": "pages"  
                     },
                     "settings": {
                         "viewName": "AppSetting",

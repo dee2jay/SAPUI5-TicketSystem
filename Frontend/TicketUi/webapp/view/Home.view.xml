@@ -1,8 +1,7 @@
-<mvc:View id="homeView" controllerName="ui5.ticketui.controller.Home" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:tnt="sap.tnt" xmlns:core="sap.ui.core">
+<mvc:View id="home" controllerName="ui5.ticketui.controller.Home" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:tnt="sap.tnt" xmlns:core="sap.ui.core">
 	<Page id="homePage">
 		<customHeader>
-			<Toolbar>
-				<Button icon="sap-icon://menu" press=".onToggleSideNav"/>
+			<Toolbar>				
 				<Title text="{i18n>appTitle}"/>
 				<ToolbarSpacer/>
 			</Toolbar>

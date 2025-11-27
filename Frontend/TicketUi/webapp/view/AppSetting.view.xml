@@ -4,16 +4,13 @@
 			<HBox fitContainer="true">
 				<tnt:SideNavigation id="sideNav" expanded="true" width="250px" itemSelect=".onNavSelect">
 					<tnt:NavigationList id="navList">
-						<tnt:NavigationListItem text="Dashboard" icon="sap-icon://home" select=".onNavSelect" key="dashboard"/>
-						<tnt:NavigationListItem text="Tickets" icon="sap-icon://document-text" select=".onNavSelect" key="tickets"/>
-						<tnt:NavigationListItem text="{i18n>settingsTitle}" icon="sap-icon://action-settings" select=".onNavSelect" key="settings"/>
+						<tnt:NavigationListItem id="navDashboard" text="Dashboard" icon="sap-icon://home"  key="dashboard"/>
+						<tnt:NavigationListItem id="navTickets" text="Tickets" icon="sap-icon://document-text" key="tickets"/>
+						<tnt:NavigationListItem id="navSettings" text="{i18n>settingsTitle}" icon="sap-icon://action-settings" key="settings"/>
+            			<tnt:NavigationListItem id="navLogout" text="{i18n>buttonLogout}" icon="sap-icon://log" key="logout"/>
 					</tnt:NavigationList>
 				</tnt:SideNavigation>
-				<VBox class="sapUiSmallMargin">
-					<Label text="{i18n>labelApiEndpoint}" labelFor="apiEndpointInput"/>
-					<Input id="apiEndpointInput" placeholder="{i18n>textApiEndpoint}" value="{/apiEndpoint}"/>
-					<Label text="{i18n>labelItemsPerPage}" labelFor="itemsPerPageInput" class="sapUiSmallMarginTop"/>
-					<Input id="itemsPerPageInput" type="Number" placeholder="{i18n>textItemsPerPage}" value="{/itemsPerPage}"/>
+				<VBox class="sapUiSmallMargin">					
 					<Label text="{i18n>labelTheme}"/>
 					<Select>
 						<items>

@@ -64,7 +64,5 @@ public class TicketCreatedEventHandler : IEventHandler<TicketCreatedEvent>
             await _logger.LogError(e.Message, e, nameof(TicketCreatedEventHandler), e.StackTrace!);
         }
         
-        
-        //log send mail
     }
 }
