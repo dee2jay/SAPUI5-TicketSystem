@@ -15,14 +15,14 @@
 
         <content>
 
-            <List
+            <List                        
                 items="{
                     path: 'ticketsModel>histories'
                 }"
                 width="100%">
 
                 <CustomListItem>
-                    <VBox>                     
+                    <VBox>      
                     <Text text="{ticketsModel>action}"/>                                        
                     </VBox>
                 </CustomListItem>

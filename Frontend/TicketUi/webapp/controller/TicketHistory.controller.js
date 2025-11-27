@@ -20,7 +20,7 @@ sap.ui.define([
                 this.getView().bindElement({
                     path: sTicketPath,
                     model: "ticketsModel"
-                });
+            });
             } else {
                 console.error("Ticket not found!", id);
             }
@@ -34,7 +34,7 @@ sap.ui.define([
                 return "/tickets/" + index;
             }
             return null;
-        },
+         },
 
          onCloseButtonPress: function(){
             const oHistory = sap.ui.core.routing.History.getInstance();
