@@ -9,7 +9,7 @@ sap.ui.define([
             "manifest": "json",
             "interfaces": ["sap.ui.core.IAsyncContentCreation"],
             "rootView": {
-                "viewName": "ui5.ticketui.view.App",
+                "viewName": "ui5.ticketui.view.App",                
                 "type": "XML",
                 "async": true
             }
@@ -22,7 +22,8 @@ sap.ui.define([
             // set i18n model
             const i18nModel = new ResourceModel({
                 bundleName: "ui5.ticketui.i18n.i18n",
-                fallbackLocale: "en_US",
+                supportedLocales: ["","en", "de"],                
+                fallbackLocale: "en",
                 async: true
             });
             this.setModel(i18nModel, "i18n");

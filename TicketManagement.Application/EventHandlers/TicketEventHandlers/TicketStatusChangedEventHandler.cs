@@ -14,7 +14,7 @@ using TicketManagementSystem.Infrastructure.Persistence;
 
 namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers;
 
-public class TicketStatusChangedEventHandler(IAppLogger logger, IServiceProvider serviceProvider) : IEventHandler<TicketStatusChangedEvent>
+public class TicketStatusChangedEventHandler(IAppLogger logger, IServiceProvider serviceProvider, INotificationService notificationService) : IEventHandler<TicketStatusChangedEvent>
 {
     public async Task HandleAsync(TicketStatusChangedEvent @event, CancellationToken ct)
     {
@@ -57,8 +57,10 @@ public class TicketStatusChangedEventHandler(IAppLogger logger, IServiceProvider
                     Timestamp = @event.OccuredOn
                 });
             
-            //TODO:send Mail
-            //TODO:log send mail
+            
+            await notificationService.NotifyStatusChangedAsync(@event, ct);
+
+            
         }
         catch (Exception e)
         {
