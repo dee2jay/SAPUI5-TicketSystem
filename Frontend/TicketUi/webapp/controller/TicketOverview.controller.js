@@ -3,8 +3,9 @@ sap.ui.define([
     "ui5/ticketui/service/TicketService",
     "sap/ui/core/Fragment",
     "ui5/ticketui/util/formatter",
-    "sap/m/MessageToast"
-], function(Controller, TicketService, Fragment, formatter, MessageToast) {
+    "sap/m/MessageToast",
+    "ui5/ticketui/model/TicketViewModel"
+], function(Controller, TicketService, Fragment, formatter, MessageToast, TicketViewModel) {
     "use strict";
     return Controller.extend("ui5.ticketui.controller.TicketOverview", {
         
@@ -13,8 +14,11 @@ sap.ui.define([
         onInit: function () {            
             var oModel = this.getOwnerComponent().getModel("ticketsModel");
             this.getView().setModel(oModel, "ticketsModel");
-
+            
             this._loadTickets();
+
+            
+            this.getView().setModel(TicketViewModel.create(), "ticketViewModel");
         
         },
 
@@ -45,11 +49,14 @@ sap.ui.define([
                 });
             } else {
                 this._ticketCreate.open();
-            }
+            }  
+            
+            this.getView().getModel("ticketViewModel").setData(TicketViewModel.create().getData());
         },
 
         onCreateButtonPress: async function(){
-            const newTicket = this.getView().getModel("newTicket").getData();
+            const newTicket = this.getView().getModel("ticketViewModel").getData();
+            console.log("newTicket", newTicket);
             try {
                     await TicketService.createTicket(newTicket);
                     sap.m.MessageToast.show("Ticket created successfully");

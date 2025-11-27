@@ -47,14 +47,14 @@ sap.ui.define([], function () {
          *  CREATE new ticket
          * ----------------------------------------------*/
         createTicket: function (ticketDto) {
-            return request(BASE_URL, "POST", ticketDto);
+            return request('${BASE_URL}/create', "POST", ticketDto);
         },
 
         /** ---------------------------------------------
          *  UPDATE ticket
          * ----------------------------------------------*/
         updateTicket: function (ticketId, ticketDto) {
-            return request(`${BASE_URL}/${ticketId}`, "PUT", ticketDto);
+            return request(`${BASE_URL}/${ticketId}/update`, "PUT", ticketDto);
         },
         
     };

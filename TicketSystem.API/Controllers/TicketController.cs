@@ -53,7 +53,7 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
 
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpPost("/create",Name = "CreateTicket")]
     public async Task<IActionResult> AddTicket([FromBody] TicketDto dto, CancellationToken cancellationToken)
     {
@@ -78,8 +78,8 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
         }
     }
 
-    [Authorize]
-    [HttpGet("/history/{ticketId}", Name = "GetHistory")]
+    //[Authorize]
+    [HttpGet("/ticket/{ticketId}/history/", Name = "GetHistory")]
     public async Task<IActionResult> GetHistoryFromTicket(int ticketId)
     {
         try
@@ -93,8 +93,8 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
         }
     }
 
-    [Authorize]
-    [HttpPut("/update/{ticketId}", Name = "UpdateTicket")]
+    //[Authorize]
+    [HttpPut("/ticket/{ticketId}/update", Name = "UpdateTicket")]
     public async Task<IActionResult> UpdateTicket(int ticketId, [FromBody] TicketUpdateDto dto, CancellationToken ct)
     {
         try
@@ -107,5 +107,4 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
             return BadRequest(new{message=e.Message});
         }
     }
-    
 }

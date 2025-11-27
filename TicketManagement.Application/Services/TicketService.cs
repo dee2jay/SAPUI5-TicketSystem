@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Sockets;
 using TicketManagementSystem.Application.Dtos;
@@ -294,5 +295,9 @@ public class TicketService(
         }
         return [];
     }
-    
+
+    public async Task AddCommentToTicket(int ticketId, string comment)
+    {
+        throw new NotImplementedException();
+    }
 }
