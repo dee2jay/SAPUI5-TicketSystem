@@ -11,7 +11,7 @@ sap.ui.define([
             "rootView": {
                 "viewName": "ui5.ticketui.view.App",                
                 "type": "XML",
-                "async": true
+                "async": true,
             }
         },
 
@@ -30,7 +30,7 @@ sap.ui.define([
 
             //define and set ticket model
             const oTicketsModel= new JSONModel({tickets: []});
-            this.setModel(oTicketsModel, "ticketsModel");
+            this.setModel(oTicketsModel, "ticketsModel");           
 
             this.getRouter().initialize();
         }

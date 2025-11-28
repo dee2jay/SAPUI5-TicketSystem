@@ -10,7 +10,7 @@ sap.ui.define([], function () {
             };
 
             if (token) {
-                headers["Authorization"] = "Bearer " + token;
+                headers["Authorization"] = `Bearer ${token}`;
             }
 
             const options = { method, headers };

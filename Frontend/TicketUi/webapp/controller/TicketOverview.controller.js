@@ -4,14 +4,30 @@ sap.ui.define([
     "sap/ui/core/Fragment",
     "ui5/ticketui/util/formatter",
     "sap/m/MessageToast",
-    "ui5/ticketui/model/TicketViewModel"
-], function(Controller, TicketService, Fragment, formatter, MessageToast, TicketViewModel) {
+    "ui5/ticketui/model/TicketViewModel",
+    "ui5/ticketui/service/TokenService"
+], function(Controller,
+	TicketService,
+	Fragment,
+	formatter,
+	MessageToast,
+	TicketViewModel,
+	TokenService) {
     "use strict";
     return Controller.extend("ui5.ticketui.controller.TicketOverview", {
         
         formatter: formatter,
 
-        onInit: function () {            
+        onInit: function () { 
+            
+            const token = TokenService.getToken();
+            if (!token) {
+                MessageToast.show("login session expired ")
+                // Redirect to login
+                this.getOwnerComponent().getRouter().navTo("home", {}, true);
+                return;
+            }
+
             var oModel = this.getOwnerComponent().getModel("ticketsModel");
             this.getView().setModel(oModel, "ticketsModel");
             
@@ -24,7 +40,7 @@ sap.ui.define([
 
          _loadTickets: async function () {
             try {
-                const tickets = await TicketService.getAllTickets();                
+                var tickets = await TicketService.getAllTickets();                
                 
                 this.getView().getModel("ticketsModel").setProperty("/", tickets);
                 this.getView().getModel("ticketsModel").getData();                
@@ -58,11 +74,19 @@ sap.ui.define([
             const newTicket = this.getView().getModel("ticketViewModel").getData();
             console.log("newTicket", newTicket);
             try {
-                    await TicketService.createTicket(newTicket);
+                    var response = await TicketService.createTicket(newTicket);
+                    console.log("response", response);
+                    if(!response)
+                    {
+                        sap.m.MessageToast.show("Error creating ticket");
+                        this._ticketCreate.close();
+                        return;
+                    }
                     sap.m.MessageToast.show("Ticket created successfully");
-                    this._oCreateDialog.close();
+                    this._ticketCreate.close();
                     this._loadTickets(); // reload list
             } catch (err) {
+                console.log("error: ", err);
                 sap.m.MessageToast.show("Error creating ticket");
             }
         },
@@ -100,25 +124,29 @@ sap.ui.define([
             
             var oNavList = this.byId("navList");
 
-    switch (key) {
-        case "dashboard": 
-            //oNavList.setSelectedItem(this.byId("navDashboard"));
-            this.getOwnerComponent().getRouter().navTo("dashboard");
-            break;
+        switch (key) {
+            case "dashboard": 
+                //oNavList.setSelectedItem(this.byId("navDashboard"));
+                this.getOwnerComponent().getRouter().navTo("dashboard");
+                break;
 
-        case "tickets":    
-            //oNavList.setSelectedItem(this.byId("navTickets"));
-            this.getOwnerComponent().getRouter().navTo("tickets");
-            break;
+            case "tickets":    
+                //oNavList.setSelectedItem(this.byId("navTickets"));
+                this.getOwnerComponent().getRouter().navTo("tickets");
+                break;
 
-        case "settings":
-            //oNavList.setSelectedItem(this.byId("navSettings"));
-            this.getOwnerComponent().getRouter().navTo("settings");
-            break;
-        case "logout":
-            this.getOwnerComponent().getRouter().navTo("home");
-            break;
-    } 
+            case "settings":
+                //oNavList.setSelectedItem(this.byId("navSettings"));
+                this.getOwnerComponent().getRouter().navTo("settings");
+                break;
+            case "logout":
+                if(TokenService.getToken()){
+                    TokenService.clear();   
+                }            
+                MessageToast.show("session logged out successfully")
+                this.getOwnerComponent().getRouter().navTo("home");                      
+                break;
+            } 
         }      
 
     });

@@ -6,7 +6,7 @@
 			<Label text="{i18n>labelLocation}"/>
 			<Input value="{ticketViewModel>/location}" placeholder="{i18n>labelLocation}"/>
 			<Label text="{i18n>labelCostCenter}"/>
-			<Input value="{ticketViewModel/costCenter}" placeholder="{i18n>labelCostCenter}"/>
+			<Input value="{ticketViewModel>/costCenter}" placeholder="{i18n>labelCostCenter}"/>
 			<Label text="{i18n>labelOrderNr}"/>
 			<Input value="{ticketViewModel>/orderNumber}" placeholder="{i18n>labelOrderNr}"/>
 			<Label text="{i18n>labelTitle}"/>

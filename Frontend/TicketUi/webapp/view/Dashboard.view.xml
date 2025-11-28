@@ -1,4 +1,4 @@
-<mvc:View id="dashboardView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f" xmlns:tnt="sap.tnt" displayBlock="true" controllerName="ui5.ticketui.controller.Dashboard">
+<mvc:View  xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f" xmlns:tnt="sap.tnt" displayBlock="true" controllerName="ui5.ticketui.controller.Dashboard">
 	<Page>
 		<customHeader>
 			<Toolbar>

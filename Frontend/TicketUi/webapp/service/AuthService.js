@@ -6,13 +6,13 @@ sap.ui.define([
     "use strict";
 
     return {
-        async login(username, password) {
+        async login(email, password) {
             const endpoint = "/api/User/login";
 
             try {
                 // Call API to login
                 const res = await ApiService.post(endpoint, {
-                    username,
+                    email,
                     password
                 }, null);
 
@@ -31,6 +31,10 @@ sap.ui.define([
 
         logout() {
             TokenService.clear();
+        },
+        isAuthenticated: function () {
+            const token = localStorage.getItem("auth_Token");
+            return !!token;
         }
     };
 });

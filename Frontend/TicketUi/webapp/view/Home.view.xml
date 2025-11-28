@@ -1,5 +1,5 @@
-<mvc:View id="home" controllerName="ui5.ticketui.controller.Home" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:tnt="sap.tnt" xmlns:core="sap.ui.core">
-	<Page id="homePage">
+<mvc:View controllerName="ui5.ticketui.controller.Home" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:tnt="sap.tnt" xmlns:core="sap.ui.core">
+	<Page>
 		<customHeader>
 			<Toolbar>				
 				<Title text="{i18n>appTitle}"/>
@@ -20,14 +20,22 @@
 					<Panel class="sapUiResponsiveMargin" width="auto">
 						<VBox class="sapUiSmallMargin">
 							<Label text="{i18n>labelUsername}" labelFor="usernameInput"/>
-							<Input id="usernameInput" placeholder="{i18n>textUsername}" value="{/username}"/>
+							<Input id="emailInput" placeholder="{i18n>textUsername}" value="{loginUserViewModel>/email}"/>
 							<Label text="{i18n>labelPassword}" labelFor="passwordInput" class="sapUiSmallMarginTop"/>
-							<Input id="passwordInput" type="Password" placeholder="{i18n>textPassword}" value="{/password}"/>
+							<Input id="passwordInput" type="Password" placeholder="{i18n>textPassword}" value="{loginUserViewModel>/password}"/>
 							<HBox class="sapUiSmallMarginTop" justifyContent="End">
 								<ToolbarSpacer/>
 								<Button class="sapUiSmallMarginEnd" text="{i18n>buttonSubmit}" type="Emphasized" press=".onButtonSubmitPress"/>
 								<Button class="sapUiSmallMarginEnd" text="{i18n>buttonCancel}" press=".onButtonCancelPress"/>
-							</HBox>
+							</HBox>							
+						</VBox>
+					</Panel>
+					<Panel headerText="Login with SSO" class="sapUiResponsiveMargin" width="auto">
+						<VBox class="sapUiSmallMargin">							
+							<HBox class="sapUiSmallMarginTop" justifyContent="End">
+								
+								<Button class="sapUiSmallMarginEnd" text="{i18n>buttonSubmitSso}" type="Emphasized" width="100%" press=".onButtonSubmitSsoPress"/>								
+							</HBox>							
 						</VBox>
 					</Panel>
 				</VBox>

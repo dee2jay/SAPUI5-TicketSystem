@@ -12,7 +12,7 @@ namespace TicketManagementSystem.API.Controllers;
 public class TicketsController(ITicketService ticketService) : ControllerBase
 {
     private readonly CancellationToken _cancellationToken = CancellationToken.None;
-    //[Authorize]
+    [Authorize]
     [HttpGet(Name = "GetTickets")]
     public async Task<IActionResult?> GetTickets(CancellationToken cancellationToken = default)
     {
@@ -30,7 +30,7 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
             return StatusCode(500, new { message = e.Message });
         }
     }
-    //[Authorize]
+    [Authorize]
     [HttpGet("/ticket/{ticketId}", Name = "GetTicket")]
     public async Task<IActionResult> GetTicket(int ticketId)
     {
@@ -53,7 +53,7 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
 
     }
 
-    //[Authorize]
+    [Authorize]
     [HttpPost("/create",Name = "CreateTicket")]
     public async Task<IActionResult> AddTicket([FromBody] TicketDto dto, CancellationToken cancellationToken)
     {
@@ -78,7 +78,7 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
         }
     }
 
-    //[Authorize]
+    [Authorize]
     [HttpGet("/ticket/{ticketId}/history/", Name = "GetHistory")]
     public async Task<IActionResult> GetHistoryFromTicket(int ticketId)
     {
@@ -93,7 +93,7 @@ public class TicketsController(ITicketService ticketService) : ControllerBase
         }
     }
 
-    //[Authorize]
+    [Authorize]
     [HttpPut("/ticket/{ticketId}/update", Name = "UpdateTicket")]
     public async Task<IActionResult> UpdateTicket(int ticketId, [FromBody] TicketUpdateDto dto, CancellationToken ct)
     {

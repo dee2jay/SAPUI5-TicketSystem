@@ -1,9 +1,7 @@
-<mvc:View xmlns:core="sap.ui.core"
-    id="ticketHistoryView"
+<mvc:View 
     controllerName="ui5.ticketui.controller.TicketHistory"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:f="sap.f"
+    xmlns="sap.m"    
     displayBlock="true"
     height="100%"
     busyIndicatorDelay="0">
@@ -14,7 +12,6 @@
           navButtonPress=".onPageTicketHistoryNavButtonPress">
 
         <content>
-
             <List                        
                 items="{
                     path: 'ticketsModel>histories'

@@ -167,7 +167,7 @@ public class NotificationService(ISmtpSettingsProvider emailProvider, IAppLogger
 
         try
         {
-            await emailProvider.GenerateAndSendEmail(emailContent, CancellationToken.None);
+            //await emailProvider.GenerateAndSendEmail(emailContent, CancellationToken.None);
             await logger.LogInfo("Email sent!!!", $"{nameof(NotificationService)} -> {nameof(NotifyTicketCreatedAsync)}");
         }
         catch (Exception e)

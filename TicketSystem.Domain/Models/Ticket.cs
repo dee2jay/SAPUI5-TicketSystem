@@ -19,7 +19,7 @@ public class Ticket
     [Required] public string Location { get; set; } = string.Empty;
     public string CostCenter { get; set; } = string.Empty;
     public string? AssignedTo { get; set; }
-    public DateTime ? DueDate { get; set; }
+    public DateTime? DueDate { get; set; }
     public string OrderNumber { get; set; }
 
     public int? UserId { get; set; }

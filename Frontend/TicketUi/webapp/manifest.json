@@ -111,7 +111,6 @@
                     },
                     "dashboard": {
                         "viewName": "Dashboard",
-                        "viewId": "dashboardView",
                         "controlId": "app",
                         "clearControlAggregation": true,
                         "transition": "slide",
@@ -122,7 +121,6 @@
                     },
                     "tickets": {
                         "viewName": "TicketOverview",
-                        "viewId": "ticketOverviewView",
                         "controlId": "app",
                         "clearControlAggregation": true,
                         "transition": "slide",
@@ -133,7 +131,6 @@
                     },
                     "ticketDetails": {
                         "viewName": "TicketDetails",
-                        "viewId": "ticketDetailsView",
                         "controlId": "app",
                         "clearControlAggregation": true,
                         "transition": "slide",
@@ -144,7 +141,6 @@
                     },
                     "ticketHistory":{
                         "viewName": "TicketHistory",
-                        "viewId": "ticketsHistoryView",
                         "controlId": "app",
                         "clearControlAggregation": true,
                         "transition": "slide",
@@ -155,7 +151,6 @@
                     },
                     "settings": {
                         "viewName": "AppSetting",
-                        "viewId": "settings",
                         "controlId": "app",
                         "clearControlAggregation": true,
                         "transition": "slide",

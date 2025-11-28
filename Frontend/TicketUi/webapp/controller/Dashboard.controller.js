@@ -1,11 +1,22 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller"
-], function (Controller) {
+    "sap/ui/core/mvc/Controller",
+    "ui5/ticketui/service/TokenService",
+    "sap/m/MessageToast"
+], function (Controller,
+	TokenService, MessageToast) {
     "use strict";
 
     return Controller.extend("ui5.ticketui.controller.Dashboard", {
         onInit: function () {
-            console.log("Dashboard loaded");
+           const token = TokenService.getToken();
+            if (!token) {
+
+                MessageToast.show("Please login");
+                // Redirect to login
+                this.getOwnerComponent().getRouter().navTo("home", {}, true);
+                return;
+            }
+
         },
 
         onToggleSideNav: function () {
@@ -40,9 +51,13 @@ sap.ui.define([
             //oNavList.setSelectedItem(this.byId("navSettings"));
             this.getOwnerComponent().getRouter().navTo("settings");
             break;
-        case "logout":
-            this.getOwnerComponent().getRouter().navTo("home");
-            break;
+         case "logout":
+                if(TokenService.getToken()){
+                    TokenService.clear();   
+                }            
+                MessageToast.show("session logged out successfully")
+                this.getOwnerComponent().getRouter().navTo("home");                      
+                break;
     } 
         }
     });

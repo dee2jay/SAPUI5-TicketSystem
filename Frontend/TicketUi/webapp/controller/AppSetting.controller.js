@@ -1,10 +1,18 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller"
-], function(Controller) {
+    "sap/ui/core/mvc/Controller",
+    "sap/m/MessageToast",
+    "ui5/ticketui/service/TokenService"
+], function(Controller, MessageToast,TokenService) {
     "use strict";
     return Controller.extend("ui5.ticketui.controller.AppSetting", {
        
-    onInit: function () {                    
+    onInit: function () {
+        const token = TokenService.getToken();
+            if (!token) {
+                // Redirect to login
+                this.getOwnerComponent().getRouter().navTo("home", {}, true);
+                return;
+            }                 
         
     },
 
@@ -41,8 +49,12 @@ sap.ui.define([
             this.getOwnerComponent().getRouter().navTo("settings");
             break;
         case "logout":
-            this.getOwnerComponent().getRouter().navTo("home");
-            break;
+                if(TokenService.getToken()){
+                    TokenService.clear();   
+                }            
+                MessageToast.show("session logged out successfully")
+                this.getOwnerComponent().getRouter().navTo("home");                      
+                break;
     } 
         },
 

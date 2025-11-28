@@ -1,10 +1,11 @@
 <mvc:View
     controllerName="ui5.ticketui.controller.App"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns:tnt="sap.tnt"
+    xmlns:mvc="sap.ui.core.mvc"    
     xmlns="sap.m">
 
     <Shell>
-    <App id="app" />
+    <App id="app">
+    <Page></Page>
+    </App>
     </Shell>
 </mvc:View>

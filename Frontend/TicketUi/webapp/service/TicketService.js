@@ -1,13 +1,17 @@
-sap.ui.define([], function () {
+sap.ui.define([
+    "ui5/ticketui/service/TokenService"
+], function (
+	TokenService) {
     "use strict";
 
-    const BASE_URL = "https://localhost:7187/api/tickets";
+    const BASE_URL = "https://localhost:7187";
 
     async function request(url, method = "GET", body = null) {
         const options = {
             method,
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${TokenService.getToken()}`
             }
         };
 
@@ -33,28 +37,28 @@ sap.ui.define([], function () {
          *  GET all tickets
          * ----------------------------------------------*/
         getAllTickets: function () {
-            return request(BASE_URL, "GET");
+            return request(`${BASE_URL}/api/Tickets`, "GET");
         },
 
         /** ---------------------------------------------
          *  GET ticket by ID
          * ----------------------------------------------*/
         getTicketById: function (ticketId) {
-            return request(`${BASE_URL}/${ticketId}`, "GET");
+            return request(`${BASE_URL}/ticket/${ticketId}`, "GET");
         },
 
         /** ---------------------------------------------
          *  CREATE new ticket
          * ----------------------------------------------*/
         createTicket: function (ticketDto) {
-            return request('${BASE_URL}/create', "POST", ticketDto);
+            return request(`${BASE_URL}/create`, "POST", ticketDto);
         },
 
         /** ---------------------------------------------
          *  UPDATE ticket
          * ----------------------------------------------*/
         updateTicket: function (ticketId, ticketDto) {
-            return request(`${BASE_URL}/${ticketId}/update`, "PUT", ticketDto);
+            return request(`${BASE_URL}/ticket/${ticketId}/update`, "PUT", ticketDto);
         },
         
     };
