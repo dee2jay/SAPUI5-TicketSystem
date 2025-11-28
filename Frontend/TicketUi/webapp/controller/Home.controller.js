@@ -44,16 +44,7 @@ sap.ui.define([
            MessageToast.show("User logged in!");            
             
             this.getOwnerComponent().getRouter().navTo("dashboard");            
-        },
-
-        onButtonCancelPress: function () {
-
-            //empty user input fields
-            const oLoginModel = this.getView().getModel("loginUserViewModel");
-            oLoginModel.setData({ email: "", password: "" });
-           
-            // Show a cancellation message
-            MessageToast.show("Login cancelled!");
         }
+
     });
 });

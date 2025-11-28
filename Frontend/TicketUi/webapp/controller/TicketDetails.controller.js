@@ -7,23 +7,47 @@ sap.ui.define([
 
 	return Controller.extend("ui5.ticketui.controller.TicketDetails", {
 
-        onInit: function() {
-            var oRouter = this.getOwnerComponent().getRouter();
+       onInit: function() {
+        const oModel = this.getOwnerComponent().getModel("ticketsModel");
+        const savedState = localStorage.getItem("ticketsModelState");
+        if (savedState) {
+            oModel.setData(JSON.parse(savedState));
+        }
+        
+        oModel.attachPropertyChange(() => {
+        localStorage.setItem("ticketsModelState", JSON.stringify(oModel.getData()));
+        });
 
-            oRouter.getRoute("ticketDetails").attachPatternMatched(this._onMatched, this);
-        },
+    // Attacher la route
+    const oRouter = this.getOwnerComponent().getRouter();
+    oRouter.getRoute("ticketDetails").attachPatternMatched(this._onMatched, this);
+},
 
         _onMatched(oEvent){
-             const id = oEvent.getParameter("arguments").ticketId;
+             const ticketId = oEvent.getParameter("arguments").ticketId;
 
-             // Load ticket details by ID
-             const sTicketPath = this._findTicketPathById(id);
+            if (!ticketId) {
+                ticketId = localStorage.getItem("lastOpenedTicketId");
+            }
+
+            if (!ticketId) {
+                console.error("Impossible to get  the ID of the  ticket !");
+                return;
+            }
+            
+            localStorage.setItem("lastOpenedTicketId", ticketId);
+            
+            // Load ticket details by ID
+             const sTicketPath = this._findTicketPathById(ticketId);
+            
             if (sTicketPath) {
                  this.getView().bindElement({
                     path: sTicketPath,
                     model: "ticketsModel"
                  });
-            }            
+            }  else {
+                console.error("Ticket introuvable:", ticketId);
+            }           
         
         },
 
@@ -33,7 +57,7 @@ sap.ui.define([
 
             const index = aTickets.findIndex(t => t.id == id);
             if (index !== -1) {
-                return "/tickets/" + index;
+                return  `/tickets/${index}`;
             }
             return null;
         },
@@ -54,10 +78,22 @@ sap.ui.define([
         window.print();
 
        },
-       onSaveButtonPress: function(){
-        MessageToast.show("Ticket saved")
+       onSaveButtonPress: function(oEvent){
+            const oCtx = this.getView().getBindingContext("ticketsModel");
+            if (!oCtx) {
+                console.error("No binding context");
+                return;
+            }
+
+            const sPath = oCtx.getPath();
+            const ticket = this.getView().getModel("ticketsModel").getProperty(sPath);
+
+            TicketService.updateTicket(ticket.id, ticket);
+        
+        MessageToast.show("Ticket saved");
 
        },
+
         onCancelButtonPress: function(){
             let oHistory = History.getInstance();
             let sPrevHash = oHistory.getPreviousHash();

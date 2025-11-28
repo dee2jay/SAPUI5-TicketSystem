@@ -97,13 +97,13 @@ sap.ui.define([
             //const aFilters = [];  
         },
 
-        onViewDetailsButtonPress: function (oEvent) {
-            MessageToast.show("Navigating to ticket details...");
+        onViewDetailsButtonPress: function (oEvent) {            
             const oItem = oEvent.getSource();
-            const oContext = oItem.getBindingContext("ticketsModel");
-            console.log("Context:", oContext);
+            const oContext = oItem.getBindingContext("ticketsModel");            
             const sTicketId = oContext.getProperty("id");
-            console.log("Navigating to ticket ID:", sTicketId);
+            
+            localStorage.setItem("lastOpenedTicketId", sTicketId);
+
             this.getOwnerComponent().getRouter().navTo("ticketDetails", { ticketId: sTicketId });
         },
 

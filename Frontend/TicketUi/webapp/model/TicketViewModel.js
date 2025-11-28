@@ -12,7 +12,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel"], function(JSONModel) {
                     "updatedAt": "",
                     "status": "",
                     "priority": "",
-                    "category": "t",
+                    "category": "",
                     "location": "",
                     "costCenter": "",
                     "assignedTo": null,

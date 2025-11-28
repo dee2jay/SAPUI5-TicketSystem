@@ -20,13 +20,12 @@
 					<Panel class="sapUiResponsiveMargin" width="auto">
 						<VBox class="sapUiSmallMargin">
 							<Label text="{i18n>labelUsername}" labelFor="usernameInput"/>
-							<Input id="emailInput" placeholder="{i18n>textUsername}" value="{loginUserViewModel>/email}"/>
+							<Input  placeholder="{i18n>textUsername}" value="{loginUserViewModel>/email}"/>
 							<Label text="{i18n>labelPassword}" labelFor="passwordInput" class="sapUiSmallMarginTop"/>
-							<Input id="passwordInput" type="Password" placeholder="{i18n>textPassword}" value="{loginUserViewModel>/password}"/>
+							<Input  type="Password" placeholder="{i18n>textPassword}" value="{loginUserViewModel>/password}"/>
 							<HBox class="sapUiSmallMarginTop" justifyContent="End">
 								<ToolbarSpacer/>
-								<Button class="sapUiSmallMarginEnd" text="{i18n>buttonSubmit}" type="Emphasized" press=".onButtonSubmitPress"/>
-								<Button class="sapUiSmallMarginEnd" text="{i18n>buttonCancel}" press=".onButtonCancelPress"/>
+								<Button class="sapUiSmallMarginEnd" text="{i18n>buttonSubmit}" type="Emphasized" press=".onButtonSubmitPress"/>								
 							</HBox>							
 						</VBox>
 					</Panel>
@@ -34,7 +33,7 @@
 						<VBox class="sapUiSmallMargin">							
 							<HBox class="sapUiSmallMarginTop" justifyContent="End">
 								
-								<Button class="sapUiSmallMarginEnd" text="{i18n>buttonSubmitSso}" type="Emphasized" width="100%" press=".onButtonSubmitSsoPress"/>								
+								<Button class="sapUiSmallMarginEnd" text="{i18n>buttonSsoSubmit}" type="Emphasized" width="100%" press=".onButtonSubmitSsoPress"/>								
 							</HBox>							
 						</VBox>
 					</Panel>

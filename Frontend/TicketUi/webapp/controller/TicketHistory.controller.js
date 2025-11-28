@@ -1,7 +1,9 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
+	"sap/ui/core/mvc/Controller",
+    "ui5/ticketui/service/TicketService"
 ], function(
-	Controller
+	Controller,
+	TicketService
 ) {
 	"use strict";
 
@@ -20,7 +22,7 @@ sap.ui.define([
                 this.getView().bindElement({
                     path: sTicketPath,
                     model: "ticketsModel"
-            });
+                });
             } else {
                 console.error("Ticket not found!", id);
             }
@@ -46,6 +48,8 @@ sap.ui.define([
                 oRouter.navTo("tickets", {}, { skipHistory: true });
             }
         },
+
+        
 
         onPageTicketHistoryNavButtonPress: function() {
             this.onCloseButtonPress();

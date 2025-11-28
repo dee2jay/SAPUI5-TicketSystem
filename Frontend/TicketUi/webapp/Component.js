@@ -28,10 +28,35 @@ sap.ui.define([
             });
             this.setModel(i18nModel, "i18n");
 
+            
             //define and set ticket model
             const oTicketsModel= new JSONModel({tickets: []});
             this.setModel(oTicketsModel, "ticketsModel");           
 
+            const oModel = this.getModel("ticketsModel");
+
+         // Restore model state from localStorage
+            const savedState = localStorage.getItem("ticketsModelState");
+            if (savedState) {
+                try {
+                    oTicketsModel.setData(JSON.parse(savedState));
+                } catch (e) {
+                    console.error("Failed to parse saved ticketsModelState:", e);
+                }
+            }
+
+            // Hook setData to save automatically to localStorage
+            const originalSetData = oTicketsModel.setData.bind(oTicketsModel);
+            oTicketsModel.setData = function (data) {
+                originalSetData(data);
+                try {
+                    localStorage.setItem("ticketsModelState", JSON.stringify(this.getData()));
+                } catch (e) {
+                    console.error("Failed to save ticketsModelState:", e);
+                }
+            };         
+            
+            
             this.getRouter().initialize();
         }
     });
