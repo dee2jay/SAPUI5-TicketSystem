@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
     "sap/m/MessageToast",
-    "sap/ui/core/routing/History"
-], (Controller, MessageToast, History) => {
+    "sap/ui/core/routing/History",
+    "ui5/ticketui/service/TicketService"
+], (Controller, MessageToast, History, TicketService) => {
 	"use strict";
 
 	return Controller.extend("ui5.ticketui.controller.TicketDetails", {
@@ -30,8 +31,7 @@ sap.ui.define([
                 ticketId = localStorage.getItem("lastOpenedTicketId");
             }
 
-            if (!ticketId) {
-                console.error("Impossible to get  the ID of the  ticket !");
+            if (!ticketId) {                
                 return;
             }
             
@@ -45,8 +45,6 @@ sap.ui.define([
                     path: sTicketPath,
                     model: "ticketsModel"
                  });
-            }  else {
-                console.error("Ticket introuvable:", ticketId);
             }           
         
         },
@@ -88,9 +86,13 @@ sap.ui.define([
             const sPath = oCtx.getPath();
             const ticket = this.getView().getModel("ticketsModel").getProperty(sPath);
 
-            TicketService.updateTicket(ticket.id, ticket);
+            const response = TicketService.updateTicket(ticket.id, ticket);
+            if(response){
+                MessageToast.show("Ticket saved");
+            }
         
-        MessageToast.show("Ticket saved");
+        
+        this.onNavBack();
 
        },
 
@@ -235,7 +237,12 @@ sap.ui.define([
                     }).catch(err => {
                         sap.m.MessageToast.show("Error deleting attachment");
                     });                 
-        }   
+        },
+        
+        onSendenButtonPress:function(oEvent)
+        {
+            MessageToast.show("Comment sent!!!")
+        }
            
     });
 });

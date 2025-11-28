@@ -1,20 +1,20 @@
 ﻿using ErrorOr;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
 
 namespace TicketManagementSystem.Infrastructure.Persistence.Repository;
 
-public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbcontext) : ITicketRepository
+public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbContext, IServiceScopeFactory serviceScopeFactory) : ITicketRepository
 {
-
     public async Task AddTicket(Ticket ticket)
     {
         try
         {
-            dbcontext.Tickets.Add(ticket);
-            await dbcontext.SaveChangesAsync();
+            dbContext.Tickets.Add(ticket);
+            await dbContext.SaveChangesAsync();
             await logger.LogInfo($"Ticket with ID {ticket.Id} added.");
         }
         catch (Exception e)
@@ -26,7 +26,7 @@ public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbcontex
 
     public async Task<ErrorOr<Ticket>> GetTicketById(int ticketId, CancellationToken ct)
     {
-        var ticket = await dbcontext.Tickets
+        var ticket = await dbContext.Tickets
             .Include(t =>t.Comments)
             .Include(t=>t.Attachments)
             .Include(t =>t.Histories.OrderByDescending(h => h.Timestamp))
@@ -48,8 +48,10 @@ public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbcontex
 
             try
             {
-                dbcontext.Tickets.Update(ticket);
-                await dbcontext.SaveChangesAsync();
+                using var scope = serviceScopeFactory.CreateScope();
+                var db = scope.ServiceProvider.GetRequiredService<TicketDbContext>();
+                db.Tickets.Update(ticket);
+                await db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException e)
             {
@@ -69,7 +71,7 @@ public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbcontex
     {
         try
         {
-            var attachments = await dbcontext.TicketAttachments. 
+            var attachments = await dbContext.TicketAttachments. 
                 Where(ta => ta.TicketId == ticketId).ToListAsync(ct);
             if (attachments.Count > 0)
             {
@@ -89,7 +91,7 @@ public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbcontex
     {
         try
         {
-            var comments = await dbcontext.TicketComments.
+            var comments = await dbContext.TicketComments.
                 Where(tc => tc.TicketId == ticketId).ToListAsync(ct);
             if (comments.Count > 0)
             {
@@ -109,7 +111,7 @@ public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbcontex
     {
         try
         {
-            var historyList = await dbcontext.TicketHistories.
+            var historyList = await dbContext.TicketHistories.
                 Where(h => h.TicketId == ticketId).ToListAsync(ct);
             if (historyList.Count > 0)
             {
@@ -127,7 +129,7 @@ public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbcontex
 
     public async Task<ErrorOr<IEnumerable<Ticket>>> GetAllTickets(CancellationToken ct)
     {
-        var ticketList = await dbcontext.Tickets
+        var ticketList = await dbContext.Tickets
             .Include(t => t.Histories)
             .Include(t=>t.Attachments)
             .Include(t => t.Comments)

@@ -60,7 +60,7 @@
 				          width="100%"
 				          rows="7"/>
 				<Button icon="sap-icon://paper-plane"
-				        text="Senden"/>
+				        text="Senden" press="onSendenButtonPress"/>
 			</VBox>
 		</Panel>
 		<Toolbar>

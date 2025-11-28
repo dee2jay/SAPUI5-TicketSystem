@@ -67,7 +67,7 @@
 											<Text text="{ticketsModel>priority}"/>
 											<Text text="{path:'ticketsModel>createdAt', formatter:'.formatter.formatDate'}"/>
 											<Text text="{ticketsModel>author}"/>
-											<Button icon="sap-icon://sys-find" type="Emphasized" enabled="{= ${ticketsModel>status} === 'Open' }" press=".onViewDetailsButtonPress"/>
+											<Button icon="sap-icon://sys-find" type="Emphasized" enabled="{= ${ticketsModel>status} !== 'Closed' }" press=".onViewDetailsButtonPress"/>
 										</cells>
 									</ColumnListItem>
 								</items>

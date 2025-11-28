@@ -37,8 +37,9 @@ public class TicketUpdatedEventHandler(IAppLogger logger, INotificationService n
         
     }
 
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
-        await logger.DisposeAsync();
+        GC.SuppressFinalize(this);
+        return ValueTask.CompletedTask;
     }
 }

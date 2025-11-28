@@ -95,7 +95,7 @@ public class NotificationService(ISmtpSettingsProvider emailProvider, IAppLogger
         {
             if (evt.Ticket.Status == TicketStatus.Closed)
             {
-                await emailProvider.GenerateAndSendEmail(emailContent, CancellationToken.None);
+                //await emailProvider.GenerateAndSendEmail(emailContent, CancellationToken.None);
                 await logger.LogInfo("Email sent!!!", $"{nameof(NotificationService)} -> {nameof(NotifyStatusChangedAsync)}");
             }
             

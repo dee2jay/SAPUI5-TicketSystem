@@ -21,12 +21,12 @@ sap.ui.define([
         onInit: function () { 
             
             const token = TokenService.getToken();
-            if (!token) {
+            if (!token || !TokenService.isTokenValid(token)) {
                 MessageToast.show("login session expired ")
                 // Redirect to login
                 this.getOwnerComponent().getRouter().navTo("home", {}, true);
                 return;
-            }
+            }            
 
             var oModel = this.getOwnerComponent().getModel("ticketsModel");
             this.getView().setModel(oModel, "ticketsModel");

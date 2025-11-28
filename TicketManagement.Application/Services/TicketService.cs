@@ -22,13 +22,10 @@ public class TicketService(
     ITicketAssignmentService ticketAssignmentService)
     : ITicketService
 {
-    private readonly IAppLogger _logger = logger;
-    private readonly IUserService _userService = userService;
-
+    private IUserService _userService = userService;
 
     public async Task<IEnumerable<Ticket>> GetAllTicketsAsync(CancellationToken ct)
     {
-        await using var logger = serviceProvider.GetRequiredService<IAppLogger>();
         try
         {
             ct.ThrowIfCancellationRequested();
@@ -75,8 +72,6 @@ public class TicketService(
 
     public async Task<TicketDto> CreateTicketAsync(TicketDto dto, CancellationToken ct)
     {
-        await using var logger = serviceProvider.GetRequiredService<IAppLogger>();
-        await using var userService = serviceProvider.GetRequiredService<IUserService>();
         try
         {
             // Implementation for creating a ticket goes here.
@@ -89,7 +84,7 @@ public class TicketService(
             ticket.AssignedTo = ticketAssignmentService.GetAssigneeForCategory(dto.Category);
 
 
-            var user = await userService.GetCurrentUser();
+            var user = await _userService.GetCurrentUser();
             ticket.Author = $"{user.Vorname} {user.Name}";
             ticket.User = user;
             ticket.UserId = user.Id;
@@ -112,13 +107,10 @@ public class TicketService(
 
     public async Task<Ticket?> UpdateTicketAsync(int ticketId, TicketUpdateDto dto, CancellationToken ct)
     {
-        await using var logger = serviceProvider.GetRequiredService<IAppLogger>();
-        await using var userService = serviceProvider.GetRequiredService<IUserService>();
-        
         var changes = new Dictionary<string, (object? oldValue, object? newValue)>();
-       
+        _userService = serviceProvider.GetRequiredService<IUserService>();
 
-        var currentUser = await userService.GetCurrentUser();
+        var currentUser = await _userService.GetCurrentUser();
 
         
 
@@ -160,7 +152,7 @@ public class TicketService(
             currentTicket.AssignedTo = dto.AssignedTo;
         }
 
-        if (dto.NewComments != null)
+        if (dto.NewComments is { Count: > 0 })
         {
             ct.ThrowIfCancellationRequested();
 
@@ -185,9 +177,8 @@ public class TicketService(
                 currentTicket.Comments.Count);
         }
 
-        if (dto.NewAttachments != null)
+        if (dto.NewAttachments is { Count: > 0 })
         {
-            var oldCount =currentTicket.Attachments.Count;
             foreach (var attachmentDto in dto.NewAttachments)
             {
                 ct.ThrowIfCancellationRequested();
@@ -225,7 +216,6 @@ public class TicketService(
 
     public async Task<Ticket?> GetTicketById(int ticketId, CancellationToken ct)
     {
-        await using var logger = serviceProvider.GetRequiredService<IAppLogger>();
         try
         {
             var existingTicket = await ticketRepository.GetTicketById(ticketId, ct);

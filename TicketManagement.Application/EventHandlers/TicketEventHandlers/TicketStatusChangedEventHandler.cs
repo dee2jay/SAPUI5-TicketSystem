@@ -35,10 +35,10 @@ public class TicketStatusChangedEventHandler(IAppLogger logger, IServiceProvider
                 Title = title,
                 TicketId = @event.Ticket.Id,
                 Property = nameof(@event.Ticket.Status),
-                OldValue = nameof(@event.OldStatus),
-                NewValue = nameof(@event.NewStatus),
+                OldValue = @event.OldStatus.ToString(),
+                NewValue = @event.NewStatus.ToString(),
                 ChangedAt = DateTime.Now,
-                ChangedBy = $"{@event.ChangeBy.Username}"
+                ChangedBy = $"{@event.ChangeBy.Name} {@event.ChangeBy.Vorname}"
             };
             var message =
                 $"TimeStamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId -> {logEntry.TicketId}, " +
