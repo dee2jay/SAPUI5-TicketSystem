@@ -2,14 +2,24 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
     "sap/m/MessageToast",
     "sap/ui/core/routing/History",
-    "ui5/ticketui/service/TicketService"
-], (Controller, MessageToast, History, TicketService) => {
+    "ui5/ticketui/service/TicketService",
+    "ui5/ticketui/service/UserService",
+    "ui5/ticketui/model/CommentViewModel"
+], function(Controller,
+	MessageToast,
+	History,
+	TicketService,	
+	CommentViewModel,
+    UserService){
 	"use strict";
 
 	return Controller.extend("ui5.ticketui.controller.TicketDetails", {
 
        onInit: function() {
+
         const oModel = this.getOwnerComponent().getModel("ticketsModel");
+
+       // const oCommentModel = CommentViewModel.create();
         const savedState = localStorage.getItem("ticketsModelState");
         if (savedState) {
             oModel.setData(JSON.parse(savedState));
@@ -18,10 +28,11 @@ sap.ui.define([
         oModel.attachPropertyChange(() => {
         localStorage.setItem("ticketsModelState", JSON.stringify(oModel.getData()));
         });
-
-    // Attacher la route
-    const oRouter = this.getOwnerComponent().getRouter();
-    oRouter.getRoute("ticketDetails").attachPatternMatched(this._onMatched, this);
+        
+        this.getView().setModel(oCommentModel, "commentViewModel");
+        
+        const oRouter = this.getOwnerComponent().getRouter();
+        oRouter.getRoute("ticketDetails").attachPatternMatched(this._onMatched, this);
 },
 
         _onMatched(oEvent){
@@ -87,7 +98,7 @@ sap.ui.define([
             const ticket = this.getView().getModel("ticketsModel").getProperty(sPath);
 
             const response = TicketService.updateTicket(ticket.id, ticket);
-            if(response){
+            if(response.OK){
                 MessageToast.show("Ticket saved");
             }
         
@@ -241,7 +252,20 @@ sap.ui.define([
         
         onSendenButtonPress:function(oEvent)
         {
-            MessageToast.show("Comment sent!!!")
+            var aComments = oEvent.getParameter("arguments").comments;
+            
+            const oCommentModel = this.getView().getModel("commentViewModel");
+            const oTicketModel = this.getView().getModel("ticketsModel");
+
+            const curTicket = localStorage.getItem("ticketsModelState", JSON.stringify(oTicketModel.getData()));             
+
+
+            
+            aComments.push(Object.assign({}, oCommentModel.getData()));
+
+            TicketService.updateTicket(ticketId, curTicket);
+            
+            MessageToast.show("Comment sent!!!");
         }
            
     });

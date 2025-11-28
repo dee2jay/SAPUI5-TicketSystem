@@ -7,8 +7,8 @@ sap.ui.define([
         create: function() {
             return new JSONModel(
                 {   
-                    "email": "",
-                    "password": ""                    
+                    "author": "",
+                    "text": ""                  
                 }
             );
         }
