@@ -25,6 +25,7 @@ namespace TicketManagementSystem.Application.Services
             catch (Exception e)
             {
                 await logger.LogError(e.Message, e, e.Source, e.StackTrace!);
+                return [];
             }
             
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TicketManagementSystem.Application.Interfaces
 {
-    internal interface IMappingService
+    public interface IMappingService
     {
     }
 }

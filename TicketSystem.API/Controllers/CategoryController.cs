@@ -5,6 +5,8 @@ using TicketManagementSystem.Domain.Models;
 
 namespace TicketManagementSystem.API.Controllers;
 
+[ApiController]
+[Route("api/[controller]")]
 public class CategoryController(ICategoryService categoryService) : ControllerBase
 {
     private readonly ICategoryService _categoryService = categoryService;
@@ -16,7 +18,7 @@ public class CategoryController(ICategoryService categoryService) : ControllerBa
         return Ok(await _categoryService.GetAllAsync(_cancellationTokenSource.Token));
     }
 
-    [HttpPost("", Name = "AddCategory")]
+    [HttpPost("/api/addcategory", Name = "AddCategory")]
     public async Task<ActionResult<CategoryDto>> AddCategory([FromBody] string category)
     {
         await _categoryService.AddCategory(new CategoryDto

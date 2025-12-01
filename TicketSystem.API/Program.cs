@@ -69,7 +69,8 @@ builder.Services.AddScoped<ISmtpSettingsProvider, SmtpSettingProvider>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
-builder.Services.AddScoped<ICategoryService, ICategoryService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IMappingService, MappingService>();
 
 // === Command Handler and Event Handlers===
 builder.Services.AddScoped<IEventHandler<TicketCreatedEvent>, TicketCreatedEventHandler>();
