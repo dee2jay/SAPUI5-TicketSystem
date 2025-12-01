@@ -4,22 +4,22 @@ sap.ui.define([
     "sap/ui/core/routing/History",
     "ui5/ticketui/service/TicketService",
     "ui5/ticketui/service/UserService",
-    "ui5/ticketui/model/CommentViewModel"
+    "ui5/ticketui/util/formatter"
 ], function(Controller,
 	MessageToast,
 	History,
-	TicketService,	
-	CommentViewModel,
-    UserService){
+	TicketService,
+	UserService,
+	formatter){
 	"use strict";
 
 	return Controller.extend("ui5.ticketui.controller.TicketDetails", {
 
+        formatter: formatter,
        onInit: function() {
 
-        const oModel = this.getOwnerComponent().getModel("ticketsModel");
+        const oModel = this.getOwnerComponent().getModel("ticketsModel");        
 
-       // const oCommentModel = CommentViewModel.create();
         const savedState = localStorage.getItem("ticketsModelState");
         if (savedState) {
             oModel.setData(JSON.parse(savedState));
@@ -27,9 +27,7 @@ sap.ui.define([
         
         oModel.attachPropertyChange(() => {
         localStorage.setItem("ticketsModelState", JSON.stringify(oModel.getData()));
-        });
-        
-        this.getView().setModel(oCommentModel, "commentViewModel");
+        });      
         
         const oRouter = this.getOwnerComponent().getRouter();
         oRouter.getRoute("ticketDetails").attachPatternMatched(this._onMatched, this);
@@ -42,10 +40,6 @@ sap.ui.define([
                 ticketId = localStorage.getItem("lastOpenedTicketId");
             }
 
-            if (!ticketId) {                
-                return;
-            }
-            
             localStorage.setItem("lastOpenedTicketId", ticketId);
             
             // Load ticket details by ID
@@ -88,7 +82,7 @@ sap.ui.define([
 
        },
        onSaveButtonPress: function(oEvent){
-            const oCtx = this.getView().getBindingContext("ticketsModel");
+            const oCtx = oEvent.getSource().getBindingContext("ticketsModel");            
             if (!oCtx) {
                 console.error("No binding context");
                 return;
@@ -250,22 +244,45 @@ sap.ui.define([
                     });                 
         },
         
-        onSendenButtonPress:function(oEvent)
+        onSendenButtonPress: async function(oEvent)
         {
-            var aComments = oEvent.getParameter("arguments").comments;
-            
+            const oItem = oEvent.getSource();
+            const oContext = oItem.getBindingContext("ticketsModel");
+            const ticketData = oContext.getObject();           // ← ticket
+            const ticketId = ticketData.id;
+
+            // -- Comment model
             const oCommentModel = this.getView().getModel("commentViewModel");
-            const oTicketModel = this.getView().getModel("ticketsModel");
+            
+            const commentData = oCommentModel.getData();
 
-            const curTicket = localStorage.getItem("ticketsModelState", JSON.stringify(oTicketModel.getData()));             
-
+            if(!commentData.text){
+                MessageToast.show("Please, empty comment is not supported");
+                return;
+            }
 
             
-            aComments.push(Object.assign({}, oCommentModel.getData()));
+            const comment = { ...oCommentModel.getData() };
 
-            TicketService.updateTicket(ticketId, curTicket);
-            
-            MessageToast.show("Comment sent!!!");
+
+            // -- Get current user 
+            const currentUser = await UserService.getCurrentUser();
+            comment.author = currentUser.fullname;
+            comment.createAt = new Date().toISOString();
+
+            // -- Add new comment safely
+            ticketData.comments = ticketData.comments || [];
+            ticketData.comments.push(comment);
+
+            // -- Refresh UI bindings
+            this.getView().getModel("ticketsModel").refresh(true);
+
+            // -- Update API
+            await TicketService.updateTicket(ticketId, ticketData);
+
+            oCommentModel.setData({ author: "", text: "", createAt: "" });
+
+            MessageToast.show("Comment sent!");
         }
            
     });

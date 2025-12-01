@@ -118,9 +118,8 @@ sap.ui.define([
             if(!oItem){
                 return;
             }
-            this.byId("sideNav").setSelectedItem(oItem);
-            
             var key = oItem.getKey();
+            this.byId("sideNav").setSelectedItem(key);
             
             var oNavList = this.byId("navList");
 

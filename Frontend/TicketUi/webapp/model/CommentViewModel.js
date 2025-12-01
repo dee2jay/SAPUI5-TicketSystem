@@ -8,7 +8,8 @@ sap.ui.define([
             return new JSONModel(
                 {   
                     "author": "",
-                    "text": ""                  
+                    "text": "",
+                    "createAt":""
                 }
             );
         }

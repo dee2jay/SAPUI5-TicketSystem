@@ -1,8 +1,12 @@
 sap.ui.define([
     "sap/ui/core/UIComponent",
     "sap/ui/model/resource/ResourceModel",
-    "sap/ui/model/json/JSONModel"
-], function(UIComponent, ResourceModel, JSONModel) {
+    "sap/ui/model/json/JSONModel",
+    "ui5/ticketui/model/CommentViewModel"
+], function(UIComponent,
+	ResourceModel,
+	JSONModel,
+	CommentViewModel) {
     "use strict";
     return UIComponent.extend("ui5.ticketui.Component", {
         metadata: {
@@ -31,7 +35,11 @@ sap.ui.define([
             
             //define and set ticket model
             const oTicketsModel= new JSONModel({tickets: []});
-            this.setModel(oTicketsModel, "ticketsModel");           
+            this.setModel(oTicketsModel, "ticketsModel");     
+                  
+            //define and set comment model
+            const oCommentModel= CommentViewModel.create();
+            this.setModel(oCommentModel, "commentViewModel");     
 
             const oModel = this.getModel("ticketsModel");
 
