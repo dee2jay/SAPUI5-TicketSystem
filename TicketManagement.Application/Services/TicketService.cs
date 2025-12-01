@@ -152,42 +152,47 @@ public class TicketService(
             currentTicket.AssignedTo = dto.AssignedTo;
         }
 
-        if (dto.NewComments is { Count: > 0 })
+        if (dto.Comments?.Count > currentTicket.Comments.Count)
         {
             ct.ThrowIfCancellationRequested();
 
-            changes[nameof(currentTicket.Comments)] = (currentTicket.Comments, dto.NewComments);
+            changes[nameof(currentTicket.Comments)] = (currentTicket.Comments, dto.Comments);
 
-            foreach (var commentDto in dto.NewComments)
+            var lastComment = dto.Comments.LastOrDefault();
+
+            if (lastComment != null)
             {
                 var comment = new TicketComment
-                    { Text = commentDto.Text, 
-                        CreatedAt = DateTime.Now,
-                        Author = commentDto.Author,
-                        User = currentUser,
-                        UserId = currentUser.Id
-                    };
+                {
+                    Text = lastComment.Text,
+                    CreatedAt = DateTime.Now,
+                    Author = lastComment.Author,
+                    User = currentUser,
+                    UserId = currentUser.Id
+                };
                 currentTicket.Comments.Add(comment);
-                
+
                 await eventPublisher.PublishEventAsync(
                     new CommentAddedToTicketEvent(ticketId, comment.Text!, currentUser.Name), ct);
-            }
 
-            changes[nameof(currentTicket.Attachments)] = (currentTicket.Comments.Count - dto.NewComments.Count,
-                currentTicket.Comments.Count);
+                changes[nameof(currentTicket.Comments)] = (currentTicket.Comments.Count - dto.Comments.Count,
+                    currentTicket.Comments.Count);
+            }
+            
         }
 
-        if (dto.NewAttachments is { Count: > 0 })
+        if (dto.Attachments?.Count > currentTicket.Attachments.Count)
         {
-            foreach (var attachmentDto in dto.NewAttachments)
+            ct.ThrowIfCancellationRequested();
+            var newAttachment = dto.Attachments.LastOrDefault();
+
+            if (newAttachment != null)
             {
-                ct.ThrowIfCancellationRequested();
-                
                 var attachment = new TicketAttachment
                 {
-                    FileName = attachmentDto.FileName, 
-                    Url = attachmentDto.Url, 
-                    Data = attachmentDto.Data,
+                    FileName = newAttachment.FileName,
+                    Url = newAttachment.Url,
+                    Data = newAttachment.Data,
                     User = currentUser,
                     UserId = currentUser.Id
                 };
@@ -196,10 +201,10 @@ public class TicketService(
 
                 await eventPublisher.PublishEventAsync(
                     new AttachmentAddedToTicketEvent(ticketId, attachment.FileName, currentUser.Name), ct);
-            }
 
-            changes[nameof(currentTicket.Attachments)] = (currentTicket.Attachments.Count - dto.NewAttachments.Count,
-                currentTicket.Attachments.Count);
+                changes[nameof(currentTicket.Attachments)] = (currentTicket.Attachments.Count - dto.Attachments.Count,
+                    currentTicket.Attachments.Count);
+            }
           
         }
 
@@ -284,10 +289,5 @@ public class TicketService(
             await logger.LogError(e.Message, e, "Database", e.StackTrace!);
         }
         return [];
-    }
-
-    public async Task AddCommentToTicket(int ticketId, string comment)
-    {
-        throw new NotImplementedException();
     }
 }

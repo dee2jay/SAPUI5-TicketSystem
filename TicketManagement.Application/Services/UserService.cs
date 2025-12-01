@@ -56,6 +56,11 @@ public class UserService : IUserService
         throw new NotImplementedException();
     }
 
+    public Task<string?> GetUserFullnameById(int userId)
+    {
+        throw new NotImplementedException();
+    }
+
     public ValueTask DisposeAsync()
     {
         GC.SuppressFinalize(this);

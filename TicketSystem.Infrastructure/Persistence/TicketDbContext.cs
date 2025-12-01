@@ -13,6 +13,8 @@ public class TicketDbContext : DbContext
     public DbSet<History> TicketHistories { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<CategoryLocationUserMapping> CategoryLocationUserMappings { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -102,6 +104,16 @@ public class TicketDbContext : DbContext
         //              History
         // -----------------------------
         modelBuilder.Entity<History>();
+
+        // -----------------------------
+        //              Category
+        // -----------------------------
+        modelBuilder.Entity<Category>();
+
+        // -----------------------------
+        //              Mappings 
+        // -----------------------------
+        modelBuilder.Entity<CategoryLocationUserMapping>();
 
     }
 }

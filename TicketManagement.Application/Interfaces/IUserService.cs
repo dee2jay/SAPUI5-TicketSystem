@@ -14,6 +14,7 @@ namespace TicketManagementSystem.Application.Interfaces
         Task<string> LoginUserAsync(LoginUserDto dto, CancellationToken ct);
         Task LogoutUserAsync(string email);
         public Task<User> GetCurrentUser();
-        Task<User?> GetUserById(int toInt32);
+        Task<User?> GetUserById(int userId);
+        Task<string?> GetUserFullnameById(int  userId);
     }
 }

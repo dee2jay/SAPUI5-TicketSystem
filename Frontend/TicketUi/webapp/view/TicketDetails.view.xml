@@ -1,4 +1,4 @@
-<mvc:View id="idTicketDetailsView"
+<mvc:View 
           controllerName="ui5.ticketui.controller.TicketDetails"
           xmlns:mvc="sap.ui.core.mvc"
           xmlns="sap.m"
@@ -44,21 +44,24 @@
 		</Panel>
 		<Panel headerText="{i18n>descriptionTitle}">
 			<TextArea width="100%"
-			          rows="7"
+			          rows="4"
 			          value="{ticketsModel>description}"
 			          editable="false"/>
 		</Panel>
 		<Panel headerText="{i18n>commentsTitle}"
 		       class="sapUiSmallMarginTop">
-			<List items="{ticketsModel>/comments}">
-				<StandardListItem title="{ticketsModel>User}"
-				                  description="{ticketsModel>Text}"
-				                  info="{ticketsModel>Date}"/>
+			<List items="{ticketsModel>comments}" >
+				<StandardListItem 
+					title="{ticketsModel>author}"
+					description="{ticketsModel>text}"
+					icon="sap-icon://comment"
+					info="{path: 'ticketsModel>createdAt', formatter: '.formatter.formatDateTime'}"/>
 			</List>
 			<VBox>
 				<TextArea placeholder="Kommentar hinzufügen..."
 				          width="100%"
-				          rows="7"/>
+				          rows="2"
+						  value="{commentViewModel>/text}"/>
 				<Button icon="sap-icon://paper-plane"
 				        text="Senden" press="onSendenButtonPress"/>
 			</VBox>

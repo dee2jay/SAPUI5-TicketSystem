@@ -61,7 +61,7 @@ public class UserRepository : IUserRepository
 
     public async Task<ErrorOr<User>> GetUserByUsername(string username)
     {
-        var user = await _dbcontext.Users.FirstOrDefaultAsync(u => u.Username == username);
+        var user = await _dbcontext.Users.FirstOrDefaultAsync(u => u.Email == username);
         if (user != null)
         {
             return user;
@@ -69,6 +69,7 @@ public class UserRepository : IUserRepository
         _logger.LogWarning($"User with the username {username} not found.");
         return Error.NotFound(description: $"User with the username {username} not found.");
     }
+
     public async Task<ErrorOr<User>> GetUserByEmail(string email)
     {
         var user = await _dbcontext.Users.FirstOrDefaultAsync(u => u.Email == email);

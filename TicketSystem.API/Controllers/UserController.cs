@@ -77,10 +77,10 @@ public class UserController : ControllerBase
 
     [Authorize]
     [HttpGet("me")]
-    public IActionResult Me()
+    public async Task<IActionResult> Me()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var username = User.Identity?.Name;
-        return Ok(new { userId, username });
+       var user =await _userService.GetCurrentUser();
+       var fullname = $"{user.Vorname}, {user.Name}";
+       return Ok(new { user.Id, fullname });
     }
 }

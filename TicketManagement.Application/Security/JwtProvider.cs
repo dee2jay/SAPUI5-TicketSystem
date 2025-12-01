@@ -28,12 +28,13 @@ public class JwtProvider : IJwtProvider
 
     public string Generate(User user)
     {
+        var fullName = $"{user.Name} {user.Vorname}";
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.Email)
+            new Claim(ClaimTypes.Name, fullName)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));

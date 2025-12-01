@@ -2,7 +2,18 @@
 	<content>
 		<l:SimpleForm editable="true" layout="ResponsiveGridLayout" class="sapUiResponsiveMargin" width="auto">
 			<Label text="{i18n>labelCategory}"/>
-			<Input value="{ticketViewModel>/category}" placeholder="{i18n>labelCategory}"/>
+			<Select selectedKey="{ticketViewModel>category}" placeholder="{i18n>labelCategory}">
+			<items>
+				<core:Item key="Low"
+							text="Low"/>
+				<core:Item key="Medium"
+							text="Medium"/>
+				<core:Item key="High"
+							text="High"/>
+				<core:Item key="Critical"
+							text="Critical"/>
+			</items>
+			</Select>
 			<Label text="{i18n>labelLocation}"/>
 			<Input value="{ticketViewModel>/location}" placeholder="{i18n>labelLocation}"/>
 			<Label text="{i18n>labelCostCenter}"/>
