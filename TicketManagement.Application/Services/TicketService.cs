@@ -152,60 +152,83 @@ public class TicketService(
             currentTicket.AssignedTo = dto.AssignedTo;
         }
 
-        if (dto.Comments?.Count > currentTicket.Comments.Count)
+        if (dto.Comments != null && dto.Comments.Count > 0)
         {
             ct.ThrowIfCancellationRequested();
 
-            changes[nameof(currentTicket.Comments)] = (currentTicket.Comments, dto.Comments);
+            var oldCount = currentTicket.Comments.Count;
 
-            var lastComment = dto.Comments.LastOrDefault();
+            // Build a fast lookup of existing comment signatures (Id if available, otherwise text+user+created)
+            var existingSignatures = new HashSet<string>(currentTicket.Comments.Select(c =>
+                $"{c.Text?.Trim()}:{c.UserId}"));
 
-            if (lastComment != null)
+            var added = 0;
+            foreach (var commentDto in dto.Comments)
             {
-                var comment = new TicketComment
+                ct.ThrowIfCancellationRequested();
+
+                var comment = mapper.Map<TicketComment>(commentDto);
+                comment.User = currentUser;
+                comment.UserId = currentUser.Id;
+                comment.CreatedAt = DateTime.UtcNow;
+
+                var signature = $"{comment.Text ?? string.Empty}:{comment.UserId}";
+
+                if (existingSignatures.Contains(signature))
                 {
-                    Text = lastComment.Text,
-                    CreatedAt = DateTime.Now,
-                    Author = lastComment.Author,
-                    User = currentUser,
-                    UserId = currentUser.Id
-                };
+                    continue;
+                }
+
                 currentTicket.Comments.Add(comment);
+                existingSignatures.Add(signature);
+                added++;
 
                 await eventPublisher.PublishEventAsync(
-                    new CommentAddedToTicketEvent(ticketId, comment.Text!, currentUser.Name), ct);
-
-                changes[nameof(currentTicket.Comments)] = (currentTicket.Comments.Count - dto.Comments.Count,
-                    currentTicket.Comments.Count);
+                    new CommentAddedToTicketEvent(ticketId, comment.Text ?? string.Empty, currentUser.Name), ct);
             }
-            
+
+            if (added > 0)
+            {
+                changes[nameof(currentTicket.Comments)] = (oldCount, currentTicket.Comments.Count);
+            }
         }
 
         if (dto.Attachments?.Count > currentTicket.Attachments.Count)
         {
             ct.ThrowIfCancellationRequested();
-            var newAttachment = dto.Attachments.LastOrDefault();
+            var oldCount = currentTicket.Comments.Count;
 
-            if (newAttachment != null)
+            var existingSignatures = new HashSet<string>(currentTicket.Attachments.Select(a =>
+                $"{a.FileName}:{a.UserId}"));
+
+            var added = 0;
+
+            foreach (var attachmentDto in dto.Attachments)
             {
-                var attachment = new TicketAttachment
+                ct.ThrowIfCancellationRequested();
+                var attachment = mapper.Map<TicketAttachment>(attachmentDto);
+                attachment.User = currentUser;
+                attachment.UserId = currentUser.Id;
+                attachment.UploadedAt = DateTime.UtcNow;
+
+                var signature = $"{attachment.FileName}:{attachment.UserId}";
+
+                if (existingSignatures.Contains(signature))
                 {
-                    FileName = newAttachment.FileName,
-                    Url = newAttachment.Url,
-                    Data = newAttachment.Data,
-                    User = currentUser,
-                    UserId = currentUser.Id
-                };
-
+                    continue;
+                }
+                
                 currentTicket.Attachments.Add(attachment);
-
+                existingSignatures.Add(signature);
+                added++;
                 await eventPublisher.PublishEventAsync(
                     new AttachmentAddedToTicketEvent(ticketId, attachment.FileName, currentUser.Name), ct);
-
-                changes[nameof(currentTicket.Attachments)] = (currentTicket.Attachments.Count - dto.Attachments.Count,
-                    currentTicket.Attachments.Count);
             }
-          
+
+            if (added > 0)
+            {
+                changes[nameof(currentTicket.Attachments)] = (oldCount,currentTicket.Attachments.Count );
+            }
         }
 
         if (changes.Count == 0)

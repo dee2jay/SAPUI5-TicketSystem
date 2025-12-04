@@ -10,5 +10,6 @@ public class TicketAttachmentDto
 {
     public string FileName { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;
-    public byte[] Data { get; set; } = [];    
+    public byte[] Data { get; set; } = [];
+    public DateTime UploadAt { get; set; }
 }

@@ -61,6 +61,8 @@ builder.Services.AddScoped<IEventDispatcher, EventDispatcher>();
 
 builder.Services.AddAutoMapper(profile => profile.AddProfile(typeof(TicketMappingProfile)));
 builder.Services.AddAutoMapper(profile => profile.AddProfile(typeof(UserMappingProfile)));
+builder.Services.AddAutoMapper(profile => profile.AddProfile(typeof(TicketCommentMappingProfile)));
+builder.Services.AddAutoMapper(profile => profile.AddProfile(typeof(TicketAttachmentMappingProfile)));
 
 // === Services ===
 builder.Services.AddScoped<ITicketAssignmentService, TicketAssignmentService>();
@@ -183,6 +185,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseRouting();
 app.UseCors("AllowUI5");
 
 app.UseHttpsRedirection();

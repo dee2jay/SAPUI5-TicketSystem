@@ -12,12 +12,12 @@ public class TicketComment
     public DateTime CreatedAt { get; set; }
 
     public int UserId { get; set; }
-    public User User { get; set; }
+    public User? User { get; set; }
 
     [JsonIgnore]
     public int TicketId { get; set; }
 
     [JsonIgnore]
-    public Ticket Ticket { get; set; }
+    public Ticket? Ticket { get; set; }
 
 }

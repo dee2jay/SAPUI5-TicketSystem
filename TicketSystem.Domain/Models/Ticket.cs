@@ -20,7 +20,7 @@ public class Ticket
     public string CostCenter { get; set; } = string.Empty;
     public string? AssignedTo { get; set; }
     public DateTime? DueDate { get; set; }
-    public string OrderNumber { get; set; }
+    public string? OrderNumber { get; set; }
 
     public int? UserId { get; set; }
     public User? User { get; set; }
@@ -31,6 +31,6 @@ public class Ticket
 
     
     [Timestamp]
-    public byte[] RowVersion { get; set; }
+    public byte[]? RowVersion { get; set; }
     
 }
