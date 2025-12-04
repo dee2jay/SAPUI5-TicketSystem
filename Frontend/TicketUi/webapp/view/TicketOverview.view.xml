@@ -1,4 +1,9 @@
-<mvc:View  controllerName="ui5.ticketui.controller.TicketOverview" xmlns="sap.m" xmlns:tnt="sap.tnt" xmlns:mvc="sap.ui.core.mvc">
+<mvc:View  
+	controllerName="ui5.ticketui.controller.TicketOverview" 
+	xmlns="sap.m" 
+	xmlns:tnt="sap.tnt" 
+	xmlns:mvc="sap.ui.core.mvc">
+	
 	<Page id="ticketOverviewPage">
 		<customHeader>
 			<Toolbar>

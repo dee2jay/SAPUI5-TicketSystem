@@ -3,13 +3,17 @@ sap.ui.define([
     "sap/m/MessageToast",
     "sap/ui/core/routing/History",
     "ui5/ticketui/service/TicketService",
+    "ui5/ticketui/service/TokenService",
     "ui5/ticketui/service/UserService",
+    "sap/ui/core/Fragment",
     "ui5/ticketui/util/formatter"
 ], function(Controller,
 	MessageToast,
 	History,
 	TicketService,
+    TokenService,
 	UserService,
+    Fragment,
 	formatter){
 	"use strict";
 
@@ -17,6 +21,14 @@ sap.ui.define([
 
         formatter: formatter,
        onInit: function() {
+
+            const token = TokenService.getToken();
+            if (!token || !TokenService.isTokenValid(token)) {
+                MessageToast.show("login session expired ")
+                // Redirect to login
+                this.getOwnerComponent().getRouter().navTo("home", {}, true);
+                return;
+            }    
 
         const oModel = this.getOwnerComponent().getModel("ticketsModel");        
 
@@ -122,127 +134,129 @@ sap.ui.define([
                 oRouter.navTo("tickets", {}, { skipHistory: true });
             }
         },
-        onAttachmentsButtonPress: function(){
-            MessageToast.show("Attachments button pressed");
 
-            // Implement attachment handling logic here
-            //call file upload dialog or navigate to attachments view            
-            if (!this._oAttachmentsDialog) {
-                const oView = this.getView();
-                const oUpload = new sap.m.UploadCollection({
-                    uploadUrl: "/api/tickets/upload", 
-                    maximumFilenameLength: 100,
-                    multiple: true,
-                    instantlyUpload: false, 
-                    change: this._onUploadChange.bind(this),
-                    beforeUploadStarts: this._onBeforeUploadStarts.bind(this),
-                    uploadComplete: this._onUploadComplete.bind(this),
-                    fileDeleted: this._onFileDeleted.bind(this)
+        onAttachmentsButtonPress: function(){                 
+            
+            if (!this._attachmentDialog) {
+                Fragment.load({
+                    name: "ui5.ticketui.view.AttachmentDialog",
+                    controller: this
+                }).then(oDialog => {
+                    this._attachmentDialog = oDialog;
+                    this.getView().addDependent(oDialog);                    
+
+                    oDialog.open();
                 });
-
-            this._oAttachmentsDialog = new sap.m.Dialog({
-                title: "Ticket - {i18n>titleTicketAttachments}",
-                content: [oUpload],
-                beginButton: new sap.m.Button({
-                    text: "{i18n>buttonUpload}",
-                    press: function () {
-                        oUpload.upload(); // lance upload pour les fichiers sélectionnés
-                    }
-                }),                
-                endButton: new sap.m.Button({
-                    text: "{i18n>buttonClose}",
-                    press: function () { this._oAttachmentsDialog.close(); }.bind(this)
-                }),
-                
-                afterClose: function () 
-                { 
-                    this._oAttachmentsDialog.close(); 
-                }
-            });
-
-            oView.addDependent(this._oAttachmentsDialog);
-            this._oUploadCollection = oUpload;
-            }
-        const sTicketPath = this.getView().getBindingContext("ticketsModel").Path; // ex: /tickets/3
-        const oTicket = this.getView().getModel("ticketsModel").getProperty(sTicketPath);
-        const sTicketId = oTicket && oTicket.id;
-        this._oUploadCollection.setUploadUrl(`/api/tickets/${sTicketId}/attachments`);
-
-        this._oAttachmentsDialog.open();
-        },
-        
-        _onBeforeUploadStarts: function (oEvent) {
-    // Ajouter en-têtes (token ...). Utilisez votre TokenService réel.
-    const sToken = sap.ui.require("ui5.ticketui.service.TokenService")?.getToken?.() || null;
-    if (sToken) {
-        const oHeader = new sap.m.UploadCollectionParameter({
-            name: "Authorization",
-            value: "Bearer " + sToken
-        });
-        oEvent.getParameters().addHeaderParameter(oHeader);
-    }
-    // Contrôle taille/type:
-    const oFile = oEvent.getParameter("file");
-    if (oFile.size > 10 * 1024 * 1024) { // 10 MB
-        sap.m.MessageToast.show("Fichier trop volumineux (max 10MB).");
-        oEvent.preventDefault(); // annule l'upload de ce fichier
-    }
+            } else {
+                this._attachmentDialog.open();
+            }           
         },
 
-        _onUploadChange: function (oEvent) {
-        // Optionnel: validation immédiate des fichiers choisis
-            const aFiles = oEvent.getParameter("files");
-            for (let i = 0; i < aFiles.length; i++) {
-                const oFile = aFiles[i];
-                if (oFile.size > 10 * 1024 * 1024) { // 10 MB
-                    sap.m.MessageToast.show("{i18n>attachementValidationError}");                
-         
-                    oEvent.preventDefault(); // annule l'upload de ce fichier                   
-                } 
-            }
+        onFileSelected: function(oEvent) {
+            this._file = oEvent.getParameter("files")[0];            
         },
 
-        _onUploadComplete: function (oEvent) {
-            // Parsez la réponse du serveur et mettez à jour le modèle
-            const sResponse = oEvent.getParameter("response");
-            // Ex: le serveur renvoie JSON { id, filename, url }
+        onUploadComplete: function(oEvent) {
+            const response = oEvent.getParameter("response");
             try {
-                const oJson = JSON.parse(sResponse);
-                // ajouter l'attachment dans le modèle ticketsModel sous le ticket en cours
-                const oModel = this.getView().getModel("ticketsModel");
+                const oJson = JSON.parse(response); // { id, filename, url }
+
                 const sPath = this.getView().getBindingContext("ticketsModel").getPath();
+                const oModel = this.getView().getModel("ticketsModel");
+
                 const aAttachments = oModel.getProperty(sPath + "/attachments") || [];
                 aAttachments.push(oJson);
                 oModel.setProperty(sPath + "/attachments", aAttachments);
-                sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("messageTicketSaved") || "Upload OK");
+
+                sap.m.MessageToast.show("Upload OK !");
             } catch (e) {
-                // certaines implémentations renvoient vide; handle accordingly
-                sap.m.MessageToast.show("Upload terminé. Actualisez la liste si nécessaire.");
+                console.log(e);
+                sap.m.MessageToast.show("Upload NOK, but invalid response.");
             }
         },
-        _onFileDeleted: function (oEvent) {
 
-            const sDocumentId = oEvent.getParameter("documentId"); 
-                fetch(`/api/attachments/${sDocumentId}`, { method: "DELETE", headers: { "Authorization": "Bearer " + /* token */ "" }})
-                    .then(resp => {
-                        if (resp.ok) {
-                            // retirer du modèle
-                            const oModel = this.getView().getModel("ticketsModel");
-                            const sPath = this.getView().getBindingContext("ticketsModel").getPath();
-                            const aAttachments = oModel.getProperty(sPath + "/attachments") || [];
-                            const i = aAttachments.findIndex(a => a.id == sDocumentId);
-                            if (i !== -1) {
-                                aAttachments.splice(i, 1);
-                                oModel.setProperty(sPath + "/attachments", aAttachments);
-                            }
-                            sap.m.MessageToast.show("Attachment deleted");
-                        } else {
-                            sap.m.MessageToast.show("Delete failed");
-                        }
-                    }).catch(err => {
-                        sap.m.MessageToast.show("Error deleting attachment");
-                    });                 
+        onDialogClose: function(){
+            this._attachmentDialog.close();
         },
+
+        onUploadPress: function() {
+            
+            const oBundle = this.getView().getModel("i18n").getResourceBundle();
+
+            if (!this._file) {
+                sap.m.MessageToast.show("Select a file first!");
+                return;
+            }
+            const oToken = localStorage.getItem("auth_token");
+            console.log(TokenService.isTokenValid(oToken));
+            
+            if(!TokenService.isTokenValid(oToken))
+            {
+                MessageToast.show("Session expired");
+                this.getOwnerComponent().getRouter().navTo("home", {}, true);
+                return;
+            }
+
+            const headers = {
+                "Authorization": "Bearer " + TokenService.getToken(),
+            };
+
+            const oUploader = sap.ui.getCore().byId("fileUploaderDialog");
+
+            oUploader.removeAllHeaderParameters();
+            Object.keys(headers).forEach(key => {
+                oUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
+                    name: key,
+                    value: headers[key]
+                }));
+            });
+
+            const sPath = this.getView().getBindingContext("ticketsModel").getPath();
+            const oTicket = this.getView().getModel("ticketsModel").getProperty(sPath);                       
+            oUploader.setUploadUrl(`https://localhost:7187/tickets/${oTicket.id}/uploadAttachment`);
+            oUploader.upload();
+        },
+
+        onDeleteAttachmentPress: async function (oEvent) {
+    const oBundle = this.getView().getModel("i18n").getResourceBundle();
+
+    // Récupérer le contexte de la ligne
+    const oItem = oEvent.getSource().getParent().getBindingContext("ticketsModel");
+    const oAttachment = oItem.getObject();
+
+    const attachmentId = oAttachment.id;
+    const ticketId = this.currentTicketId;
+
+    try {
+        const sToken = TokenService.getToken();
+
+        const response = await fetch(`/api/tickets/${ticketId}/attachments/${attachmentId}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + sToken
+            }
+        });
+
+        if (!response.ok) {
+            MessageToast.show(oBundle.getText("attachmentDeletionError") || "Fehler beim Löschen");
+            return;
+        }
+
+        // Mise à jour du modèle local
+        const sPath = this.getView().getBindingContext("ticketsModel").getPath();
+        const oModel = this.getView().getModel("ticketsModel");
+
+        let aAttachments = oModel.getProperty(sPath + "/attachments") || [];
+        aAttachments = aAttachments.filter(a => a.id !== attachmentId);
+        oModel.setProperty(sPath + "/attachments", aAttachments);
+
+        MessageToast.show(oBundle.getText("attachmentDeleted") || "Attachment supprimé");
+
+    } catch (err) {
+        console.error(err);
+        MessageToast.show(oBundle.getText("attachmentDeletionError") || "Erreur suppression");
+    }
+},
         
         onSendenButtonPress: async function(oEvent)
         {
@@ -272,13 +286,13 @@ sap.ui.define([
 
             // -- Add new comment safely
             ticketData.comments = ticketData.comments || [];
-            ticketData.comments.push(comment);
-
-            // -- Refresh UI bindings
-            this.getView().getModel("ticketsModel").refresh(true);
+            ticketData.comments.push(comment);           
 
             // -- Update API
             await TicketService.updateTicket(ticketId, ticketData);
+
+                // -- Refresh UI bindings
+            this.getView().getModel("ticketsModel").refresh(true);
 
             oCommentModel.setData({ author: "", text: "", createAt: "" });
 

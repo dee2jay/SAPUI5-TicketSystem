@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:unified="sap.ui.unified">
+    <Dialog
+        id="attachmentDialog"
+        title="{i18n>titleTicketAttachments}"        
+        afterClose=".onDialogClose">
+        <VBox id="_IDGenVBox" class="sapUiSmallMargin">
+            <unified:FileUploader
+                id="fileUploaderDialog"
+                name="file"
+                sendXHR="true"
+                uploadComplete=".onUploadComplete"
+                change=".onFileSelected"
+                width="100%"/>
+            <Button id="_IDGenButton"
+                text="{i18n>buttonUpload}"
+                type="Emphasized"
+                press=".onUploadPress"/>
+
+                <List
+            id="attachmentList"
+            headerText="{i18n>titleTicketAttachmentList}"
+            items="{ticketsModel>attachments}">
+            <CustomListItem id="_IDGenStandardListItem"                
+                type="Active">
+                <HBox id="_IDGenHBox" justifyContent="SpaceBetween" alignItems="Center">                
+                
+                <core:Icon id="_IDGenIcon" src= "sap-icon://document" />
+                <Text id="_IDGenText" text="{ticketsModel>fileName}" />
+
+                <Button id="_IDGenButton2" icon="sap-icon://delete" press=".onDeleteAttachmentPress"/>
+                </HBox>
+                </CustomListItem>
+
+        </List>
+        </VBox>
+        <endButton>
+            <Button id="_IDGenButton1" text="{i18n>buttonClose}" press=".onDialogClose"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

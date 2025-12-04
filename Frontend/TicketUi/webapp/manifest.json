@@ -27,6 +27,10 @@
         }
     },
     "sap.ui5": {
+        "loader":{
+            "preload": "async"
+        },
+        "handleValidation": true,
         "flexEnabled": true,
         "contentDensities": {
             "compact": true,

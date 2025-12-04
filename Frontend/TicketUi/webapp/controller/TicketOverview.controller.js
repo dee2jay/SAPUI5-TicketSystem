@@ -4,15 +4,17 @@ sap.ui.define([
     "sap/ui/core/Fragment",
     "ui5/ticketui/util/formatter",
     "sap/m/MessageToast",
-    "ui5/ticketui/model/TicketViewModel",
-    "ui5/ticketui/service/TokenService"
+    "ui5/ticketui/model/TicketViewModel",    
+    "ui5/ticketui/service/TokenService",
+    "sap/ui/core/library"
 ], function(Controller,
-	TicketService,
-	Fragment,
-	formatter,
-	MessageToast,
-	TicketViewModel,
-	TokenService) {
+    TicketService,
+    Fragment,
+    formatter,
+    MessageToast,
+    TicketViewModel,
+    TokenService,
+    coreLibrary) {
     "use strict";
     return Controller.extend("ui5.ticketui.controller.TicketOverview", {
         
@@ -88,6 +90,25 @@ sap.ui.define([
             } catch (err) {
                 console.log("error: ", err);
                 sap.m.MessageToast.show("Error creating ticket");
+            }
+        },
+
+        onLocationChange: function(oEvent) {
+            
+            const ValueState = coreLibrary.ValueState;
+            var sValue = oEvent.getParameter("value");
+            var oInput = oEvent.getSource();
+            if (!sValue || sValue.trim() === "") {
+                oInput.setValueState(ValueState.Error);
+                var oI18n = this.getOwnerComponent().getModel("i18n");
+                var sText = "Location is required";
+                try {
+                    sText = oI18n.getResourceBundle().getText("validationLocationRequired");
+                } catch (e) {}
+                oInput.setValueStateText(sText);
+            } else {
+                oInput.setValueState(ValueState.None);
+                oInput.setValueStateText("");
             }
         },
 
