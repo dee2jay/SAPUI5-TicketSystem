@@ -11,9 +11,9 @@ sap.ui.define([
 	MessageToast,
 	History,
 	TicketService,
-    TokenService,
+	TokenService,
 	UserService,
-    Fragment,
+	Fragment,
 	formatter){
 	"use strict";
 
@@ -26,7 +26,7 @@ sap.ui.define([
             if (!token || !TokenService.isTokenValid(token)) {
                 MessageToast.show("login session expired ")
                 // Redirect to login
-                this.getOwnerComponent().getRouter().navTo("home", {}, true);
+                this.getOwnerComponent().getRouter().navTo("home", {});
                 return;
             }    
 
@@ -79,11 +79,11 @@ sap.ui.define([
 
        onHistoryButtonPress: function(){
         MessageToast.show("Ticket History");
+        //this._refreshHistory();
         const oRouter = this.getOwnerComponent().getRouter();
         const sTicketPath = this.getView().getBindingContext("ticketsModel").getPath();
         const oTicket = this.getView().getModel("ticketsModel").getProperty(sTicketPath);
-
-        console.log("ticket", oTicket);
+       
         const sTicketId = oTicket && oTicket.id;
 
         oRouter.navTo("ticketHistory", { ticketId: sTicketId });
@@ -94,22 +94,26 @@ sap.ui.define([
 
        },
        onSaveButtonPress: function(oEvent){
-            const oCtx = oEvent.getSource().getBindingContext("ticketsModel");            
-            if (!oCtx) {
-                console.error("No binding context");
-                return;
-            }
+            try{
+                const oCtx = oEvent.getSource().getBindingContext("ticketsModel");            
+                if (!oCtx) {
+                    console.error("No binding context");
+                    return;
+                }
 
-            const sPath = oCtx.getPath();
-            const ticket = this.getView().getModel("ticketsModel").getProperty(sPath);
+                const sPath = oCtx.getPath();
+                const ticket = this.getView().getModel("ticketsModel").getProperty(sPath);
 
-            const response = TicketService.updateTicket(ticket.id, ticket);
-            if(response.OK){
-                MessageToast.show("Ticket saved");
+                const response = TicketService.updateTicket(ticket.id, ticket);
+                
+                MessageToast.show("Ticket saved");            
+            
+                this.onNavBack();
+            }catch(error){
+                console.log(error);
             }
-        
-        
-        this.onNavBack();
+            
+            
 
        },
 
@@ -123,7 +127,7 @@ sap.ui.define([
                 this.getOwnerComponent().getRouter().navTo("tickets", {}, { skipHistory: true });
             }
         },
-        onNavBack() {
+        onPageNavButtonPress() {
             const oHistory = History.getInstance();
             const sPreviousHash = oHistory.getPreviousHash();
 
@@ -152,14 +156,19 @@ sap.ui.define([
             }           
         },
 
-        onFileSelected: function(oEvent) {
-            this._file = oEvent.getParameter("files")[0];            
+        onFileUploaderChange: function(oEvent) {
+            this._file = oEvent.getParameter("files")[0];   
+            console.log(this._file);         
         },
 
-        onUploadComplete: function(oEvent) {
-            const response = oEvent.getParameter("response");
+        onFileUploderUploadComplete: function(oEvent) {
+            const response = oEvent.getParameter("responseRaw");
+
+            console.log("response: ", response);
             try {
                 const oJson = JSON.parse(response); // { id, filename, url }
+
+                console.log("oJson: ", oJson);
 
                 const sPath = this.getView().getBindingContext("ticketsModel").getPath();
                 const oModel = this.getView().getModel("ticketsModel");
@@ -169,17 +178,25 @@ sap.ui.define([
                 oModel.setProperty(sPath + "/attachments", aAttachments);
 
                 sap.m.MessageToast.show("Upload OK !");
+                this._refreshAttachmentList();
+                this._refreshHistory();
             } catch (e) {
                 console.log(e);
                 sap.m.MessageToast.show("Upload NOK, but invalid response.");
             }
         },
 
-        onDialogClose: function(){
+        onDialogAfterClose: function(){
+            this._refreshAttachmentList();
+            this._refreshHistory();
             this._attachmentDialog.close();
         },
 
-        onUploadPress: function() {
+        onButtonClosePress: function(){
+            this._attachmentDialog.close();
+        },
+
+        onButtonUploadPress: function() {
             
             const oBundle = this.getView().getModel("i18n").getResourceBundle();
 
@@ -187,8 +204,7 @@ sap.ui.define([
                 sap.m.MessageToast.show("Select a file first!");
                 return;
             }
-            const oToken = localStorage.getItem("auth_token");
-            console.log(TokenService.isTokenValid(oToken));
+            const oToken = localStorage.getItem("auth_token");            
             
             if(!TokenService.isTokenValid(oToken))
             {
@@ -201,7 +217,7 @@ sap.ui.define([
                 "Authorization": "Bearer " + TokenService.getToken(),
             };
 
-            const oUploader = sap.ui.getCore().byId("fileUploaderDialog");
+            const oUploader = sap.ui.getCore().byId("idFileUploader");
 
             oUploader.removeAllHeaderParameters();
             Object.keys(headers).forEach(key => {
@@ -215,50 +231,55 @@ sap.ui.define([
             const oTicket = this.getView().getModel("ticketsModel").getProperty(sPath);                       
             oUploader.setUploadUrl(`https://localhost:7187/tickets/${oTicket.id}/uploadAttachment`);
             oUploader.upload();
+            this.onDialogAfterClose();
+            
         },
 
-        onDeleteAttachmentPress: async function (oEvent) {
-    const oBundle = this.getView().getModel("i18n").getResourceBundle();
+        onButtonDeletePress: async function (oEvent) {
+            const oBundle = this.getView().getModel("i18n").getResourceBundle();
 
-    // Récupérer le contexte de la ligne
-    const oItem = oEvent.getSource().getParent().getBindingContext("ticketsModel");
-    const oAttachment = oItem.getObject();
+            // Récupérer le contexte de la ligne
+            const oItemAttachement = oEvent.getSource().getBindingContext("ticketsModel");
+            
+            const oAttachment = oItemAttachement.getObject();
+            const sAttachmentPath = oItemAttachement.sPath;
+            const attachmentId = oAttachment.id;
+            const sTicketPath = sAttachmentPath.split("/attachments")[0]; // "/tickets/0"
+            const oTicket = this.getView().getModel("ticketsModel").getProperty(sTicketPath);
+            const ticketId = oTicket.id;
 
-    const attachmentId = oAttachment.id;
-    const ticketId = this.currentTicketId;
+            try {
+                const sToken = TokenService.getToken();
 
-    try {
-        const sToken = TokenService.getToken();
+                const response = await fetch(`https://localhost:7187/tickets/${ticketId}/attachment/${attachmentId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": "Bearer " + sToken
+                    }
+                });
 
-        const response = await fetch(`/api/tickets/${ticketId}/attachments/${attachmentId}`, {
-            method: "DELETE",
-            headers: {
-                "Authorization": "Bearer " + sToken
+                if (!response.ok) {
+                    MessageToast.show("Issue during deletion");
+                    return;
+                }
+
+                // Mise à jour du modèle local
+                const sPath = this.getView().getBindingContext("ticketsModel").getPath();
+                const oModel = this.getView().getModel("ticketsModel");
+
+                let aAttachments = oModel.getProperty(sPath + "/attachments") || [];
+                aAttachments = aAttachments.filter(a => a.id !== attachmentId);
+                oModel.setProperty(sPath + "/attachments", aAttachments);
+
+                MessageToast.show("Attachment deleted");
+
+            } catch (err) {
+                console.error(err);
+                MessageToast.show("Issue during Deletion");
             }
-        });
-
-        if (!response.ok) {
-            MessageToast.show(oBundle.getText("attachmentDeletionError") || "Fehler beim Löschen");
-            return;
-        }
-
-        // Mise à jour du modèle local
-        const sPath = this.getView().getBindingContext("ticketsModel").getPath();
-        const oModel = this.getView().getModel("ticketsModel");
-
-        let aAttachments = oModel.getProperty(sPath + "/attachments") || [];
-        aAttachments = aAttachments.filter(a => a.id !== attachmentId);
-        oModel.setProperty(sPath + "/attachments", aAttachments);
-
-        MessageToast.show(oBundle.getText("attachmentDeleted") || "Attachment supprimé");
-
-    } catch (err) {
-        console.error(err);
-        MessageToast.show(oBundle.getText("attachmentDeletionError") || "Erreur suppression");
-    }
-},
+        },
         
-        onSendenButtonPress: async function(oEvent)
+        onSendButtonPress: async function(oEvent)
         {
             const oItem = oEvent.getSource();
             const oContext = oItem.getBindingContext("ticketsModel");
@@ -297,6 +318,63 @@ sap.ui.define([
             oCommentModel.setData({ author: "", text: "", createAt: "" });
 
             MessageToast.show("Comment sent!");
+            
+            this._refreshCommentList();
+            this._refreshHistory();
+        },
+
+        _refreshAttachmentList: function() {
+            const sPath = this.getView().getBindingContext("ticketsModel").getPath();
+            const oTicket = this.getView().getModel("ticketsModel").getProperty(sPath);
+
+            fetch(`https://localhost:7187/tickets/${oTicket.id}/attachments`, {
+                headers: {
+                    "Authorization": "Bearer " + TokenService.getToken()
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                // Mettre à jour le modèle ticketsModel>attachments
+                const oModel = this.getView().getModel("ticketsModel");
+                oModel.setProperty(sPath + "/attachments", data);
+            })
+            .catch(err => console.error(err));
+        },
+
+        _refreshCommentList: function() {
+            const sPath = this.getView().getBindingContext("ticketsModel").getPath();
+            const oTicket = this.getView().getModel("ticketsModel").getProperty(sPath);
+
+            fetch(`https://localhost:7187/tickets/${oTicket.id}/comments`, {
+                headers: {
+                    "Authorization": "Bearer " + TokenService.getToken()
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                
+                const oModel = this.getView().getModel("ticketsModel");
+                oModel.setProperty(sPath + "/comments", data);
+            })
+            .catch(err => console.error(err));
+        },
+
+        _refreshHistory: function() {
+            const sPath = this.getView().getBindingContext("ticketsModel").getPath();
+            const oTicket = this.getView().getModel("ticketsModel").getProperty(sPath);
+
+            fetch(`https://localhost:7187/tickets/${oTicket.id}/histories`, {
+                headers: {
+                    "Authorization": "Bearer " + TokenService.getToken()
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                
+                const oModel = this.getView().getModel("ticketsModel");
+                oModel.setProperty(sPath + "/histories", data);
+            })
+            .catch(err => console.error(err));
         }
            
     });

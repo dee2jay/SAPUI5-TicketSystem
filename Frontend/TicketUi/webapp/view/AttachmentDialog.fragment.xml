@@ -3,41 +3,40 @@
     xmlns:core="sap.ui.core"
     xmlns:unified="sap.ui.unified">
     <Dialog
-        id="attachmentDialog"
+        id="idAttachmentDialog"
         title="{i18n>titleTicketAttachments}"        
-        afterClose=".onDialogClose">
-        <VBox id="_IDGenVBox" class="sapUiSmallMargin">
+        afterClose=".onDialogAfterClose">
+        <VBox id="IdVBox" class="sapUiSmallMargin">
             <unified:FileUploader
-                id="fileUploaderDialog"
+                id="idFileUploader"
                 name="file"
                 sendXHR="true"
-                uploadComplete=".onUploadComplete"
-                change=".onFileSelected"
+                uploadComplete=".onFileUploaderUploadComplete"
+                change=".onFileUploaderChange"
                 width="100%"/>
-            <Button id="_IDGenButton"
+            <Button id="idUploadButton"
                 text="{i18n>buttonUpload}"
                 type="Emphasized"
-                press=".onUploadPress"/>
+                press=".onButtonUploadPress"/>
 
-                <List
-            id="attachmentList"
-            headerText="{i18n>titleTicketAttachmentList}"
-            items="{ticketsModel>attachments}">
-            <CustomListItem id="_IDGenStandardListItem"                
+                <List id="idAttachmentsList"
+                    headerText="{i18n>titleTicketAttachmentList}"
+                    items="{ticketsModel>attachments}">
+            <CustomListItem id="idCustomListItem"                
                 type="Active">
-                <HBox id="_IDGenHBox" justifyContent="SpaceBetween" alignItems="Center">                
+                <HBox id="id1HBox" justifyContent="SpaceBetween" alignItems="Center">                
                 
-                <core:Icon id="_IDGenIcon" src= "sap-icon://document" />
-                <Text id="_IDGenText" text="{ticketsModel>fileName}" />
+                <core:Icon id="idIcon" src= "sap-icon://document" />
+                <Text id="idFileNameText" text="{ticketsModel>fileName}" />
 
-                <Button id="_IDGenButton2" icon="sap-icon://delete" press=".onDeleteAttachmentPress"/>
+                <Button id="idDeleteButton" icon="sap-icon://delete" press=".onButtonDeletePress"/>
                 </HBox>
                 </CustomListItem>
 
         </List>
         </VBox>
         <endButton>
-            <Button id="_IDGenButton1" text="{i18n>buttonClose}" press=".onDialogClose"/>
+            <Button id="idCloseButton" text="{i18n>buttonClose}" press=".onButtonClosePress"/>
         </endButton>
     </Dialog>
 </core:FragmentDefinition>

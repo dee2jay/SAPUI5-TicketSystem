@@ -4,87 +4,86 @@
           xmlns="sap.m"
           xmlns:core="sap.ui.core"
           displayBlock="true">
-	<Page title="{i18n>titleTicketDetails}"
-	      showNavButton="true"
-	      navButtonPress=".onNavBack">
-		<Panel headerText="{Ticket}">
-			<HBox justifyContent="SpaceBetween"
+	<Page id="idPage" title="{i18n>titleTicketDetails}"
+	      showNavButton="true" 
+	      navButtonPress=".onPageNavButtonPress">
+		<Panel id="idPanel" headerText="{Ticket}">
+			<HBox id="id2HBox" justifyContent="SpaceBetween"
 			      alignItems="Center"
 			      width="100%">
-				<VBox>
-					<Text text="Ticket {ticketsModel>id}"/>
+				<VBox id="id1VBox">
+					<Text id="id1IdText" text="Ticket {ticketsModel>id}" class="boldText"/>
 				</VBox>
-				<HBox gap="10px">
-					<Select selectedKey="{ticketsModel>status}">
+				<HBox id="id3HBox">
+					<Select id="idStatusSelect" selectedKey="{ticketsModel>status}">
 						<items>
-							<core:Item key="Open"
+							<core:Item id="idOpenItem" key="Open"
 							           text="Open"/>
-							<core:Item key="InProgress"
+							<core:Item id="idInProgressItem" key="InProgress"
 							           text="In Progress"/>
-							<core:Item key="Closed"
+							<core:Item id="idClosedItem" key="Closed"
 							           text="Closed"/>
-							<core:Item key="Waiting"
+							<core:Item id="idWaitingItem" key="Waiting"
 							           text="Waiting"/>
 						</items>
 					</Select>
-					<Select selectedKey="{ticketsModel>priority}">
+					<Select id="idPrioritySelect" selectedKey="{ticketsModel>priority}">
 						<items>
-							<core:Item key="Low"
+							<core:Item id="idLowItem" key="Low"
 							           text="Low"/>
-							<core:Item key="Medium"
+							<core:Item id="idMediumItem" key="Medium"
 							           text="Medium"/>
-							<core:Item key="High"
+							<core:Item id="idHighItem" key="High"
 							           text="High"/>
-							<core:Item key="Critical"
+							<core:Item id="idCriticalItem" key="Critical"
 							           text="Critical"/>
 						</items>
 					</Select>
 				</HBox>
 			</HBox>
 		</Panel>
-		<Panel headerText="{i18n>descriptionTitle}">
-			<TextArea width="100%"
+		<Panel id="id2Panel" headerText="{i18n>descriptionTitle}">
+			<TextArea id="idDescription1TextArea" width="100%"
 			          rows="4"
 			          value="{ticketsModel>description}"
 			          editable="false"/>
 		</Panel>
-		<Panel headerText="{i18n>commentsTitle}"
+		<Panel id="id4Panel" headerText="{i18n>commentsTitle}"
 		       class="sapUiSmallMarginTop">
-			<List items="{ticketsModel>comments}" >
-				<StandardListItem 
+			<List id="idCommentsList" items="{ticketsModel>comments}" >
+				<StandardListItem id="idStandardListItem" 
 					title="{ticketsModel>author}"
 					description="{ticketsModel>text}"
 					icon="sap-icon://comment"
-					info="{path: 'ticketsModel>createdAt', formatter: '.formatter.formatDateTime'}"/>
+					info="{parts:[{path: 'ticketsModel>createdAt'}], formatter: '.formatter.formatDateTimeWithTimezone'}"/>
 			</List>
-			<VBox>
-				<TextArea placeholder="Kommentar hinzufügen..."
+			<VBox id="id3VBox">
+				<TextArea id="idTextTextArea" placeholder="Kommentar hinzufügen..."
 				          width="100%"
-				          rows="2"
 						  value="{commentViewModel>/text}"/>
-				<Button icon="sap-icon://paper-plane"
-				        text="Senden" press="onSendenButtonPress"/>
+				<Button id="idSendButton"  icon="sap-icon://paper-plane"
+				        text="{i18n>buttonSend}" press="onSendButtonPress"/>
 			</VBox>
 		</Panel>
-		<Toolbar>
-			<Button text="{i18n>buttonHistory}"
+		<Toolbar id="idButtonToolbar">
+			<Button id="idHistoryButton" text="{i18n>buttonHistory}"
 			        icon="sap-icon://history"
 			        type="Emphasized"
 			        press=".onHistoryButtonPress"/>
-			<Button text="{i18n>buttonAttachments}"
+			<Button id="idAttachmentsButton" text="{i18n>buttonAttachments}"
 			        icon="sap-icon://attachment"
 			        type="Emphasized"
 			        press=".onAttachmentsButtonPress"/>
-			<Button text="{i18n>buttonPrint}"
+			<Button id="idPrintButton" text="{i18n>buttonPrint}"
 			        icon="sap-icon://print"
 			        type="Emphasized"
 			        press=".onPrintButtonPress"/>
-			<ToolbarSpacer/>
-			<Button text="{i18n>buttonSave}"
+			<ToolbarSpacer  id="idButtonToolbarSpacer"/>
+			<Button id="idSaveButton" text="{i18n>buttonSave}"
 			        icon="sap-icon://save"
 			        press=".onSaveButtonPress"
 			        type="Emphasized"/>
-			<Button text="{i18n>buttonCancel}"
+			<Button id="idCancelButton" text="{i18n>buttonCancel}"
 			        icon="sap-icon://cancel"
 			        press=".onCancelButtonPress"
 			        type="Emphasized"/>

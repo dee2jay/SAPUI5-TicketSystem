@@ -2,11 +2,13 @@ sap.ui.define([
     "sap/ui/core/UIComponent",
     "sap/ui/model/resource/ResourceModel",
     "sap/ui/model/json/JSONModel",
-    "ui5/ticketui/model/CommentViewModel"
+    "ui5/ticketui/model/CommentViewModel",
+    "ui5/ticketui/model/TicketCategoryViewModel"
 ], function(UIComponent,
 	ResourceModel,
 	JSONModel,
-	CommentViewModel) {
+	CommentViewModel,
+    TicketCategoryViewModel) {
     "use strict";
     return UIComponent.extend("ui5.ticketui.Component", {
         metadata: {
@@ -35,7 +37,11 @@ sap.ui.define([
             
             //define and set ticket model
             const oTicketsModel= new JSONModel({tickets: []});
-            this.setModel(oTicketsModel, "ticketsModel");     
+            this.setModel(oTicketsModel, "ticketsModel");   
+            
+            //define and set ticket category
+            var oTicketCategoryModel = TicketCategoryViewModel.create();
+            this.setModel(oTicketCategoryModel, "ticketCategoryViewModel")            
                   
             //define and set comment model
             const oCommentModel= CommentViewModel.create();
@@ -67,5 +73,6 @@ sap.ui.define([
             
             this.getRouter().initialize();
         }
+       
     });
 });

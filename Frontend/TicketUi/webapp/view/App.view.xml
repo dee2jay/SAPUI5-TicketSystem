@@ -3,9 +3,9 @@
     xmlns:mvc="sap.ui.core.mvc"    
     xmlns="sap.m">
 
-    <Shell>
+    <Shell id="idShell">
     <App id="app">
-    <Page></Page>
+    <Page id="idAppPage"></Page>
     </App>
     </Shell>
 </mvc:View>

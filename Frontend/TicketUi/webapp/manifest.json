@@ -36,6 +36,13 @@
             "compact": true,
             "cozy": true
         },
+        "resources": {
+            "css": [
+                {
+                    "uri": "css/style.css"
+                }
+            ]
+        },
         "rootView": {
             "viewName": "ui5.ticketui.view.App",
             "type": "XML",

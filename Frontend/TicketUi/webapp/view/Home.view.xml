@@ -1,39 +1,39 @@
 <mvc:View controllerName="ui5.ticketui.controller.Home" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:tnt="sap.tnt" xmlns:core="sap.ui.core">
-	<Page>
+	<Page id="id4Page">
 		<customHeader>
-			<Toolbar>				
-				<Title text="{i18n>appTitle}"/>
-				<ToolbarSpacer/>
+			<Toolbar id="id4Toolbar"> 				
+				<Title id="idTitle" text="{i18n>appTitle}"/>
+				<ToolbarSpacer id="id4ToolbarSpacer"/>
 			</Toolbar>
 		</customHeader>
 		<content>
-			<HBox fitContainer="true">
+			<HBox id="id9HBox" fitContainer="true">
 				<VBox id="contentArea" class="sapUiSmallMargin" width="100%">
-					<Panel headerText="Welcome" class="sapUiResponsiveMargin" width="auto">
+					<Panel id="idWelcomePanel" headerText="Welcome" class="sapUiResponsiveMargin" width="auto">
 						<headerToolbar>
-							<Toolbar>
-								<Title text="{i18n>appWelcomeMessage}"/>
-								<ToolbarSpacer/>
+							<Toolbar id="id5Toolbar">
+								<Title id="idWelcomTitle" text="{i18n>appWelcomeMessage}"/>
+								<ToolbarSpacer id="id7ToolbarSpacer"/>
 							</Toolbar>
 						</headerToolbar>
 					</Panel>
-					<Panel class="sapUiResponsiveMargin" width="auto">
-						<VBox class="sapUiSmallMargin">
-							<Label text="{i18n>labelUsername}" labelFor="usernameInput"/>
-							<Input  placeholder="{i18n>textUsername}" value="{loginUserViewModel>/email}"/>
-							<Label text="{i18n>labelPassword}" labelFor="passwordInput" class="sapUiSmallMarginTop"/>
-							<Input  type="Password" placeholder="{i18n>textPassword}" value="{loginUserViewModel>/password}"/>
-							<HBox class="sapUiSmallMarginTop" justifyContent="End">
-								<ToolbarSpacer/>
-								<Button class="sapUiSmallMarginEnd" text="{i18n>buttonSubmit}" type="Emphasized" press=".onButtonSubmitPress"/>								
+					<Panel id="idLoginPanel" class="sapUiResponsiveMargin" width="auto">
+						<VBox id="id6VBox" class="sapUiSmallMargin">
+							<Label  id="idUsernameLabel" text="{i18n>labelUsername}" labelFor="usernameInput"/>
+							<Input id="idUsernameInput"  placeholder="{i18n>textUsername}" value="{loginUserViewModel>/email}"/>
+							<Label id="idSPasswordLabel" text="{i18n>labelPassword}" labelFor="passwordInput" class="sapUiSmallMarginTop"/>
+							<Input id="idSPasswordInput" type="Password" placeholder="{i18n>textPassword}" value="{loginUserViewModel>/password}"/>
+							<HBox id="id7HBox" class="sapUiSmallMarginTop" justifyContent="End">
+								<ToolbarSpacer id="id3ToolbarSpacer" />
+								<Button id="idSubmitButton" class="sapUiSmallMarginEnd" text="{i18n>buttonSubmit}" type="Emphasized" press=".onButtonSubmitPress"/>								
 							</HBox>							
 						</VBox>
 					</Panel>
-					<Panel headerText="Login with SSO" class="sapUiResponsiveMargin" width="auto">
-						<VBox class="sapUiSmallMargin">							
-							<HBox class="sapUiSmallMarginTop" justifyContent="End">
+					<Panel id="id7Panel" headerText="Login with SSO" class="sapUiResponsiveMargin" width="auto">
+						<VBox id="id7VBox" class="sapUiSmallMargin">							
+							<HBox id="id8HBox" class="sapUiSmallMarginTop" justifyContent="End">
 								
-								<Button class="sapUiSmallMarginEnd" text="{i18n>buttonSsoSubmit}" type="Emphasized" width="100%" press=".onButtonSubmitSsoPress"/>								
+								<Button id="idSsoSubmitButton" class="sapUiSmallMarginEnd" text="{i18n>buttonSsoSubmit}" type="Emphasized" width="100%" press=".onButtonSubmitSsoPress"/>								
 							</HBox>							
 						</VBox>
 					</Panel>

@@ -12,15 +12,15 @@
           navButtonPress=".onPageTicketHistoryNavButtonPress">
 
         <content>
-            <List                        
+            <List id="idHistoriesList"                       
                 items="{
                     path: 'ticketsModel>histories'
                 }"
                 width="100%">
 
-                <CustomListItem>
-                    <VBox>      
-                    <Text text="{ticketsModel>action}"/>                                        
+                <CustomListItem id="id2CustomListItem">
+                    <VBox id="idCustomListItemVBox">      
+                    <Text id="id1ActionText" text="{ticketsModel>action}"/>                                        
                     </VBox>
                 </CustomListItem>
                     

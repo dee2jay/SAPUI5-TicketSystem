@@ -4,75 +4,75 @@
 	xmlns:tnt="sap.tnt" 
 	xmlns:mvc="sap.ui.core.mvc">
 	
-	<Page id="ticketOverviewPage">
+	<Page id="idTicketOverviewPage">
 		<customHeader>
-			<Toolbar>
-				<Button icon="sap-icon://menu" press=".onToggleSideNav"/>
-				<Title text="Tickets"/>
-				<ToolbarSpacer/>
+			<Toolbar id="idToolbar">
+				<Button id="idToggleSideNavButton" icon="sap-icon://menu" press=".onButtonToggleSideNavPress"/>
+				<Title id="idTicketsTitle" text="Tickets"/>
+				<ToolbarSpacer id="idCustsomHeaderToolbarSpacer"/>
 			</Toolbar>
 		</customHeader>
 		<content>
-			<HBox fitContainer="true">
+			<HBox id="idHBox" fitContainer="true">
 				<!-- MENU -->
-				<tnt:SideNavigation id="sideNav" expanded="true" width="250px" itemSelect=".onNavSelect">
-					<tnt:NavigationList id="navList">
-						<tnt:NavigationListItem id="navDashboard" text="Dashboard" icon="sap-icon://home" select=".onNavSelect" key="dashboard"/>
-						<tnt:NavigationListItem id="navTickets" text="Tickets" icon="sap-icon://document-text" select=".onNavSelect" key="tickets"/>
-						<tnt:NavigationListItem id="navSettings" text="{i18n>settingsTitle}" icon="sap-icon://action-settings" select=".onNavSelect" key="settings"/>
-            <tnt:NavigationListItem id="navLogout" text="{i18n>buttonLogout}" icon="sap-icon://log" select=".onNavSelect" key="logout"/>
+				<tnt:SideNavigation id="idSideNavigation" expanded="true" width="250px" itemSelect=".onSideNavigationItemSelect">
+					<tnt:NavigationList id="idNavigationList">
+						<tnt:NavigationListItem id="idDashboardNav" text="Dashboard" icon="sap-icon://home" select=".onDashboardNavigationListItemSelect" key="dashboard"/>
+						<tnt:NavigationListItem id="idTicketsNav" text="Tickets" icon="sap-icon://document-text" select=".onTicketsNavigationListItemSelect" key="tickets"/>
+						<tnt:NavigationListItem id="idSettingsNav" text="{i18n>settingsTitle}" icon="sap-icon://action-settings" select=".onDashboardNavigationListItemSelect" key="settings"/>
+			<tnt:NavigationListItem id="idLogoutNavigationListItem" text="{i18n>buttonLogout}" icon="sap-icon://log" select=".onDashboardNavigationListItemSelect" key="logout"/>
 					</tnt:NavigationList>
 				</tnt:SideNavigation>
 				<!-- CONTENT -->
-				<VBox id="contentArea" class="sapUiSmallMargin">
-					<Panel headerText="{i18n>titleTicketOverview}" class="sapUiResponsiveMargin" width="auto">
+				<VBox id="idTicketOverviewContentVBox" class="sapUiSmallMargin">
+					<Panel id="idTicketOverviewPanel" headerText="{i18n>titleTicketOverview}" class="sapUiResponsiveMargin" width="auto">
 						<headerToolbar>
-							<Toolbar>
-								<Title text="{i18n>titleTicketOverview}"/>
-								<ToolbarSpacer/>
-								<Button text="{i18n>buttonNewTicket}" type="Emphasized" press=".onNewTicketButtonPress" icon="sap-icon://add"/>
+							<Toolbar id="idTicketOverviewToolbar">
+								<Title id="idTicketsOverviewTitle" text="{i18n>titleTicketOverview}"/>
+								<ToolbarSpacer id="idToolbarSpacer"/>
+								<Button id="idNewTicketButton" text="{i18n>buttonNewTicket}" type="Emphasized" press=".onNewTicketButtonPress" icon="sap-icon://add"/>
 							</Toolbar>
 						</headerToolbar>
 						<content>
-							<SearchField width="100%" liveChange=".onSearchFieldsLiveChange"/>
-							<Table items="{ticketsModel>/tickets}" mode="SingleSelectMaster" class="sapUiResponsiveMargin" width="auto" growing="false" growingScrollToLoad="true">
+							<SearchField id="idSearchField" width="100%" liveChange=".onSearchFieldsLiveChange"/>
+							<Table id="idTicketsTable" items="{ticketsModel>/tickets}" mode="SingleSelectMaster" class="sapUiResponsiveMargin" width="auto" growing="false" growingScrollToLoad="true">
 								<columns>
-									<Column>
-										<Text text="{i18n>columnNumber}"/>
+									<Column id="idNumberColumn">
+										<Text id="idNumberText" text="{i18n>columnNumber}"/>
 									</Column>
-									<Column>
-										<Text text="{i18n>columnCategory}"/>
+									<Column id="idCategoryColumn">
+										<Text id="idCategoryText" text="{i18n>columnCategory}"/>
 									</Column>
-									<Column>
-										<Text text="{i18n>columnLocation}"/>
+									<Column id="idLocationColumn">
+										<Text id="idLocationText" text="{i18n>columnLocation}"/>
 									</Column>
-									<Column>
-										<Text text="{i18n>columnStatus}"/>
+									<Column id="idStatusColumn">
+										<Text id="idStatusText" text="{i18n>columnStatus}"/>
 									</Column>
-									<Column>
-										<Text text="{i18n>columnPriority}"/>
+									<Column id="idPriorityColumn">
+										<Text id="idPriorityText" text="{i18n>columnPriority}"/>
 									</Column>
-									<Column>
-										<Text text="{i18n>columnCreatedAt}"/>
+									<Column id="idCreatedAtColumn">
+										<Text id="idCreatedAtText" text="{i18n>columnCreatedAt}"/>
 									</Column>
-									<Column>
-										<Text text="{i18n>columnCreatedBy}"/>
+									<Column id="idCreatedByColumn">
+										<Text id="idCreatedByText" text="{i18n>columnCreatedBy}"/>
 									</Column>
-									<Column>
-										<Text text=""/>
+									<Column id="idActionColumn">
+										<Text id="idActionText" text=""/>
 									</Column>
 								</columns>
 								<items>
-									<ColumnListItem type="Active">
+									<ColumnListItem id="idColumnListItem" type="Navigation" detailPress=".onViewDetailsButtonPress">
 										<cells>
-											<Text text="{ticketsModel>id}"/>
-											<Text text="{ticketsModel>category}"/>
-											<Text text="{ticketsModel>location}"/>
-											<Text text="{ticketsModel>status}"/>
-											<Text text="{ticketsModel>priority}"/>
-											<Text text="{path:'ticketsModel>createdAt', formatter:'.formatter.formatDate'}"/>
-											<Text text="{ticketsModel>author}"/>
-											<Button icon="sap-icon://sys-find" type="Emphasized" enabled="{= ${ticketsModel>status} !== 'Closed' }" press=".onViewDetailsButtonPress"/>
+											<Text id="idIdText" text="{ticketsModel>id}"/>
+											<Text id="idCategory1Text" text="{ticketsModel>category}"/>
+											<Text id="idLocation1Text" text="{ticketsModel>location}"/>
+											<Text id="idStatus1Text" text="{ticketsModel>status}"/>
+											<Text id="idPriority1Text" text="{ticketsModel>priority}"/>
+											<Text id="idCreatedAt1Text" text="{parts:[{path: 'ticketsModel>createdAt'}], formatter: '.formatter.formatDateTimeWithTimezone'}"/>
+											<Text id="idAuthorText" text="{ticketsModel>author}"/>
+											<Button id="idDetailViewButton" icon="sap-icon://sys-find" type="Emphasized" enabled="{= ${ticketsModel>status} !== 'Closed' }" press=".onViewDetailsButtonPress"/>
 										</cells>
 									</ColumnListItem>
 								</items>

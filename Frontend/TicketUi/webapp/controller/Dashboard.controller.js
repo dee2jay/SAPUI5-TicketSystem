@@ -13,52 +13,76 @@ sap.ui.define([
 
                 MessageToast.show("Please login");
                 // Redirect to login
-                this.getOwnerComponent().getRouter().navTo("home", {}, true);
+                this.getOwnerComponent().getRouter().navTo("home", {});
                 return;
             }
 
         },
 
-        onToggleSideNav: function () {
-            var oSideNav = this.byId("sideNav");
+        onButtonToggleSideNavPress: function () {
+            var oSideNav = this.byId("id1SideNavigation");
             oSideNav.setExpanded(!oSideNav.getExpanded());
         },
-        
-         onNavSelect: function (oEvent) {
-            var oItem = oEvent.getParameter("item"); 
-            
-            if(!oItem){
-                return;
-            }
-            this.byId("sideNav").setSelectedItem(oItem);
-            
-            var key = oItem.getKey();
-            
-            var oNavList = this.byId("navList");
 
-    switch (key) {
-        case "dashboard": 
-            //oNavList.setSelectedItem(this.byId("navDashboard"));
+        onDashboardNavigationListItemSelect: function(){
             this.getOwnerComponent().getRouter().navTo("dashboard");
-            break;
+        },
 
-        case "tickets":    
-            //oNavList.setSelectedItem(this.byId("navTickets"));
+        onTicketsNavigationListItemSelect: function(){
             this.getOwnerComponent().getRouter().navTo("tickets");
-            break;
+        },
 
-        case "settings":
-            //oNavList.setSelectedItem(this.byId("navSettings"));
+        onSettingsNavigationListItemSelect: function(){
             this.getOwnerComponent().getRouter().navTo("settings");
-            break;
-         case "logout":
-                if(TokenService.getToken()){
-                    TokenService.clear();   
-                }            
-                MessageToast.show("session logged out successfully")
-                this.getOwnerComponent().getRouter().navTo("home");                      
-                break;
-    } 
+        },
+
+        onLogoutNavigationListItemSelect: function(){
+            this.getOwnerComponent().getRouter().navTo("home");
+        },
+        
+         onSideNavigationItemSelect: function (oEvent) {
+            const oItem = oEvent.getParameter("item");
+            if (!oItem) return;
+
+            const key = oItem.getKey();
+            const oNavList = this.byId("id2NavigationList");
+
+            const actions = {
+                "dashboard": {
+                    item: this.byId("idDashboardNavigationListItem"),
+                    fn: this.onDashboardNavigationListItemSelect?.bind(this)
+                },
+                "tickets": {
+                    item: this.byId("idTicketsNavigationListItem"),
+                    fn: this.onTicketsNavigationListItemSelect?.bind(this)
+                },
+                "settings": {
+                    item: this.byId("idSettingsNavigationListItem"),
+                    fn: this.onSettingsNavigationListItemSelect?.bind(this)
+                },
+                "logout": {
+                    item: this.byId("idLogoutNavigationListItem"),
+                    fn: () => {
+                        if (TokenService.getToken()) TokenService.clear();
+                        MessageToast.show("session logged out successfully");
+                        this.onLogoutNavigationListItemSelect?.();
+                    }
+            }
+            };
+
+            const action = actions[key];
+            if (!action) return;
+
+            if (action.item) {
+                oNavList.setSelectedItem(action.item);
+            } else {
+                oNavList.setSelectedItem(oItem);
+            }
+
+            if (action.fn) {
+                action.fn();
+            }
+
         }
     });
 });

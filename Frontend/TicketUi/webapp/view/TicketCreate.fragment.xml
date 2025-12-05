@@ -1,35 +1,25 @@
-<Dialog title="{i18n>titleTicketCreation}" xmlns="sap.m" xmlns:l="sap.ui.layout.form" xmlns:core="sap.ui.core">
+<Dialog id="idDialog" title="{i18n>titleTicketCreation}" xmlns="sap.m" xmlns:l="sap.ui.layout.form" xmlns:core="sap.ui.core">
 	<content>
-		<l:SimpleForm editable="true" layout="ResponsiveGridLayout" class="sapUiResponsiveMargin" width="auto">
-			<Label text="{i18n>labelCategory}"/>
-			<Select selectedKey="{ticketViewModel>category}">
-			<items>
-				<core:Item key="default"
-							text="default"/>
-				<core:Item key="accessControl"
-							text="access control"/>
-				<core:Item key="intercomSystems"
-							text="intercom systems"/>
-				<core:Item key="socketsLights"
-							text="sockets/lights"/>
-				<core:Item key="telephone"
-							text="telephone"/>
-				<core:Item key="network"
-							text="network"/>				
-			</items>
+		<l:SimpleForm id="idSimpleForm" editable="true" class="sapUiResponsiveMargin" width="auto">
+			<Label id="idCategoryLabel" text="{i18n>labelCategory}"/>
+			<Select id="idCategorySelect" selectedKey="{ticketViewModel>category}" change="onCategoryChange" liveChange="onLiveChange"
+				items="{path: 'ticketCategoryViewModel>/categories',
+						sorter: {path: 'Value'}}" >
+				<core:Item id="id1CategoryText" key="{ticketCategoryViewModel>key}" text="{ticketCategoryViewModel>value}" />
+				
 			</Select>
-			<Label text="{i18n>labelLocation}"/>
-			<Input value="{ticketViewModel>/location}" placeholder="{i18n>labelLocation}" liveChange=".onLocationChange" required="true"/>
-			<Label text="{i18n>labelCostCenter}"/>
-			<Input value="{ticketViewModel>/costCenter}" placeholder="{i18n>labelCostCenter}"/>
-			<Label text="{i18n>labelOrderNr}"/>
-			<Input value="{ticketViewModel>/orderNumber}" placeholder="{i18n>labelOrderNr}"/>
-			<Label text="{i18n>labelTitle}"/>
-			<Input value="{ticketViewModel>/title}" placeholder="{i18n>labelTitle}"/>
-			<TextArea value="{ticketViewModel>/description}" placeholder="Description" rows="5" width="100%"/>
+			<Label id="idLocationLabel" text="{i18n>labelLocation}"/>
+			<Input id="idLocationInput" value="{ticketViewModel>/location}" placeholder="{i18n>labelLocation}" liveChange=".onLocationInputLiveChange" required="true"/>
+			<Label id="idCostCenterLabel" text="{i18n>labelCostCenter}"/>
+			<Input id="idCostCenterInput" value="{ticketViewModel>/costCenter}" placeholder="{i18n>labelCostCenter}"/>
+			<Label id="idOrderNrLabel" text="{i18n>labelOrderNr}"/>
+			<Input id="idOrderNumberInput" value="{ticketViewModel>/orderNumber}" placeholder="{i18n>labelOrderNr}"/>
+			<Label id="idTitleLabel" text="{i18n>labelTitle}"/>
+			<Input id="idTitleInput" value="{ticketViewModel>/title}" placeholder="{i18n>labelTitle}"/>
+			<TextArea id="idDescriptionTextArea" value="{ticketViewModel>/description}" placeholder="Description" rows="5" width="100%"/>
 		</l:SimpleForm>
 	</content>
 	<buttons>
-		<Button text="{i18n>buttonCreate}" type="Emphasized" press=".onCreateButtonPress"/>
+		<Button id="idCreateButton" text="{i18n>buttonCreate}" type="Emphasized" press=".onCreateButtonPress"/>
 	</buttons>
 </Dialog>
