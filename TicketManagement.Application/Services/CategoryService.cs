@@ -17,8 +17,8 @@ namespace TicketManagementSystem.Application.Services
                 return await db.Categories
                     .Select(x => new CategoryDto
                     {
-                        Id = x.Id,
-                        Name = x.Name
+                        Key = x.Key,
+                        Value = x.Value
                     })
                     .ToListAsync(cancellationToken: ct);
             }
@@ -35,7 +35,7 @@ namespace TicketManagementSystem.Application.Services
             try
             {
                 ct.ThrowIfCancellationRequested();
-                var newCategory = new Category { Name = categoryDto.Name };
+                var newCategory = new Category { Key = categoryDto.Key, Value = categoryDto.Value };
                 db.Categories.Add(newCategory);
                 await db.SaveChangesAsync(ct);
             }

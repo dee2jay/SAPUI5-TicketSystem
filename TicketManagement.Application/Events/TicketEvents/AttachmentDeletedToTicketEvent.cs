@@ -3,7 +3,7 @@ using TicketManagementSystem.Application.Interfaces;
 
 namespace TicketManagementSystem.Application.Events.TicketEvents;
 
-public record TicketUpdatedEvent(int TicketId, string UpdatedBy, Dictionary<string, (object? OldValue, object? NewValue)> Changes) : IDomainEvent
+public record AttachmentDeletedToTicketEvent(int TicketId, string AttachmentId, string User) : IDomainEvent
 {
     public Instant OccuredOn { get; } = SystemClock.Instance.GetCurrentInstant();
 }

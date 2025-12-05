@@ -16,8 +16,8 @@ public class UserMappingProfile : Profile
     {
         CreateMap<RegisterUserCommand, User>().ConstructUsing(command => new User
         {
-            Name = command.Nachname,
-            Vorname = command.Vorname,
+            LastName = command.Nachname,
+            FirstName = command.Vorname,
             Email = command.Email,
             Username = command.Username,
             Password = command.Password

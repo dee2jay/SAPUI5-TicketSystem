@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NodaTime;
 
 namespace TicketManagementSystem.Domain.Models
 {
@@ -12,7 +13,7 @@ namespace TicketManagementSystem.Domain.Models
         public string Property { get; set; } = string.Empty;
         public string? OldValue { get; set; }
         public string? NewValue { get; set; }
-        public DateTime ChangedAt { get; set; }
+        public Instant? ChangedAt { get; set; }
         public string ChangedBy { get; set; } = string.Empty;
     }
 }

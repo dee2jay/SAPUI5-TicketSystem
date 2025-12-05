@@ -107,6 +107,16 @@ public sealed class TicketRepository(IAppLogger logger, TicketDbContext dbContex
         return default;
     }
 
+    public async Task RemoveAttachmentsByTicketId(int ticketId, string attachmentId, CancellationToken ct)
+    {
+        var query = dbContext.TicketAttachments.
+            Where(ta => ta.TicketId == ticketId && ta.Id.ToString() == attachmentId) ;
+        var attachment = await query.ToListAsync(ct);
+
+        dbContext.TicketAttachments.RemoveRange(attachment);
+        await dbContext.SaveChangesAsync(ct);
+    }
+
     public async Task<ErrorOr<IEnumerable<History>>> GetHistoryByTicketId(int ticketId, CancellationToken ct)
     {
         try

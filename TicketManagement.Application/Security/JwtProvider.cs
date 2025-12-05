@@ -28,7 +28,7 @@ public class JwtProvider : IJwtProvider
 
     public string Generate(User user)
     {
-        var fullName = $"{user.Name} {user.Vorname}";
+        var fullName = $"{user.LastName} {user.FirstName}";
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -37,7 +37,7 @@ public class JwtProvider : IJwtProvider
             new Claim(ClaimTypes.Name, fullName)
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(

@@ -1,9 +1,10 @@
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
+using NodaTime;
+using System.Text.Json.Serialization;
+using NodaTime.Serialization.SystemTextJson;
 using TicketManagementSystem.API.OptionsSetup;
 using TicketManagementSystem.Application.Command.UserCommands;
 using TicketManagementSystem.Application.CommandHandler.UserCommandHandlers;
@@ -78,6 +79,7 @@ builder.Services.AddScoped<IMappingService, MappingService>();
 builder.Services.AddScoped<IEventHandler<TicketCreatedEvent>, TicketCreatedEventHandler>();
 builder.Services.AddScoped<IEventHandler<TicketUpdatedEvent>, TicketUpdatedEventHandler>();
 builder.Services.AddScoped<IEventHandler<AttachmentAddedToTicketEvent>, AttachmentAddedToTicketEventHandler>();
+builder.Services.AddScoped<IEventHandler<AttachmentDeletedToTicketEvent>, AttachmentDeletedToTicketEventHandler>();
 builder.Services.AddScoped<IEventHandler<CommentAddedToTicketEvent>, CommentAddedTicketEventHandler>();
 builder.Services.AddScoped<IEventHandler<TicketPriorityChangedEvent>, TicketPriorityChangedEventHandler>();
 builder.Services.AddScoped<IEventHandler<TicketStatusChangedEvent>, TicketStatusChangedEventHandler>();
@@ -123,6 +125,8 @@ builder.Services.AddControllers()
     .AddJsonOptions(option =>
     {
         option.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        option.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+        option.JsonSerializerOptions.WriteIndented = true;
     });
 
 

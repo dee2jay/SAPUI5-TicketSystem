@@ -16,5 +16,5 @@ public class TicketUpdateDto
     public List<TicketAttachmentDto>? Attachments { get; set; } = [];
     public List<HistoryDto> Histories { get; set; } = [];
     
-    public byte[] RowVersion { get; set; }
+    public byte[]? RowVersion { get; set; }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TicketManagementSystem.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using TicketManagementSystem.Infrastructure.Persistence;
 namespace TicketManagementSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(TicketDbContext))]
-    partial class TicketDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251204214612_ResolveIssueByChangeDateToInstant")]
+    partial class ResolveIssueByChangeDateToInstant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,12 +33,7 @@ namespace TicketManagementSystem.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -104,8 +102,8 @@ namespace TicketManagementSystem.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CostCenter")
                         .HasColumnType("nvarchar(max)");
@@ -148,8 +146,6 @@ namespace TicketManagementSystem.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("UserId");
 
@@ -271,18 +267,10 @@ namespace TicketManagementSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("TicketManagementSystem.Domain.Models.Ticket", b =>
                 {
-                    b.HasOne("TicketManagementSystem.Domain.Models.Category", "Category")
-                        .WithMany("Tickets")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("TicketManagementSystem.Domain.Models.User", "User")
                         .WithMany("Tickets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Category");
 
                     b.Navigation("User");
                 });
@@ -323,11 +311,6 @@ namespace TicketManagementSystem.Infrastructure.Migrations
                     b.Navigation("Ticket");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TicketManagementSystem.Domain.Models.Category", b =>
-                {
-                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("TicketManagementSystem.Domain.Models.Ticket", b =>

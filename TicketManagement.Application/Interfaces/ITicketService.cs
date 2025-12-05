@@ -12,4 +12,5 @@ public interface ITicketService
     Task<IEnumerable<TicketAttachment>> GetAttachmentsByTicketId(int ticketId, CancellationToken ct);
     Task<IEnumerable<TicketComment>> GetCommentsByTicketId(int ticketId, CancellationToken ct);
     public Task<IEnumerable<History>> GetHistoryByTicketId(int ticketId, CancellationToken ct);
+    public Task RemoveAttachmentByTicketId(int ticketId, string attachmentId, CancellationToken ct);
 }

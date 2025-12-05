@@ -1,9 +1,10 @@
-﻿using TicketManagementSystem.Application.Interfaces;
+﻿using NodaTime;
+using TicketManagementSystem.Application.Interfaces;
 
 namespace TicketManagementSystem.Application.Events.UserEvents;
 
-public record UserCreatedEvent(string Vorname, string Name, string Username, string Email, DateTime Timestamp)
+public record UserCreatedEvent(string Vorname, string Name, string Username, string Email, Instant Timestamp)
     : IDomainEvent
 {
-    public DateTime OccuredOn { get; } = DateTime.UtcNow;
+    public Instant OccuredOn { get; } = SystemClock.Instance.GetCurrentInstant();
 }

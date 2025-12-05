@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using NodaTime;
 using TicketManagementSystem.Domain.Enums;
 
 namespace TicketManagementSystem.Domain.Models;
@@ -8,18 +9,18 @@ public class Ticket
 {
     [Key]
     public int Id { get; set; }
-    public string Title { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
+    public string? Title { get; set; } = string.Empty;
+    public string? Description { get; set; } = string.Empty;
     public string Author { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public Instant? CreatedAt { get; set; }
+    public Instant? UpdatedAt { get; set; }
     public TicketStatus Status { get; set; }
     public TicketPriority Priority { get; set; }
-    public string Category { get; set; } = string.Empty;
-    [Required] public string Location { get; set; } = string.Empty;
-    public string CostCenter { get; set; } = string.Empty;
+    public string? Category { get; set; }
+    [Required] public string? Location { get; set; } = string.Empty;
+    public string? CostCenter { get; set; } = string.Empty;
     public string? AssignedTo { get; set; }
-    public DateTime? DueDate { get; set; }
+    public Instant? DueDate { get; set; }
     public string? OrderNumber { get; set; }
 
     public int? UserId { get; set; }
@@ -31,6 +32,6 @@ public class Ticket
 
     
     [Timestamp]
-    public byte[]? RowVersion { get; set; }
+    public byte[] RowVersion { get; set; }
     
 }

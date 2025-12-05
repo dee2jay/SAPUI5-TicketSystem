@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NodaTime;
 using TicketManagementSystem.Domain.Models;
 
 namespace TicketManagementSystem.Infrastructure.Persistence;
@@ -79,31 +80,66 @@ public class TicketDbContext : DbContext
             .WithMany(t => t.Histories)
             .HasForeignKey(h => h.TicketId)
             .OnDelete(DeleteBehavior.Cascade);
-
+       
         // -----------------------------
         //              User
         // -----------------------------
         modelBuilder.Entity<User>();
 
         // -----------------------------
+        //              Category
+        // -----------------------------
+        modelBuilder.Entity<Category>()
+            .HasKey(c => c.Id);
+
+        // -----------------------------
         //              Ticket
         // -----------------------------
-        modelBuilder.Entity<Ticket>();
+        
+        modelBuilder.Entity<Ticket>()
+            .Property(t => t.CreatedAt)
+            .HasConversion(
+                v => v!.Value.ToDateTimeUtc(),
+                v => Instant.FromDateTimeUtc(DateTime.SpecifyKind(v, DateTimeKind.Utc)));
+
+        modelBuilder.Entity<Ticket>()
+            .Property(t => t.UpdatedAt)
+            .HasConversion(
+                v => v!.Value.ToDateTimeUtc(),
+                v => Instant.FromDateTimeUtc(DateTime.SpecifyKind(v, DateTimeKind.Utc)));
+
+        modelBuilder.Entity<Ticket>()
+            .Property(t => t.DueDate)
+            .HasConversion(
+                v => v!.Value.ToDateTimeUtc(),
+                v => Instant.FromDateTimeUtc(DateTime.SpecifyKind(v, DateTimeKind.Utc)));
 
         // -----------------------------
         //              Attachments
         // -----------------------------
-        modelBuilder.Entity<TicketAttachment>();
+        modelBuilder.Entity<TicketAttachment>()
+            .Property(t => t.UploadedAt)
+            .HasConversion(
+                v => v!.Value.ToDateTimeUtc(),
+                v => Instant.FromDateTimeUtc(DateTime.SpecifyKind(v, DateTimeKind.Utc)));
 
         // -----------------------------
         //              Comment
         // -----------------------------
-        modelBuilder.Entity<TicketComment>();
+        modelBuilder.Entity<TicketComment>()
+            .Property(t => t.CreatedAt)
+            .HasConversion(
+                v => v!.Value.ToDateTimeUtc(),
+                v => Instant.FromDateTimeUtc(DateTime.SpecifyKind(v, DateTimeKind.Utc)));
 
         // -----------------------------
         //              History
         // -----------------------------
-        modelBuilder.Entity<History>();
+        modelBuilder.Entity<History>()
+            .Property(t => t.Timestamp)
+            .HasConversion(
+                v => v!.Value.ToDateTimeUtc(),
+                v => Instant.FromDateTimeUtc(DateTime.SpecifyKind(v, DateTimeKind.Utc)));
 
         // -----------------------------
         //              Category

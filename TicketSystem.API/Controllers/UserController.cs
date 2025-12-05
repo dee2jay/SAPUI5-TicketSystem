@@ -80,7 +80,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Me()
     {
        var user =await _userService.GetCurrentUser();
-       var fullname = $"{user.Vorname}, {user.Name}";
+       var fullname = $"{user.FirstName}, {user.LastName}";
        return Ok(new { user.Id, fullname });
     }
 }

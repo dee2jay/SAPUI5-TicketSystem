@@ -9,6 +9,7 @@ using System.Windows.Input;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using NodaTime;
 using TicketManagementSystem.Application.Command.UserCommands;
 using TicketManagementSystem.Application.Events;
 using TicketManagementSystem.Application.Events.UserEvents;
@@ -36,8 +37,8 @@ namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers
         {
             var user = new User
             {
-                Vorname = command.Vorname,
-                Name = command.Nachname,
+                FirstName = command.Vorname,
+                LastName = command.Nachname,
                 Username = command.Username,
                 Email = command.Email,
                 Password = string.Empty,
@@ -51,7 +52,7 @@ namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers
                 command.Nachname,
                 command.Email,
                 command.Username,
-                DateTime.Now);
+                SystemClock.Instance.GetCurrentInstant());
             try
             {
                 ct.ThrowIfCancellationRequested();

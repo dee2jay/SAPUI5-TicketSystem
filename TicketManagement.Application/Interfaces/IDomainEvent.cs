@@ -1,6 +1,8 @@
-﻿namespace TicketManagementSystem.Application.Interfaces;
+﻿using NodaTime;
+
+namespace TicketManagementSystem.Application.Interfaces;
 
 public interface IDomainEvent
 {
-    public DateTime OccuredOn { get; }
+    public Instant OccuredOn { get; }
 }

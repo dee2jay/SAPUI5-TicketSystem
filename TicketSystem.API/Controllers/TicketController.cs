@@ -1,8 +1,11 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NodaTime;
 using System.Threading;
+using Microsoft.EntityFrameworkCore;
 using TicketManagementSystem.Application.Dtos;
+using TicketManagementSystem.Application.Events.TicketEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
@@ -12,7 +15,7 @@ namespace TicketManagementSystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TicketsController(ITicketService ticketService, IUserService userService ,TicketDbContext dbContext) : ControllerBase
+public class TicketsController(ITicketService ticketService, IUserService userService ,TicketDbContext dbContext, IAppLogger logger, IEventPublisher eventPublisher) : ControllerBase
 {
     private readonly CancellationTokenSource _cancellationToken = new();
 
@@ -35,7 +38,7 @@ public class TicketsController(ITicketService ticketService, IUserService userSe
         }
     }
     [Authorize]
-    [HttpGet("/ticket/{ticketId}", Name = "GetTicket")]
+    [HttpGet("/api/tickets/{ticketId}", Name = "GetTicket")]
     public async Task<IActionResult> GetTicket(int ticketId)
     {
         try
@@ -59,7 +62,7 @@ public class TicketsController(ITicketService ticketService, IUserService userSe
     }
 
     [Authorize]
-    [HttpPost("/create",Name = "CreateTicket")]
+    [HttpPost("/api/tickets/create",Name = "CreateTicket")]
     public async Task<IActionResult> AddTicket([FromBody] TicketDto dto)
     {
         try
@@ -85,7 +88,7 @@ public class TicketsController(ITicketService ticketService, IUserService userSe
     }
 
     [Authorize]
-    [HttpGet("/ticket/{ticketId}/history/", Name = "GetHistory")]
+    [HttpGet("/api/tickets/{ticketId}/history/", Name = "GetHistory")]
     public async Task<IActionResult> GetHistoryFromTicket(int ticketId)
     {
         try
@@ -101,7 +104,7 @@ public class TicketsController(ITicketService ticketService, IUserService userSe
     }
 
     [Authorize]
-    [HttpPut("/ticket/{ticketId}/update", Name = "UpdateTicket")]
+    [HttpPut("/api/tickets/{ticketId}/update", Name = "UpdateTicket")]
     public async Task<IActionResult> UpdateTicket(int ticketId, [FromBody] TicketUpdateDto dto)
     {
         try
@@ -116,37 +119,120 @@ public class TicketsController(ITicketService ticketService, IUserService userSe
     }
 
     [Authorize]
-    [HttpPost("/tickets/{ticketId}/uploadAttachment", Name = "UploadAttachment")]
+    [HttpGet("/api/tickets/{ticketId}/histories", Name = "GetHistories")]
+    public async Task<IActionResult> GetHistories(int ticketId)
+    {
+        try
+        {
+            var histories = await ticketService.GetHistoryByTicketId(ticketId, _cancellationToken.Token);
+            return Ok(histories);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = e.Message });
+        }
+    }
+
+
+    [Authorize]
+    [HttpGet("/api/tickets/{ticketId}/comments", Name = "GetComments")]
+    public async Task<IActionResult> GetComments(int ticketId)
+    {
+        try
+        {
+            var comments = await ticketService.GetCommentsByTicketId(ticketId, _cancellationToken.Token);
+            return Ok(comments);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = e.Message });
+        }
+    }
+
+    [Authorize]
+    [HttpGet("/api/tickets/{ticketId}/attachments", Name = "GetAttachment")]
+    public async Task<IActionResult> GetAttachments(int ticketId)
+    {
+        var attachments = await ticketService.GetAttachmentsByTicketId(ticketId, _cancellationToken.Token);
+        
+        return Ok(attachments);
+    }
+
+    [Authorize]
+    [HttpPost("/api/tickets/{ticketId}/uploadAttachment", Name = "UploadAttachment")]
     public async Task<IActionResult> UploadAttachment(int ticketId)
     {
-        var user = await userService.GetCurrentUser();
-        var file = Request.Form.Files.FirstOrDefault();
-        if (file == null)
+        try
         {
-            return BadRequest("No file");
+            var user = await userService.GetCurrentUser();
+            var file = Request.Form.Files.FirstOrDefault();
+            if (file == null)
+            {
+                return BadRequest("No file");
+            }
+
+            var attachment = new TicketAttachment
+            {
+                FileName = file.FileName,
+                TicketId = ticketId,
+                UploadedAt = SystemClock.Instance.GetCurrentInstant(),
+                UserId = user.Id,
+                User = user
+            };
+
+            using var ms = new MemoryStream();
+            await file.CopyToAsync(ms);
+            attachment.Data = ms.ToArray();
+
+            dbContext.TicketAttachments.Add(attachment);
+
+            await eventPublisher.PublishEventAsync(
+                new AttachmentAddedToTicketEvent(ticketId, attachment.FileName, $"{user.FirstName}, {user.LastName}"),
+                _cancellationToken.Token);
+            
+            await dbContext.SaveChangesAsync(_cancellationToken.Token);
+            
+            return Ok(new
+            {
+                id = attachment.Id,
+                filename = attachment.FileName,
+                url = $"api/attachment/{attachment.Id}"
+            });
         }
-
-        var attachment = new TicketAttachment
+        catch (Exception e)
         {
-            FileName = file.FileName,
-            TicketId = ticketId,
-            UploadedAt = DateTime.UtcNow,
-            UserId = user.Id,
-            User = user
-        };
+            await logger.LogError( e.Message, e,e.Source, e.StackTrace!);
+            return StatusCode(500, new { message = e.Message });
+        }
+        
+    }
 
-        using var ms = new MemoryStream();
-        await file.CopyToAsync(ms);
-        attachment.Data = ms.ToArray();
-
-        dbContext.TicketAttachments.Add(attachment);
-        await dbContext.SaveChangesAsync(_cancellationToken.Token);
-
-        return Ok(new
+    [Authorize]
+    [HttpDelete("/api/tickets/{ticketId}/attachment/{attachmentId}", Name = "DeleteAttachment")]
+    public async Task<IActionResult> DeleteAttachment(int ticketId, string attachmentId)
+    {
+        try
         {
-            id = attachment.Id,
-            filename = attachment.FileName,
-            url = $"api/attachment/{attachment.Id}"
-        });
+            var user = await userService.GetCurrentUser();
+            
+            await ticketService.RemoveAttachmentByTicketId(ticketId, attachmentId, _cancellationToken.Token);
+
+            await eventPublisher.PublishEventAsync(
+                new AttachmentDeletedToTicketEvent(ticketId, attachmentId, $"{user.FirstName},{user.LastName}"),
+                _cancellationToken.Token);
+
+            await dbContext.SaveChangesAsync(_cancellationToken.Token);
+            
+            return Ok(new
+            {
+                ticketId,
+                attachmentId,
+                deleted = true
+            });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = e.Message });
+        }
     }
 }

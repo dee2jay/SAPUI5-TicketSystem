@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using NodaTime;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Domain.Models;
 
@@ -15,8 +16,7 @@ public class TicketMappingProfile : Profile
             CostCenter = dto.CostCenter,
             OrderNumber = dto.OrderNumber,
             Title = dto.Title,
-            Description = dto.Description,
-            CreatedAt = DateTime.UtcNow
+            Description = dto.Description
         });
     }
 }

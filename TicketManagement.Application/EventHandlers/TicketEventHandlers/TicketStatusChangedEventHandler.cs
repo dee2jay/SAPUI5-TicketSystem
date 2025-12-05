@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NodaTime;
 using TicketManagementSystem.Application.Events.TicketEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Enums;
@@ -37,8 +38,8 @@ public class TicketStatusChangedEventHandler(IAppLogger logger, IServiceProvider
                 Property = nameof(@event.Ticket.Status),
                 OldValue = @event.OldStatus.ToString(),
                 NewValue = @event.NewStatus.ToString(),
-                ChangedAt = DateTime.Now,
-                ChangedBy = $"{@event.ChangeBy.Name} {@event.ChangeBy.Vorname}"
+                ChangedAt = SystemClock.Instance.GetCurrentInstant(),
+                ChangedBy = $"{@event.ChangeBy.LastName} {@event.ChangeBy.FirstName}"
             };
             var message =
                 $"TimeStamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId -> {logEntry.TicketId}, " +

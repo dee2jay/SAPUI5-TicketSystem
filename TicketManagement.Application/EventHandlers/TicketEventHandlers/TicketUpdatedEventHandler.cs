@@ -7,7 +7,7 @@ using TicketManagementSystem.Infrastructure.Persistence;
 
 namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers;
 
-public class TicketUpdatedEventHandler(IAppLogger logger, INotificationService notificationService) : IEventHandler<TicketUpdatedEvent>
+public class TicketUpdatedEventHandler(IAppLogger logger) : IEventHandler<TicketUpdatedEvent>
 {
     public async Task HandleAsync(TicketUpdatedEvent @event, CancellationToken ct)
     {

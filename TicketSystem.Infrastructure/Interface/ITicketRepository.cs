@@ -17,4 +17,5 @@ public interface ITicketRepository
     Task<ErrorOr<IEnumerable<History>>> GetHistoryByTicketId(int ticketId, CancellationToken ct);
     Task<ErrorOr<IEnumerable<TicketAttachment>>> GetAttachmentsByTicketId(int ticketId, CancellationToken ct);
     Task<ErrorOr<IEnumerable<TicketComment>>> GetCommentsByTicketId(int ticketId, CancellationToken ct);
+    Task RemoveAttachmentsByTicketId(int ticketId, string attachmentId, CancellationToken ct);
 }

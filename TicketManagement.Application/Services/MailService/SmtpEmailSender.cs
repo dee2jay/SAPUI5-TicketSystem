@@ -19,7 +19,7 @@ namespace TicketManagementSystem.Application.Services.MailService
                 Body = email.Body,
                 IsBodyHtml = email.IsBodyHtml
             };
-            foreach (var address in email.To)
+            foreach (var address in email.To!)
             {
                 mail.To.Add(address);
             }

@@ -34,7 +34,7 @@ public class JwtBearerOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
                 ValidAudience = _jwtOptions.Audience,
                 ClockSkew = TimeSpan.Zero,
                 IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(_jwtOptions.SecretKey)),
+                    Encoding.UTF8.GetBytes(_jwtOptions.SecretKey!)),
 
             };
         }

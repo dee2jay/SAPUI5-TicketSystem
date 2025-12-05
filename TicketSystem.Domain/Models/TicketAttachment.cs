@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using NodaTime;
 
 namespace TicketManagementSystem.Domain.Models;
 
@@ -9,15 +10,9 @@ public class TicketAttachment
     public string FileName { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;
     public byte[] Data { get; set; } = [];
-    public DateTime UploadedAt { get; set; }
-
+    public Instant? UploadedAt { get; set; }
     public int UserId { get; set; }
-
     public User? User { get; set; }
-
-    [JsonIgnore]
-    public int TicketId { get; set; }
-
-    [JsonIgnore]
-    public Ticket? Ticket { get; set; }
+    [JsonIgnore]public int TicketId { get; set; }
+    [JsonIgnore] public Ticket? Ticket { get; set; }
 }

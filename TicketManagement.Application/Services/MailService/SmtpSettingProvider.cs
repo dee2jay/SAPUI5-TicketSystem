@@ -27,13 +27,13 @@ namespace TicketManagementSystem.Application.Services.MailService
         {
             using var message = new MailMessage
             {
-                From = new MailAddress(_options.From),
+                From = new MailAddress(_options.From!),
                 Subject = content.Subject,
                 Body = content.Body,
                 IsBodyHtml = content.IsHtml
             };
 
-             content.To.ForEach(to =>
+             content.To!.ForEach(to =>
              {
                  message.To.Add(to);
              });
