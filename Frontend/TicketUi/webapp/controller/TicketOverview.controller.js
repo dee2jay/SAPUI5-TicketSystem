@@ -38,7 +38,7 @@ sap.ui.define([
             this.getView().setModel(oModel, "ticketsModel");  
             
             var oTicketCategoryViewModel = this.getOwnerComponent().getModel("ticketCategoryViewModel");           
-            console.log(oModel);
+
             this.getView().setModel(oTicketCategoryViewModel, "ticketCategoryViewModel");
             
             this._loadTickets();
@@ -99,20 +99,29 @@ sap.ui.define([
             
         },
 
-        onCategoryChange: function(oEvent) {                        
+        onSelectChange: function(oEvent) {                        
+            var oSelectedItem = oEvent.getParameter("selectedItem");
             var oSelectedItem = oEvent.getParameter("selectedItem");
             var sKey = oSelectedItem.getKey();
             var sText = oSelectedItem.getText();
 
             console.log("Selected key:", sKey, "text:", sText);
-            var oTicketModel = this.getView().getModel("ticketViewModel");
-            
-            oTicketModel.setProperty("category", sKey);            
-        },
 
-        onLiveChange: function(oEvent){
-            const sKey = oEvent.getParameters().setSelectedItem.getKey();
-            console.log(sKey);
+            // 1️⃣ Récupérer le modèle
+            const oModel = this.getView().getModel("ticketViewModel");
+            console.log("Model: ", oModel);
+            // 2️⃣ Récupérer le binding context du ticket
+            //const oContext = oEvent.getSource().getBindingContext("ticketViewModel");
+
+            const oData = oModel.getData();
+            console.log("Data: ", oData);
+            // 3️⃣ Modifier la donnée correctement
+            //oContext.getObject().category = sKey;
+            oData.category = sText;
+
+            // 4️⃣ Rafraîchir le modèle
+            oModel.refresh(true);
+           
         },
 
         onCreateButtonPress: async function(){
@@ -161,7 +170,7 @@ sap.ui.define([
             const aFilters = [];  
         },
 
-        onViewDetailsButtonPress: function (oEvent) {            
+        onButtonViewDetailsPress: function (oEvent) {            
             const oItem = oEvent.getSource();
             const oContext = oItem.getBindingContext("ticketsModel");            
             const sTicketId = oContext.getProperty("id");
@@ -232,7 +241,18 @@ sap.ui.define([
 
         onLogoutNavigationListItemSelect: function(){
             this.getOwnerComponent().getRouter().navTo("home");
-        }     
+        }, 
+        
+        onColumnListItemDetailPress: function(oEvent){
+             const oItem = oEvent.getSource();
+            const oContext = oItem.getBindingContext("ticketsModel");            
+            const sTicketId = oContext.getProperty("id");
+            
+            localStorage.setItem("lastOpenedTicketId", sTicketId);
+
+            this.getOwnerComponent().getRouter().navTo("ticketDetails", { ticketId: sTicketId });
+
+        }
 
     });
 });

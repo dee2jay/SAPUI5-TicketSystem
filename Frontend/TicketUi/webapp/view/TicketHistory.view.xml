@@ -20,7 +20,7 @@
 
                 <CustomListItem id="id2CustomListItem">
                     <VBox id="idCustomListItemVBox">      
-                    <Text id="id1ActionText" text="{ticketsModel>action}"/>                                        
+                    <Text id="idAction1Text" text="{ticketsModel>action}"/>                                        
                     </VBox>
                 </CustomListItem>
                     

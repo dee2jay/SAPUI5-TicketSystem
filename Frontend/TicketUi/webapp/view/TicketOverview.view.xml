@@ -15,12 +15,12 @@
 		<content>
 			<HBox id="idHBox" fitContainer="true">
 				<!-- MENU -->
-				<tnt:SideNavigation id="idSideNavigation" expanded="true" width="250px" itemSelect=".onSideNavigationItemSelect">
+				<tnt:SideNavigation id="idSideNavigation" expanded="true"  itemSelect=".onSideNavigationItemSelect">
 					<tnt:NavigationList id="idNavigationList">
-						<tnt:NavigationListItem id="idDashboardNav" text="Dashboard" icon="sap-icon://home" select=".onDashboardNavigationListItemSelect" key="dashboard"/>
-						<tnt:NavigationListItem id="idTicketsNav" text="Tickets" icon="sap-icon://document-text" select=".onTicketsNavigationListItemSelect" key="tickets"/>
-						<tnt:NavigationListItem id="idSettingsNav" text="{i18n>settingsTitle}" icon="sap-icon://action-settings" select=".onDashboardNavigationListItemSelect" key="settings"/>
-			<tnt:NavigationListItem id="idLogoutNavigationListItem" text="{i18n>buttonLogout}" icon="sap-icon://log" select=".onDashboardNavigationListItemSelect" key="logout"/>
+						<tnt:NavigationListItem id="idDashboard1NavigationListItem" text="Dashboard" icon="sap-icon://home" select=".onDashboardNavigationListItemSelect" key="dashboard"/>
+						<tnt:NavigationListItem id="idTickets1NavigationListItem" text="Tickets" icon="sap-icon://document-text" select=".onTicketsNavigationListItemSelect" key="tickets"/>
+						<tnt:NavigationListItem id="idSettings1NavigationListItem" text="{i18n>settingsTitle}" icon="sap-icon://action-settings" select=".onSettingsNavigationListItemSelect" key="settings"/>
+			<tnt:NavigationListItem id="idLogoutNavigationListItem" text="{i18n>buttonLogout}" icon="sap-icon://log" select=".onLogoutNavigationListItemSelect" key="logout"/>
 					</tnt:NavigationList>
 				</tnt:SideNavigation>
 				<!-- CONTENT -->
@@ -63,7 +63,7 @@
 									</Column>
 								</columns>
 								<items>
-									<ColumnListItem id="idColumnListItem" type="Navigation" detailPress=".onViewDetailsButtonPress">
+									<ColumnListItem id="idColumnListItem" type="Navigation" detailPress=".onColumnListItemDetailPress">
 										<cells>
 											<Text id="idIdText" text="{ticketsModel>id}"/>
 											<Text id="idCategory1Text" text="{ticketsModel>category}"/>
@@ -72,7 +72,7 @@
 											<Text id="idPriority1Text" text="{ticketsModel>priority}"/>
 											<Text id="idCreatedAt1Text" text="{parts:[{path: 'ticketsModel>createdAt'}], formatter: '.formatter.formatDateTimeWithTimezone'}"/>
 											<Text id="idAuthorText" text="{ticketsModel>author}"/>
-											<Button id="idDetailViewButton" icon="sap-icon://sys-find" type="Emphasized" enabled="{= ${ticketsModel>status} !== 'Closed' }" press=".onViewDetailsButtonPress"/>
+											<Button id="idDetailViewButton" icon="sap-icon://sys-find" type="Emphasized" enabled="{= ${ticketsModel>status} !== 'Closed' }" press=".onButtonViewDetailsPress"/>
 										</cells>
 									</ColumnListItem>
 								</items>

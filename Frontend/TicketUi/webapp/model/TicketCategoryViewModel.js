@@ -4,9 +4,8 @@ sap.ui.define(["sap/ui/model/json/JSONModel"], function(JSONModel) {
     return {
         create: function() {
             return new JSONModel(
-                {   
-                    category: "default",  
-                    categories: [],                            
+                {                       
+                    categories: []
                 }
             );
         }

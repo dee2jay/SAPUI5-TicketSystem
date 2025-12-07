@@ -37,28 +37,28 @@ sap.ui.define([
          *  GET all tickets
          * ----------------------------------------------*/
         getAllTickets: function () {
-            return request(`${BASE_URL}/api/Tickets`, "GET");
+            return request(`${BASE_URL}/api/tickets`, "GET");
         },
 
         /** ---------------------------------------------
          *  GET ticket by ID
          * ----------------------------------------------*/
         getTicketById: function (ticketId) {
-            return request(`${BASE_URL}/ticket/${ticketId}`, "GET");
+            return request(`${BASE_URL}/api/tickets/${ticketId}`, "GET");
         },
 
         /** ---------------------------------------------
          *  CREATE new ticket
          * ----------------------------------------------*/
         createTicket: function (ticketDto) {
-            return request(`${BASE_URL}/create`, "POST", ticketDto);
+            return request(`${BASE_URL}/api/tickets/create`, "POST", ticketDto);
         },
 
         /** ---------------------------------------------
          *  UPDATE ticket
          * ----------------------------------------------*/
         updateTicket: function (ticketId, ticketDto) {
-            return request(`${BASE_URL}/ticket/${ticketId}/update`, "PUT", ticketDto);
+            return request(`${BASE_URL}/api/tickets/${ticketId}/update`, "PUT", ticketDto);
         },
         
     };

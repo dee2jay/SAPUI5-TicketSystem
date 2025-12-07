@@ -2,12 +2,12 @@
 	<content>
 		<l:SimpleForm id="idSimpleForm" editable="true" class="sapUiResponsiveMargin" width="auto">
 			<Label id="idCategoryLabel" text="{i18n>labelCategory}"/>
-			<Select id="idCategorySelect" selectedKey="{ticketViewModel>category}" change="onCategoryChange" liveChange="onLiveChange"
+			<Select id="idCategoriesSelect" selectedKey="{ticketViewModel>/category}"
 				items="{path: 'ticketCategoryViewModel>/categories',
-						sorter: {path: 'Value'}}" >
-				<core:Item id="id1CategoryText" key="{ticketCategoryViewModel>key}" text="{ticketCategoryViewModel>value}" />
+						sorter: {path: 'value'}}" >
+				<core:Item id="idValueCategoryItem" key="{ticketCategoryViewModel>key}" text="{ticketCategoryViewModel>value}" />
 				
-			</Select>
+			</Select>			
 			<Label id="idLocationLabel" text="{i18n>labelLocation}"/>
 			<Input id="idLocationInput" value="{ticketViewModel>/location}" placeholder="{i18n>labelLocation}" liveChange=".onLocationInputLiveChange" required="true"/>
 			<Label id="idCostCenterLabel" text="{i18n>labelCostCenter}"/>
