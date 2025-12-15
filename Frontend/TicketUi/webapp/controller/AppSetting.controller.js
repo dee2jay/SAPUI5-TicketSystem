@@ -33,11 +33,7 @@ sap.ui.define([
             
             var oNavList = this.byId("navList");
 
-    switch (key) {
-        case "dashboard": 
-            //oNavList.setSelectedItem(this.byId("navDashboard"));
-            this.getOwnerComponent().getRouter().navTo("dashboard");
-            break;
+    switch (key) {        
 
         case "tickets":    
             //oNavList.setSelectedItem(this.byId("navTickets"));

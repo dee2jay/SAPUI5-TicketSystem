@@ -3,8 +3,7 @@
 		<content>
 			<HBox id="idSettingsHBox" fitContainer="true">
 				<tnt:SideNavigation id="sideNav" expanded="true" itemSelect=".onNavSelect">
-					<tnt:NavigationList id="navList">
-						<tnt:NavigationListItem id="navDashboard" text="Dashboard" icon="sap-icon://home"  key="dashboard"/>
+					<tnt:NavigationList id="navList">						
 						<tnt:NavigationListItem id="navTickets" text="Tickets" icon="sap-icon://document-text" key="tickets"/>
 						<tnt:NavigationListItem id="navSettings" text="{i18n>settingsTitle}" icon="sap-icon://action-settings" key="settings"/>
             			<tnt:NavigationListItem id="navLogout" text="{i18n>buttonLogout}" icon="sap-icon://log" key="logout"/>

@@ -192,11 +192,7 @@ sap.ui.define([
             const key = oItem.getKey();
             const oNavList = this.byId("id2NavigationList");
 
-            const actions = {
-                "dashboard": {
-                    item: this.byId("idDashboardNavigationListItem"),
-                    fn: this.onDashboardNavigationListItemSelect?.bind(this)
-                },
+            const actions = {                                
                 "tickets": {
                     item: this.byId("idTicketsNavigationListItem"),
                     fn: this.onTicketsNavigationListItemSelect?.bind(this)
@@ -225,12 +221,8 @@ sap.ui.define([
             if (action.fn) {
                 action.fn();
             }
-        } ,
-
-        onDashboardNavigationListItemSelect: function(){
-            this.getOwnerComponent().getRouter().navTo("dashboard");
         },
-
+        
         onTicketsNavigationListItemSelect: function(){
             this.getOwnerComponent().getRouter().navTo("tickets");
         },

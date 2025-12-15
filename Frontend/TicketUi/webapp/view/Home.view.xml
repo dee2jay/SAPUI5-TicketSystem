@@ -1,18 +1,18 @@
-<mvc:View controllerName="ui5.ticketui.controller.Home" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:tnt="sap.tnt" xmlns:core="sap.ui.core">
+<mvc:View controllerName="ui5.ticketui.controller.Home" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
 	<Page id="id4Page">
 		<customHeader>
 			<Toolbar id="id4Toolbar"> 				
-				<Title id="idTitle" text="{i18n>appTitle}"/>
+				<Title id="idTicketManagementSystemTitle" text="{i18n>appTitle}"/>
 				<ToolbarSpacer id="id4ToolbarSpacer"/>
 			</Toolbar>
 		</customHeader>
 		<content>
 			<HBox id="id9HBox" fitContainer="true">
-				<VBox id="contentArea" class="sapUiSmallMargin" width="100%">
+				<VBox id="idVBox" class="sapUiSmallMargin" width="100%">
 					<Panel id="idWelcomePanel" headerText="Welcome" class="sapUiResponsiveMargin" width="auto">
 						<headerToolbar>
 							<Toolbar id="id5Toolbar">
-								<Title id="idWelcomTitle" text="{i18n>appWelcomeMessage}"/>
+								<Title id="idWelcomeTitle" text="{i18n>appWelcomeMessage}"/>
 								<ToolbarSpacer id="id7ToolbarSpacer"/>
 							</Toolbar>
 						</headerToolbar>
@@ -20,12 +20,12 @@
 					<Panel id="idLoginPanel" class="sapUiResponsiveMargin" width="auto">
 						<VBox id="id6VBox" class="sapUiSmallMargin">
 							<Label  id="idUsernameLabel" text="{i18n>labelUsername}" labelFor="usernameInput"/>
-							<Input id="idUsernameInput"  placeholder="{i18n>textUsername}" value="{loginUserViewModel>/email}"/>
-							<Label id="idSPasswordLabel" text="{i18n>labelPassword}" labelFor="passwordInput" class="sapUiSmallMarginTop"/>
-							<Input id="idSPasswordInput" type="Password" placeholder="{i18n>textPassword}" value="{loginUserViewModel>/password}"/>
+							<Input id="idEmailInput"  placeholder="{i18n>textUsername}" value="{loginUserViewModel>/email}"/>
+							<Label id="idPasswordLabel" text="{i18n>labelPassword}" labelFor="passwordInput" class="sapUiSmallMarginTop"/>
+							<Input id="idPasswordInput" type="Password" placeholder="{i18n>textPassword}" value="{loginUserViewModel>/password}"/>
 							<HBox id="id7HBox" class="sapUiSmallMarginTop" justifyContent="End">
 								<ToolbarSpacer id="id3ToolbarSpacer" />
-								<Button id="idSubmitButton" class="sapUiSmallMarginEnd" text="{i18n>buttonSubmit}" type="Emphasized" press=".onButtonSubmitPress"/>								
+								<Button id="idLoginButton" class="sapUiSmallMarginEnd" text="{i18n>buttonSubmit}" type="Emphasized" press=".onLoginButtonPress"/>								
 							</HBox>							
 						</VBox>
 					</Panel>
@@ -33,7 +33,7 @@
 						<VBox id="id7VBox" class="sapUiSmallMargin">							
 							<HBox id="id8HBox" class="sapUiSmallMarginTop" justifyContent="End">
 								
-								<Button id="idSsoSubmitButton" class="sapUiSmallMarginEnd" text="{i18n>buttonSsoSubmit}" type="Emphasized" width="100%" press=".onButtonSubmitSsoPress"/>								
+								<Button id="idLoginWithEntraIDButton" class="sapUiSmallMarginEnd" text="{i18n>buttonSsoSubmit}" type="Emphasized" width="100%" press=".onLoginWithEntraIDButtonPress"/>								
 							</HBox>							
 						</VBox>
 					</Panel>

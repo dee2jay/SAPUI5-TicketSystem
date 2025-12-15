@@ -16,11 +16,10 @@
 			<HBox id="idHBox" fitContainer="true">
 				<!-- MENU -->
 				<tnt:SideNavigation id="idSideNavigation" expanded="true"  itemSelect=".onSideNavigationItemSelect">
-					<tnt:NavigationList id="idNavigationList">
-						<tnt:NavigationListItem id="idDashboard1NavigationListItem" text="Dashboard" icon="sap-icon://home" select=".onDashboardNavigationListItemSelect" key="dashboard"/>
+					<tnt:NavigationList id="idNavigationList">						
 						<tnt:NavigationListItem id="idTickets1NavigationListItem" text="Tickets" icon="sap-icon://document-text" select=".onTicketsNavigationListItemSelect" key="tickets"/>
 						<tnt:NavigationListItem id="idSettings1NavigationListItem" text="{i18n>settingsTitle}" icon="sap-icon://action-settings" select=".onSettingsNavigationListItemSelect" key="settings"/>
-			<tnt:NavigationListItem id="idLogoutNavigationListItem" text="{i18n>buttonLogout}" icon="sap-icon://log" select=".onLogoutNavigationListItemSelect" key="logout"/>
+						<tnt:NavigationListItem id="idLogoutNavigationListItem" text="{i18n>buttonLogout}" icon="sap-icon://log" select=".onLogoutNavigationListItemSelect" key="logout"/>
 					</tnt:NavigationList>
 				</tnt:SideNavigation>
 				<!-- CONTENT -->

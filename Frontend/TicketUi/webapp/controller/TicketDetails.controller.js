@@ -80,14 +80,11 @@ sap.ui.define([
        onHistoryButtonPress: function(){
         MessageToast.show("Ticket History");
         //this._refreshHistory();
-        const oRouter = this.getOwnerComponent().getRouter();
-        const sTicketPath = this.getView().getBindingContext("ticketsModel").getPath();
-        const oTicket = this.getView().getModel("ticketsModel").getProperty(sTicketPath);
-       
+        const oRouter = this.getOwnerComponent().getRouter();        
+        const sTicketPath = this.getView().getBindingContext("ticketsModel").getPath();       
+        const oTicket = this.getView().getModel("ticketsModel").getProperty(sTicketPath);     
         const sTicketId = oTicket && oTicket.id;
-
         oRouter.navTo("ticketHistory", { ticketId: sTicketId });
-
        },
        onPrintButtonPress: function(){
         window.print();
@@ -106,7 +103,8 @@ sap.ui.define([
 
                 const response = TicketService.updateTicket(ticket.id, ticket);
                 
-                MessageToast.show("Ticket saved");            
+                MessageToast.show("Ticket saved"); 
+                this._refreshHistory;           
             
                 this.onNavBack();
             }catch(error){
@@ -157,8 +155,7 @@ sap.ui.define([
         },
 
         onFileUploaderChange: function(oEvent) {
-            this._file = oEvent.getParameter("files")[0];   
-            console.log(this._file);         
+            this._file = oEvent.getParameter("files")[0];               
         },
 
         onFileUploderUploadComplete: function(oEvent) {
@@ -229,7 +226,7 @@ sap.ui.define([
 
             const sPath = this.getView().getBindingContext("ticketsModel").getPath();
             const oTicket = this.getView().getModel("ticketsModel").getProperty(sPath);                       
-            oUploader.setUploadUrl(`https://localhost:7187/tickets/${oTicket.id}/uploadAttachment`);
+            oUploader.setUploadUrl(`https://localhost:7187/api/tickets/${oTicket.id}/uploadAttachment`);
             oUploader.upload();
             this.onDialogAfterClose();
             
@@ -327,7 +324,7 @@ sap.ui.define([
             const sPath = this.getView().getBindingContext("ticketsModel").getPath();
             const oTicket = this.getView().getModel("ticketsModel").getProperty(sPath);
 
-            fetch(`https://localhost:7187/tickets/${oTicket.id}/attachments`, {
+            fetch(`https://localhost:7187/api/tickets/${oTicket.id}/attachments`, {
                 headers: {
                     "Authorization": "Bearer " + TokenService.getToken()
                 }
@@ -345,7 +342,7 @@ sap.ui.define([
             const sPath = this.getView().getBindingContext("ticketsModel").getPath();
             const oTicket = this.getView().getModel("ticketsModel").getProperty(sPath);
 
-            fetch(`https://localhost:7187/tickets/${oTicket.id}/comments`, {
+            fetch(`https://localhost:7187/api/tickets/${oTicket.id}/comments`, {
                 headers: {
                     "Authorization": "Bearer " + TokenService.getToken()
                 }
@@ -363,7 +360,7 @@ sap.ui.define([
             const sPath = this.getView().getBindingContext("ticketsModel").getPath();
             const oTicket = this.getView().getModel("ticketsModel").getProperty(sPath);
 
-            fetch(`https://localhost:7187/tickets/${oTicket.id}/histories`, {
+            fetch(`https://localhost:7187/api/tickets/${oTicket.id}/histories`, {
                 headers: {
                     "Authorization": "Bearer " + TokenService.getToken()
                 }

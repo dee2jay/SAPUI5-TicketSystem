@@ -19,7 +19,7 @@ sap.ui.define([
             this.getView().setModel(oLoginModel, "loginUserViewModel");
         },                
 
-        onButtonSubmitPress: async function () {
+        onLoginButtonPress: async function () {
            
            var newLogin = this.getView().getModel("loginUserViewModel").getData();
            
@@ -32,18 +32,18 @@ sap.ui.define([
 
             MessageToast.show("User logged in!");            
             
-            this.getOwnerComponent().getRouter().navTo("dashboard");
+            this.getOwnerComponent().getRouter().navTo("tickets");
            }catch(error){
             MessageToast.show("User login failed!!!"); 
             console.error(error);
            }            
         },
 
-        onButtonSubmitSsoPress: async function () {     
+        onLoginWithEntraIDButtonPress: async function () {     
            
            MessageToast.show("User logged in!");            
             
-            this.getOwnerComponent().getRouter().navTo("dashboard");            
+            this.getOwnerComponent().getRouter().navTo("tickets");            
         }
 
     });

@@ -81,12 +81,7 @@
                     "pattern": "",
                     "name": "home",
                     "target": "home"
-                },
-                {
-                    "pattern": "dashboard",
-                    "name": "dashboard",
-                    "target": "dashboard"
-                },
+                },                
                 {
                     "pattern": "settings",
                     "name": "settings",
@@ -98,7 +93,7 @@
                     "target": "tickets"
                 },
                 {
-                    "pattern": "ticketDetails/{ticketId}",
+                    "pattern": "ticket/{ticketId}/details",
                     "name": "ticketDetails",
                     "target": "ticketDetails"
                 },
@@ -120,16 +115,7 @@
                         }, 
                         "controlAggregation": "pages"
                     },
-                    "dashboard": {
-                        "viewName": "Dashboard",
-                        "controlId": "app",
-                        "clearControlAggregation": true,
-                        "transition": "slide",
-                        "transitionParameters": {
-                            "direction": "left"
-                        },
-                        "controlAggregation": "pages"                    
-                    },
+                    
                     "tickets": {
                         "viewName": "TicketOverview",
                         "controlId": "app",
