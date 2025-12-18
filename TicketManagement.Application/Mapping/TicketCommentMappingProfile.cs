@@ -10,8 +10,8 @@ public class TicketCommentMappingProfile : Profile
     {
         CreateMap<TicketCommentDto, TicketComment>().ConstructUsing(dto => new TicketComment()
         {
-            Author = dto.Author,
             Text = dto.Text,
+            Author = dto.Author
         });
     }
 }

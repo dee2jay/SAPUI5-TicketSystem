@@ -55,6 +55,13 @@ sap.ui.define([
         },
 
         /** ---------------------------------------------
+         *  Add new comment
+         * ----------------------------------------------*/
+        addComment: function (ticketId,ticketCommentDto) {
+            return request(`${BASE_URL}/api/tickets/${ticketId}/addComment`, "POST", ticketCommentDto);
+        },
+
+        /** ---------------------------------------------
          *  UPDATE ticket
          * ----------------------------------------------*/
         updateTicket: function (ticketId, ticketDto) {

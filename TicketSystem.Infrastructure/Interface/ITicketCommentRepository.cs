@@ -7,8 +7,8 @@ using TicketManagementSystem.Domain.Models;
 
 namespace TicketManagementSystem.Infrastructure.Interface
 {
-    public interface ICommentRepository
+    public interface ITicketCommentRepository
     {
-        public Task<bool> InsertComment(TicketComment comment);
+        public Task<bool> InsertComment(TicketComment comment, CancellationToken ct);
     }
 }

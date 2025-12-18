@@ -82,7 +82,7 @@ public class NotificationService(ISmtpSettingsProvider emailProvider, IAppLogger
     public async Task NotifyStatusChangedAsync(TicketStatusChangedEvent evt, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
-        var recipients = new List<string>() { evt.AssignedTo };
+        var recipients = new List<string>() { evt.Ticket.AssignedTo! };
         var emailContent = new EmailContent()
         {
             To = recipients,

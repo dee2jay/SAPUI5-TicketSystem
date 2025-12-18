@@ -1,0 +1,40 @@
+sequenceDiagram
+    autonumber
+
+    participant User as User (Frontend SAPUI5)
+    participant UserController as UserController (.NET API)
+    participant UserService as UserService
+    participant DB as SQL Database
+    participant TicketController as TicketController (.NET API)
+    participant TicketService as TicketService (Business Logic)
+    participant Mail as Mail
+
+    %% --- AUTHENTICATION ---
+    User->>UserController: {username, password}
+    UserController->>UserService: ValidateCredentials()
+    UserService->>DB: SELECT User WHERE username=...
+    DB-->>UserService: User data + PasswordHash
+    UserService-->>UserController: AuthResult (success)
+    UserController-->>User: JWT Token / Auth Session
+
+    rect rgb(240,240,255)
+    Note over User,UserController: User stores token and sends it<br/>with Authorization: Bearer <token>
+    end
+
+    %% --- CREATE TICKET ---
+    User->>TicketController: POST /api/tickets/create {title, desc, locId}<br/>+ Authorization: Bearer token
+    TicketController->>TicketService: CreateTicket(request)
+
+    TicketService->>DB: INSERT INTO Tickets (...)
+    DB-->>TicketService: TicketId returned
+
+  
+    TicketService->>DB: UPDATE Ticket
+    DB-->>TicketService: OK
+
+    TicketService-->>TicketController: TicketCreatedResponse (TicketId)
+    TicketController-->>User: 201 Created + Ticket Details
+
+    %% --- EMAIL NOTIFICATION ---
+    Note over TicketService,Mail: Optional background job<br/>for ticket confirmation email
+    TicketService->>Mail: SendEmailNotification()

@@ -1,0 +1,330 @@
+classDiagram 
+	
+	class TicketAttachmentMappingProfile  {
+	}
+	class LoginUserEventHandler  {
+		-IAppLogger _logger 
+		+HandleAsync(UserLoginEvent @event, CancellationToken ct) Task
+	}
+	class UserDto  {
+		+ Vorname : string
+		+ Name : string
+		+ Username : string
+		+ Email : string
+		+ Password : string
+	}
+	class TicketCommentDto  {
+		+ Author : string?
+		+ Text : string?
+		+ CreatedAt : DateTime
+	}
+	class EventDispatcher  {
+		-IServiceProvider _serviceProvider 
+		-IEnumerable~IEventHandler~TicketUpdatedEvent~~ _ticketUpdatedEventHandlers 
+		+DispatchAsync(TEvent @event, CancellationToken ct) Task
+	}
+	class CategoryService  {
+		+GetAllAsync(CancellationToken ct) Task~List~CategoryDto~~
+		+AddCategory(CategoryDto categoryDto, CancellationToken ct) Task
+		+DisposeAsync() ValueTask
+	}
+	class IEventPublisher  {
+		-PublishEventAsync(TEvent @event, CancellationToken ct) Task
+	}
+	class HistoryDto  {
+		+ Action : string
+		+ Timestamp : DateTime
+	}
+	class AttachmentDeletedToTicketEventHandler  {
+		+HandleAsync(AttachmentDeletedToTicketEvent @event, CancellationToken ct) Task
+	}
+	class TicketMappingProfile  {
+	}
+	class ICommandHandler ~TCommand, TResult~ {
+		-Handle(TCommand command, CancellationToken ct) Task~TResult~
+	}
+	class IcsGenerator  {
+		+CreateIcsFile(string filePath, string title, string description, DateTime start, DateTime end, string? location) void
+		-Escape(string value) string
+	}
+	class ITicketService  {
+		+CreateTicketAsync(TicketDto dto, CancellationToken ct) Task~TicketDto~
+		+UpdateTicketAsync(int ticketId, TicketUpdateDto dto, CancellationToken ct) Task~Ticket?~
+		+GetAllTicketsAsync(CancellationToken ct) Task~IEnumerable~Ticket~~
+		+GetTicketById(int ticketId, CancellationToken ct) Task~Ticket?~
+		-GetAttachmentsByTicketId(int ticketId, CancellationToken ct) Task~IEnumerable~TicketAttachment~~
+		-GetCommentsByTicketId(int ticketId, CancellationToken ct) Task~IEnumerable~TicketComment~~
+		+GetHistoryByTicketId(int ticketId, CancellationToken ct) Task~IEnumerable~History~~
+		+RemoveAttachmentByTicketId(int ticketId, string attachmentId, CancellationToken ct) Task
+	}
+	class TicketUpdateDto  {
+		+ Title : string?
+		+ Category : string?
+		+ Status : TicketStatus
+		+ Priority : TicketPriority
+		+ AssignedTo : string?
+		+ Comments : List<TicketCommentDto>?
+		+ Attachments : List<TicketAttachmentDto>?
+		+ Histories : List~HistoryDto~
+		+ RowVersion : byte[]?
+	}
+	class TicketCommentMappingProfile  {
+	}
+	class DueDateAddedToTicketEventHandler  {
+		-IAppLogger _logger 
+		-IServiceProvider serviceProvider 
+		-INotificationService notificationService 
+		+HandleAsync(DueDateAddedToTicketEvent @event, CancellationToken ct) Task
+	}
+	class INotificationService  {
+		-NotifyTicketCreatedAsync(TicketCreatedEvent evt, CancellationToken ct) Task
+		-NotifyUserCreatedAsync(UserCreatedEvent evt, CancellationToken ct) Task
+		-NotifyTicketUpdatedAsync(Ticket ticket) Task
+		-NotifyCommentAddedAsync(Ticket ticket) Task
+		-NotifyAttachmentAddedAsync(Ticket ticket) Task
+		-NotifyPriorityChangedAsync(Ticket ticket) Task
+		-NotifyStatusChangedAsync(TicketStatusChangedEvent evt, CancellationToken ct) Task
+		-NotifyTicketOwnerChanged(TicketOwnerChangedEvent evt, CancellationToken ct) Task
+		-NotifyDueDateAdded(DueDateAddedToTicketEvent @event, CancellationToken ct) Task
+	}
+	class MappingService  {
+	}
+	class TicketCreatedEventHandler  {
+		-IServiceProvider _serviceProvider 
+		-IAppLogger _logger 
+		-INotificationService _notificationService 
+		+HandleAsync(TicketCreatedEvent @event, CancellationToken ct) Task
+	}
+	class IJwtProvider  {
+		-Generate(User user) string
+	}
+	class IEventDispatcher  {
+		-DispatchAsync(TEvent @event, CancellationToken ct) Task
+	}
+	class UserService  {
+		-ICommandHandler~RegisterUserCommand&#44&#32User~ _registerHandler 
+		-ICommandHandler~LoginUserCommand&#44&#32string~ _loginHandler 
+		-ICommandHandlerBase~LogoutUserCommand~ _logoutHandler 
+		-IHttpContextAccessor _httpContext 
+		-IUserRepository _userRepository 
+		+RegisterUserAsync(UserDto dto, CancellationToken ct) Task~User~
+		+LoginUserAsync(LoginUserDto dto, CancellationToken ct) Task~string~
+		+LogoutUserAsync(string email) Task
+		+GetCurrentUser() Task~User~
+		+GetUserById(int id) Task~User?~
+		+GetUserFullnameById(int userId) Task~string?~
+		+DisposeAsync() ValueTask
+	}
+	class IEventHandler ~in TEvent~ {
+		-HandleAsync(TEvent @event, CancellationToken ct) Task
+	}
+	class TicketDto  {
+		+ Category : string?
+		+ Location : string?
+		+ CostCenter : string?
+		+ OrderNumber : string?
+		+ Title : string?
+		+ Description : string?
+	}
+	class SmtpSettingProvider  {
+		-SmtpSettingsOptions _options 
+		-IConfiguration _configuration 
+		+GenerateAndSendEmail(EmailContent content, CancellationToken cancellationToken) Task
+	}
+	class AttachmentAddedToTicketEventHandler  {
+		+HandleAsync(AttachmentAddedToTicketEvent @event, CancellationToken ct) Task
+	}
+	class IMappingService  {
+	}
+	class AssignmentRulesOptions  {
+		+ Rules : Dictionary~string&#44&#32string~
+	}
+	class SmtpEmailSender  {
+		+SendEmailAsync(EmailContent email, CancellationToken cancellationToken) Task
+	}
+	class UserLoginCommandHandler  {
+		-IUserRepository _userRepo 
+		-IMapper _mapper 
+		-IConfiguration _config 
+		-IEventPublisher _eventPublisher 
+		-IJwtProvider _jwtProvider 
+		-Handle(LoginUserCommand command, CancellationToken ct) Task
+		+Handle(LoginUserCommand command, CancellationToken ct) Task~string~
+	}
+	class LogoutUserEventHandler  {
+		-IAppLogger _logger 
+		+HandleAsync(UserLogoutEvent @event, CancellationToken ct) Task
+	}
+	class TicketAttachmentDto  {
+		+ FileName : string
+		+ Url : string
+		+ Data : byte[]
+		+ UploadAt : DateTime
+	}
+	class EmailContent  {
+		+ To : List<string>?
+		+ Subject : string?
+		+ Body : string?
+		+ From : MailAddress?
+		+ IsBodyHtml : bool
+		+ IsHtml : bool
+	}
+	class TicketOwnerChangedEventHandler  {
+		+HandleAsync(TicketOwnerChangedEvent @event, CancellationToken ct) Task
+	}
+	class UserRegisterCommandHandler  {
+		-IUserRepository _userRepo 
+		-IMapper _mapper 
+		-IEventPublisher _eventPublisher 
+		-IAppLogger _logger 
+		+Handle(RegisterUserCommand command, CancellationToken ct) Task~User~
+		-Handle(RegisterUserCommand command, CancellationToken ct) Task
+	}
+	class LoginUserDto  {
+		+ Email : string
+		+ Password : string
+	}
+	class RegisterUserEventHandler  {
+		-IAppLogger _logger 
+		-INotificationService _notificationService 
+		+HandleAsync(UserCreatedEvent @event, CancellationToken ct) Task
+	}
+	class TicketService  {
+		-IUserService _userService 
+		+GetAllTicketsAsync(CancellationToken ct) Task~IEnumerable~Ticket~~
+		+AssignTicketToUserAsync(int ticketId, string userId, CancellationToken ct) Task
+		+CreateTicketAsync(TicketDto dto, CancellationToken ct) Task~TicketDto~
+		+UpdateTicketAsync(int ticketId, TicketUpdateDto dto, CancellationToken ct) Task~Ticket?~
+		+GetTicketById(int ticketId, CancellationToken ct) Task~Ticket?~
+		+GetAttachmentsByTicketId(int ticketId, CancellationToken ct) Task~IEnumerable~TicketAttachment~~
+		+GetCommentsByTicketId(int ticketId, CancellationToken ct) Task~IEnumerable~TicketComment~~
+		+GetHistoryByTicketId(int ticketId, CancellationToken ct) Task~IEnumerable~History~~
+		+RemoveAttachmentByTicketId(int ticketId, string attachmentId, CancellationToken ct) Task
+	}
+	class NotificationService  {
+		+NotifyTicketUpdatedAsync(Ticket ticket) Task
+		+NotifyAttachmentAddedAsync(Ticket ticket) Task
+		+NotifyCommentAddedAsync(Ticket ticket) Task
+		+NotifyPriorityChangedAsync(Ticket ticket) Task
+		+NotifyStatusChangedAsync(TicketStatusChangedEvent evt, CancellationToken ct) Task
+		+NotifyTicketOwnerChanged(TicketOwnerChangedEvent evt, CancellationToken ct) Task
+		+NotifyDueDateAdded(DueDateAddedToTicketEvent @event, CancellationToken ct) Task
+		+NotifyTicketCreatedAsync(TicketCreatedEvent evt, CancellationToken ct) Task
+		+NotifyUserCreatedAsync(UserCreatedEvent evt, CancellationToken ct) Task
+		-DisposeAsync() ValueTask
+	}
+	class CategoryDto  {
+		+ Key : string?
+		+ Value : string?
+	}
+	class IDomainEvent  {
+		+ OccuredOn : Instant
+	}
+	class ICategoryService  {
+		-GetAllAsync(CancellationToken ct) Task~List~CategoryDto~~
+		-AddCategory(CategoryDto categoryDto, CancellationToken ct) Task
+	}
+	class ITicketAssignmentService  {
+		-GetAssigneeForCategory(string category) string?
+	}
+	class TicketPriorityChangedEventHandler  {
+		+HandleAsync(TicketPriorityChangedEvent @event, CancellationToken ct) Task
+	}
+	class JwtOptions  {
+		+ Issuer : string?
+		+ Audience : string?
+		+ SecretKey : string?
+		+ ExpirationInMinutes : int
+	}
+	class UserLogoutCommandHandler  {
+		-IUserRepository _userRepo 
+		-IEventPublisher _eventPublisher 
+		+Handle(LogoutUserCommand cmd, CancellationToken ct) Task
+	}
+	class CommentAddedTicketEventHandler  {
+		+HandleAsync(CommentAddedToTicketEvent @event, CancellationToken ct) Task
+	}
+	class IEmailSender  {
+		-SendEmailAsync(EmailContent email, CancellationToken cancellationToken) Task
+	}
+	class EventPublisher  {
+		-IEventDispatcher _dispatcher 
+		+PublishEventAsync(TEvent @event, CancellationToken ct) Task
+	}
+	class TicketAssignmentService  {
+		-IConfiguration _configuration 
+		-AssignmentRulesOptions _options 
+		+GetAssigneeForCategory(string category) string?
+	}
+	class TicketStatusChangedEventHandler  {
+		+HandleAsync(TicketStatusChangedEvent @event, CancellationToken ct) Task
+	}
+	class IUserService  {
+		-RegisterUserAsync(UserDto dto, CancellationToken ct) Task~User~
+		-LoginUserAsync(LoginUserDto dto, CancellationToken ct) Task~string~
+		-LogoutUserAsync(string email) Task
+		+GetCurrentUser() Task~User~
+		-GetUserById(int userId) Task~User?~
+		-GetUserFullnameById(int userId) Task~string?~
+	}
+	class ISmtpSettingsProvider  {
+		-GenerateAndSendEmail(EmailContent content, CancellationToken cancellationToken) Task
+	}
+	class JwtProvider  {
+		-JwtOptions _options 
+		-IConfiguration _configuration 
+		+Generate(User user) string
+	}
+	class UserMappingProfile  {
+	}
+	class SmtpSettingsOptions  {
+		+ Host : string?
+		+ Port : int
+		+ From : string?
+		+ Username : string?
+		+ Password : string?
+		+ EnableSsl : bool
+	}
+	class ICommandHandlerBase ~TCommand~ {
+		-Handle(TCommand command, CancellationToken ct) Task
+	}
+	class TicketUpdatedEventHandler  {
+		+HandleAsync(TicketUpdatedEvent @event, CancellationToken ct) Task
+		+DisposeAsync() ValueTask
+	}
+	
+	TicketAttachmentMappingProfile --|> Profile
+	LoginUserEventHandler --|> IEventHandler
+	EventDispatcher --|> IEventDispatcher
+	CategoryService --|> ICategoryService
+	AttachmentDeletedToTicketEventHandler --|> IEventHandler
+	TicketMappingProfile --|> Profile
+	ICommandHandler --|> ICommandHandlerBase
+	TicketCommentMappingProfile --|> Profile
+	DueDateAddedToTicketEventHandler --|> IEventHandler
+	INotificationService --|> IAsyncDisposable
+	MappingService --|> IMappingService
+	TicketCreatedEventHandler --|> IEventHandler
+	UserService --|> IUserService
+	SmtpSettingProvider --|> ISmtpSettingsProvider
+	AttachmentAddedToTicketEventHandler --|> IEventHandler
+	SmtpEmailSender --|> IEmailSender
+	UserLoginCommandHandler --|> ICommandHandler
+	LogoutUserEventHandler --|> IEventHandler
+	TicketOwnerChangedEventHandler --|> IEventHandler
+	UserRegisterCommandHandler --|> ICommandHandler
+	RegisterUserEventHandler --|> IEventHandler
+	TicketService --|> ITicketService
+	NotificationService --|> INotificationService
+	ICategoryService --|> IAsyncDisposable
+	TicketPriorityChangedEventHandler --|> IEventHandler
+	UserLogoutCommandHandler --|> ICommandHandlerBase
+	CommentAddedTicketEventHandler --|> IEventHandler
+	EventPublisher --|> IEventPublisher
+	TicketAssignmentService --|> ITicketAssignmentService
+	TicketStatusChangedEventHandler --|> IEventHandler
+	IUserService --|> IAsyncDisposable
+	JwtProvider --|> IJwtProvider
+	UserMappingProfile --|> Profile
+	TicketUpdatedEventHandler --|> IEventHandler
+	

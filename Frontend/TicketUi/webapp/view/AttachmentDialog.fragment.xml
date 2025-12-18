@@ -17,7 +17,7 @@
             <Button id="idUploadButton"
                 text="{i18n>buttonUpload}"
                 type="Emphasized"
-                press=".onButtonUploadPress"/>
+                press=".onUploadButtonPress"/>
 
                 <List id="idAttachmentsList"
                     headerText="{i18n>titleTicketAttachmentList}"

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Domain.Models;
 
@@ -16,8 +11,10 @@ public class TicketAttachmentMappingProfile : Profile
         CreateMap<TicketAttachmentDto, TicketAttachment>().ConstructUsing(dto => new TicketAttachment
         {
             FileName = dto.FileName,
-            Data = dto.Data,
+            UploadedAt = dto.UploadAt,
             Url = dto.Url,
+            TicketId = dto.TicketId,
+            UserId = dto.UserId
         });
     }
 }

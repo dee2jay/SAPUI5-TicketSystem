@@ -4,23 +4,14 @@ using System.Security.Claims;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Application.Services;
-using TicketManagementSystem.Infrastructure.Interface;
 
 namespace TicketManagementSystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController : ControllerBase
+public class UserController(IUserService userService) : ControllerBase
 {
-    private readonly IUserService _userService;
-    private readonly IAppLogger _logger;
     private readonly CancellationTokenSource _tokenSource = new();
-
-    public UserController(IUserRepository userRepo, IAppLogger logger, IUserService userService)
-    {
-        _logger = logger;
-        _userService = userService;
-    }
 
     [AllowAnonymous]
     [HttpPost("register")]
@@ -29,7 +20,7 @@ public class UserController : ControllerBase
         try
         {
             _tokenSource.Token.ThrowIfCancellationRequested();
-            var user = await _userService.RegisterUserAsync(dto, _tokenSource.Token);
+            var user = await userService.RegisterUserAsync(dto, _tokenSource.Token);
             
             return Ok(new { user.Id, UserName = user.Username, user.Email });
         }
@@ -46,7 +37,7 @@ public class UserController : ControllerBase
         try
         {
             _tokenSource.Token.ThrowIfCancellationRequested();
-            var token = await _userService.LoginUserAsync(dto, _tokenSource.Token);
+            var token = await userService.LoginUserAsync(dto, _tokenSource.Token);
 
             if (string.IsNullOrEmpty(token))
             {
@@ -64,8 +55,8 @@ public class UserController : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        var user = await _userService.GetCurrentUser();
-        await _userService.LogoutUserAsync(user.Email);
+        var user = await userService.GetCurrentUser();
+        await userService.LogoutUserAsync(user.Email);
         
         return Ok(new
         {
@@ -79,7 +70,7 @@ public class UserController : ControllerBase
     [HttpGet("me")]
     public async Task<IActionResult> Me()
     {
-       var user =await _userService.GetCurrentUser();
+       var user =await userService.GetCurrentUser();
        var fullname = $"{user.FirstName}, {user.LastName}";
        return Ok(new { user.Id, fullname });
     }

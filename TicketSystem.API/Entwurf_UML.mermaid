@@ -1,0 +1,79 @@
+classDiagram
+    %% ============================
+    %% DOMAIN ENTITIES
+    %% ============================
+    class Ticket {
+        +int Id
+        +string Title
+        +string Description
+        +TicketStatus Status
+        +TicketPriority Priority
+        +DateTime CreatedAt
+        +DateTime UpdatedAt
+        +int CreatedById
+        +int TechnicalLocationId
+        +void Close()
+        +void Assign(User user)
+    }
+
+    class User {
+        +int Id
+        +string Name
+        +string Email
+        +UserRole Role
+        +List<Ticket> Tickets
+    }
+
+    class TechnicalLocation {
+        +int Id
+        +string SAPCode
+        +string Description
+        +string Plant
+        +List<Ticket> Tickets
+    }
+
+    class Attachment {
+        +int Id
+        +int TicketId
+        +string FileName
+        +string FilePath
+        +DateTime UploadedAt
+    }
+
+    class Comment {
+        +int Id
+        +int TicketId
+        +int AuthorId
+        +string Text
+        +DateTime CreatedAt
+    }
+
+    %% ============================
+    %% ENUMS
+    %% ============================
+    class TicketStatus {
+        <<enumeration>>
+        New
+        InProgress
+        Completed
+        Closed
+    }
+
+    class TicketPriority {
+        <<enumeration>>
+        Low
+        Medium
+        High
+        Critical
+    }
+    
+
+
+    %% ============================
+    %% RELATIONSHIPS
+    %% ============================
+    User "1" --> "many" Ticket : creates
+    Ticket "1" --> "many" Comment : contains >
+    Ticket "1" --> "many" Attachment : includes 
+    TechnicalLocation "1" --> "many" Ticket : assigned to     
+    Comment "many" --> "1" User : author >

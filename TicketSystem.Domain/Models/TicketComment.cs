@@ -12,8 +12,6 @@ public class TicketComment
     public string? Text { get; set; }
     public Instant? CreatedAt { get; set; }
     public int UserId { get; set; }
-    public User? User { get; set; }
-    [JsonIgnore] public int TicketId { get; set; }
-    [JsonIgnore] public Ticket? Ticket { get; set; }
+    public int TicketId { get; set; }
 
 }

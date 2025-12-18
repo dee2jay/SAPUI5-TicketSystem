@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+
+using Microsoft.Extensions.DependencyInjection;
 using TicketManagementSystem.Application.Events.TicketEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
@@ -13,20 +15,15 @@ public class TicketUpdatedEventHandler(IAppLogger logger) : IEventHandler<Ticket
     {
         try
         {
-            foreach (var message in @event.Changes.Select(change => new TicketChangeLog
-                     {
-                         Title = "Ticket Updated",
-                         TicketId = @event.TicketId,
-                         Property = change.Key,
-                         OldValue = change.Value.OldValue!.ToString(),
-                         NewValue = change.Value.NewValue!.ToString(),
-                         ChangedAt = @event.OccuredOn,
-                         ChangedBy = @event.UpdatedBy
-                     }).Select(logEntry => $"Timestamp -> {logEntry.ChangedAt}, {logEntry.Title}, TicketId: {logEntry.TicketId}, " +
-                                           $"OldValue: {logEntry.OldValue}, " +
-                                           $"NewValue: {logEntry.NewValue}, " +
-                                           $"Updated by {logEntry.ChangedBy}"))
+            foreach (var (property, values) in @event.Changes)
             {
+                ct.ThrowIfCancellationRequested();
+
+                var message =
+                    $"[{@event.OccuredOn}] Ticket {@event.TicketId} updated | " +
+                    $"{property}: '{(values.OldValue)}' → '{(values.NewValue)}' | " +
+                    $"by {@event.UpdatedBy}";
+
                 await logger.LogInfo(message);
             }
         }

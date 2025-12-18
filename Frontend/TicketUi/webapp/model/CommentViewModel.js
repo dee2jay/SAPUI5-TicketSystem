@@ -6,10 +6,8 @@ sap.ui.define([
 	return {
         create: function() {
             return new JSONModel(
-                {   
-                    "author": "",
-                    "text": "",
-                    "createAt":""
+                {                     
+                    "text": "",                    
                 }
             );
         }

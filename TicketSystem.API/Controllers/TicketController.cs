@@ -1,21 +1,22 @@
 ﻿using ErrorOr;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using System.Threading;
-using Microsoft.EntityFrameworkCore;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Application.Events.TicketEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
+using TicketManagementSystem.Infrastructure.Migrations;
 using TicketManagementSystem.Infrastructure.Persistence;
 
 namespace TicketManagementSystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TicketsController(ITicketService ticketService, IUserService userService ,TicketDbContext dbContext, IAppLogger logger, IEventPublisher eventPublisher) : ControllerBase
+public class TicketsController(ITicketService ticketService, ITicketAttachmentService attachmentService, ITicketCommentService commentService, IUserService userService ,TicketDbContext dbContext, IAppLogger logger) : ControllerBase
 {
     private readonly CancellationTokenSource _cancellationToken = new();
 
@@ -105,7 +106,7 @@ public class TicketsController(ITicketService ticketService, IUserService userSe
 
     [Authorize]
     [HttpPut("/api/tickets/{ticketId}/update", Name = "UpdateTicket")]
-    public async Task<IActionResult> UpdateTicket(int ticketId, [FromBody] TicketUpdateDto dto)
+    public async Task<IActionResult> UpdateTicket(int ticketId, [FromBody] TicketEditDto dto)
     {
         try
         {
@@ -149,6 +150,35 @@ public class TicketsController(ITicketService ticketService, IUserService userSe
         }
     }
 
+    [HttpPost("/api/tickets/{ticketId}/addComment", Name = "AddComment")]
+    public async Task<IActionResult> AddComment(int ticketId, [FromBody] TicketCommentDto dto)
+    {
+        try
+        {
+            var user = await userService.GetCurrentUser();
+
+            var updateDto = new TicketSystemUpdateDto()
+            {
+                CommentAdded = true,
+                UpdatedAt = SystemClock.Instance.GetCurrentInstant(),
+                Comment = dto.Text!,
+                UpdatedByUserId = user.Id
+            };
+            dto.CreatedAt = updateDto.UpdatedAt;
+            dto.UserId = user.Id;
+            
+            var comment = await commentService.AddCommentsByTicketId(ticketId, dto, _cancellationToken.Token);
+            await ticketService.UpdateTicketAsync(ticketId, updateDto, _cancellationToken.Token);
+
+            return Ok(comment);
+        }
+        catch (Exception e)
+        {
+            await logger.LogError(e.Message, e, e.Source, e.StackTrace!);
+            return BadRequest();
+        }
+    }
+
     [Authorize]
     [HttpGet("/api/tickets/{ticketId}/attachments", Name = "GetAttachment")]
     public async Task<IActionResult> GetAttachments(int ticketId)
@@ -165,39 +195,31 @@ public class TicketsController(ITicketService ticketService, IUserService userSe
         try
         {
             var user = await userService.GetCurrentUser();
-            var file = Request.Form.Files.FirstOrDefault();
+
+            IFormFile? file = null;
+            foreach (var formFile in Request.Form.Files)
+            {
+                file = formFile;
+                break;
+            }
+
             if (file == null)
             {
                 return BadRequest("No file");
             }
 
-            var attachment = new TicketAttachment
+            var attachment = await attachmentService.AddAttachment(ticketId, file, user, _cancellationToken.Token);
+
+            var updateDto = new TicketSystemUpdateDto()
             {
-                FileName = file.FileName,
-                TicketId = ticketId,
-                UploadedAt = SystemClock.Instance.GetCurrentInstant(),
-                UserId = user.Id,
-                User = user
+                AttachmentAdded = true,
+                UpdatedAt = SystemClock.Instance.GetCurrentInstant(),
+                UpdatedByUserId = user.Id
             };
 
-            using var ms = new MemoryStream();
-            await file.CopyToAsync(ms);
-            attachment.Data = ms.ToArray();
-
-            dbContext.TicketAttachments.Add(attachment);
-
-            await eventPublisher.PublishEventAsync(
-                new AttachmentAddedToTicketEvent(ticketId, attachment.FileName, $"{user.FirstName}, {user.LastName}"),
-                _cancellationToken.Token);
+            await ticketService.UpdateTicketAsync(ticketId, updateDto, _cancellationToken.Token);
             
-            await dbContext.SaveChangesAsync(_cancellationToken.Token);
-            
-            return Ok(new
-            {
-                id = attachment.Id,
-                filename = attachment.FileName,
-                url = $"api/attachment/{attachment.Id}"
-            });
+            return Ok(MapToDto(attachment));
         }
         catch (Exception e)
         {
@@ -207,21 +229,42 @@ public class TicketsController(ITicketService ticketService, IUserService userSe
         
     }
 
+    private static TicketAttachmentDto? MapToDto(TicketAttachment? attachment)
+    {
+        if (attachment != null)
+        {
+            return new TicketAttachmentDto
+            {
+                FileName = attachment.FileName,
+                TicketId = attachment.TicketId,
+                UploadAt = attachment.UploadedAt!.Value,
+                Url = attachment.Url,
+                UserId = attachment.UserId
+            };
+        }
+
+        return null;
+    }
+
     [Authorize]
-    [HttpDelete("/api/tickets/{ticketId}/attachment/{attachmentId}", Name = "DeleteAttachment")]
+    [HttpDelete("/api/tickets/{ticketId}/deleteAttachment/{attachmentId}", Name = "DeleteAttachment")]
     public async Task<IActionResult> DeleteAttachment(int ticketId, string attachmentId)
     {
         try
         {
             var user = await userService.GetCurrentUser();
+            var attachment = await attachmentService.GetAttachmentById(attachmentId, _cancellationToken.Token);
+            var updateDto = new TicketSystemUpdateDto()
+            {
+                FileName = attachment.FileName,
+                AttachmentDeleted = true,
+                UpdatedAt = SystemClock.Instance.GetCurrentInstant(),
+                UpdatedByUserId = user.Id
+            };
             
             await ticketService.RemoveAttachmentByTicketId(ticketId, attachmentId, _cancellationToken.Token);
 
-            await eventPublisher.PublishEventAsync(
-                new AttachmentDeletedToTicketEvent(ticketId, attachmentId, $"{user.FirstName},{user.LastName}"),
-                _cancellationToken.Token);
-
-            await dbContext.SaveChangesAsync(_cancellationToken.Token);
+            await ticketService.UpdateTicketAsync(ticketId, updateDto, _cancellationToken.Token);
             
             return Ok(new
             {

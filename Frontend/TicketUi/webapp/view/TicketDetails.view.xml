@@ -15,6 +15,18 @@
 					<Text id="id1IdText" text="Ticket {ticketsModel>id}" class="boldText"/>
 				</VBox>
 				<HBox id="id3HBox">
+					<Select id="idAssignedUserSelect" selectedKey="{ticketsModel>assignedTo}">
+						<items>
+						<core:Item id="idTicketAssignee0Item" key="Assignee0"
+							           text="Ticket Assignee0"/>
+							<core:Item id="idTicketAssignee1Item" key="Assignee1"
+							           text="Ticket Assignee1"/>
+							<core:Item id="idTicketAssignee2Item" key="Assignee2"
+							           text="Ticket Assignee2"/>
+							<core:Item id="idTicketAssignee3Item" key="Assignee3"
+							           text="Ticket Assignee3"/>
+						</items>
+					</Select>
 					<Select id="idStatusSelect" selectedKey="{ticketsModel>status}">
 						<items>
 							<core:Item id="idOpenItem" key="Open"
@@ -42,13 +54,13 @@
 				</HBox>
 			</HBox>
 		</Panel>
-		<Panel id="id2Panel" headerText="{i18n>descriptionTitle}">
+		<Panel id="id2Panel" >
 			<TextArea id="idDescription1TextArea" width="100%"
 			          rows="4"
 			          value="{ticketsModel>description}"
 			          editable="false"/>
 		</Panel>
-		<Panel id="id4Panel" headerText="{i18n>commentsTitle}"
+		<Panel id="id4Panel" 
 		       class="sapUiSmallMarginTop">
 			<List id="idCommentsList" items="{ticketsModel>comments}" >
 				<StandardListItem id="idStandardListItem" 

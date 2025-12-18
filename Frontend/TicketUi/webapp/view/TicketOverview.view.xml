@@ -57,12 +57,15 @@
 									<Column id="idCreatedByColumn">
 										<Text id="idCreatedByText" text="{i18n>columnCreatedBy}"/>
 									</Column>
+									<Column id="idAssignedUserColumn">
+										<Text id="idCurrentOwnerText" text="{i18n>columnAssignedUser}"/>
+									</Column>
 									<Column id="idActionColumn">
 										<Text id="idActionText" text=""/>
 									</Column>
 								</columns>
 								<items>
-									<ColumnListItem id="idColumnListItem" type="Navigation" detailPress=".onColumnListItemDetailPress">
+									<ColumnListItem id="idColumnListItem" type="Active" detailPress=".onColumnListItemDetailPress">
 										<cells>
 											<Text id="idIdText" text="{ticketsModel>id}"/>
 											<Text id="idCategory1Text" text="{ticketsModel>category}"/>
@@ -71,6 +74,7 @@
 											<Text id="idPriority1Text" text="{ticketsModel>priority}"/>
 											<Text id="idCreatedAt1Text" text="{parts:[{path: 'ticketsModel>createdAt'}], formatter: '.formatter.formatDateTimeWithTimezone'}"/>
 											<Text id="idAuthorText" text="{ticketsModel>author}"/>
+											<Text id="idAssignedToText" text="{ticketsModel>assignedTo}"/>
 											<Button id="idDetailViewButton" icon="sap-icon://sys-find" type="Emphasized" enabled="{= ${ticketsModel>status} !== 'Closed' }" press=".onButtonViewDetailsPress"/>
 										</cells>
 									</ColumnListItem>

@@ -3,13 +3,16 @@ sap.ui.define([
     "sap/ui/model/resource/ResourceModel",
     "sap/ui/model/json/JSONModel",
     "ui5/ticketui/model/CommentViewModel",
-    "ui5/ticketui/model/TicketCategoryViewModel"
+    "ui5/ticketui/model/TicketCategoryViewModel",
+	"ui5/ticketui/model/AttachmentViewModel"
 ], function(UIComponent,
 	ResourceModel,
 	JSONModel,
 	CommentViewModel,
-    TicketCategoryViewModel) {
+	TicketCategoryViewModel,
+	AttachmentViewModel) {
     "use strict";
+    
     return UIComponent.extend("ui5.ticketui.Component", {
         metadata: {
             "manifest": "json",
@@ -41,13 +44,17 @@ sap.ui.define([
             
             //define and set ticket category
             var oTicketCategoryModel = TicketCategoryViewModel.create();
-            this.setModel(oTicketCategoryModel, "ticketCategoryViewModel")            
-                  
+            this.setModel(oTicketCategoryModel, "ticketCategoryViewModel")     
+            
+            //define and set attachment model
+            const oAttachmentModel= AttachmentViewModel.create();
+            this.setModel(oAttachmentModel, "attachmentViewModel");
+            
+            
             //define and set comment model
             const oCommentModel= CommentViewModel.create();
             this.setModel(oCommentModel, "commentViewModel");     
-
-            const oModel = this.getModel("ticketsModel");
+                        
 
          // Restore model state from localStorage
             const savedState = localStorage.getItem("ticketsModelState");

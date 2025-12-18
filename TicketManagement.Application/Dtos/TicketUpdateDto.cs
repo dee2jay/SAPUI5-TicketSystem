@@ -12,9 +12,9 @@ public class TicketUpdateDto
     public TicketPriority Priority { get; set; }
     public string? AssignedTo { get; set; }
 
-    public List<TicketCommentDto>? Comments { get; set; } = [];
-    public List<TicketAttachmentDto>? Attachments { get; set; } = [];
-    public List<HistoryDto> Histories { get; set; } = [];
+    //public List<TicketCommentDto>? Comments { get; set; } = [];
+    //public List<TicketAttachmentDto>? Attachments { get; set; } = [];
+    //public List<HistoryDto> Histories { get; set; } = [];
     
     public byte[]? RowVersion { get; set; }
 }

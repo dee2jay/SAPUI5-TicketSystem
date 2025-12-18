@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel"], function(JSONModel) {
                     "category": "",
                     "location": "",
                     "costCenter": "",
-                    "assignedTo": null,
+                    "assignedTo": "",
                     "orderNumber": "",
                     "userId": null,
                     "user": null,

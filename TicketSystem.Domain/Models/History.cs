@@ -8,7 +8,7 @@ namespace TicketManagementSystem.Domain.Models
         public int Id { get; set; }
         public string? Action { get; set; }
         public Instant? Timestamp { get; set; }
-        [JsonIgnore] public int TicketId { get; set; }
-        [JsonIgnore] public Ticket? Ticket { get; set; }
+        public int TicketId { get; set; }
+        
     }
 }

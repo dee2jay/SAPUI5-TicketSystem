@@ -4,11 +4,8 @@ using TicketManagementSystem.Domain.Models;
 
 namespace TicketManagementSystem.Infrastructure.Persistence;
 
-public class TicketDbContext : DbContext
+public class TicketDbContext(DbContextOptions<TicketDbContext> options) : DbContext(options)
 {
-    public TicketDbContext(DbContextOptions<TicketDbContext> options) : base(options)
-    {
-    }
     public DbSet<TicketAttachment> TicketAttachments { get; set; }
     public DbSet<TicketComment> TicketComments { get; set; }
     public DbSet<History> TicketHistories { get; set; }
@@ -40,7 +37,7 @@ public class TicketDbContext : DbContext
         // User - Attachment (1 -> n)
         // -----------------------------
         modelBuilder.Entity<TicketAttachment>()
-            .HasOne(a => a.User)
+            .HasOne<User>()
             .WithMany(u => u.Attachments)
             .HasForeignKey(a => a.UserId);
 
@@ -48,7 +45,7 @@ public class TicketDbContext : DbContext
         // User - Comment (1 -> n)
         // -----------------------------
         modelBuilder.Entity<TicketComment>()
-            .HasOne(a => a.User)
+            .HasOne<User>()
             .WithMany(u => u.Comments)
             .HasForeignKey(a => a.UserId)
             .OnDelete(DeleteBehavior.NoAction);
@@ -58,7 +55,7 @@ public class TicketDbContext : DbContext
         // Ticket - Attachment (1 -> n)
         // -----------------------------
         modelBuilder.Entity<TicketAttachment>()
-            .HasOne(a => a.Ticket) 
+            .HasOne<Ticket>() 
             .WithMany(u => u.Attachments) 
             .HasForeignKey(a => a.TicketId)
             .OnDelete(DeleteBehavior.Cascade);
@@ -67,7 +64,7 @@ public class TicketDbContext : DbContext
         // Ticket - Comment (1 -> n)
         // -----------------------------
         modelBuilder.Entity<TicketComment>()
-            .HasOne(a => a.Ticket)
+            .HasOne<Ticket>()
             .WithMany(u => u.Comments) 
             .HasForeignKey(a => a.TicketId)
             .OnDelete(DeleteBehavior.Cascade);
@@ -76,7 +73,7 @@ public class TicketDbContext : DbContext
         // Ticket - History (1 -> n)
         // -----------------------------
         modelBuilder.Entity<History>()
-            .HasOne(h => h.Ticket)
+            .HasOne<Ticket>()
             .WithMany(t => t.Histories)
             .HasForeignKey(h => h.TicketId)
             .OnDelete(DeleteBehavior.Cascade);

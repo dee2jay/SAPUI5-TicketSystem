@@ -155,7 +155,23 @@ sap.ui.define([
         },
 
         onFileUploaderChange: function(oEvent) {
-            this._file = oEvent.getParameter("files")[0];               
+            
+            const oItem = oEvent.getSource();
+            const oContext = oItem.getBindingContext("ticketsModel");
+            const ticketData = oContext.getObject();           // ← ticket            
+            const ticketId = ticketData.id;
+            const oFile = oEvent.getParameter("files")[0];
+            
+            if (!oFile) {
+                return;
+            }
+
+            const oModel = this.getView().getModel("attachmentViewModel");            
+
+            oModel.setProperty("/attachment/file", oFile);
+            oModel.setProperty("/attachment/fileName", oFile.name);
+            oModel.setProperty("/attachment/size", oFile.size);
+            oModel.setProperty("/ticketId", ticketId);
         },
 
         onFileUploderUploadComplete: function(oEvent) {
@@ -193,14 +209,11 @@ sap.ui.define([
             this._attachmentDialog.close();
         },
 
-        onButtonUploadPress: function() {
+        onUploadButtonPress: function(oEvent) {                        
             
-            const oBundle = this.getView().getModel("i18n").getResourceBundle();
-
-            if (!this._file) {
-                sap.m.MessageToast.show("Select a file first!");
-                return;
-            }
+            const oModel = this.getView().getModel("attachmentViewModel");            
+           
+            const data = oModel.getData();
             const oToken = localStorage.getItem("auth_token");            
             
             if(!TokenService.isTokenValid(oToken))
@@ -209,33 +222,54 @@ sap.ui.define([
                 this.getOwnerComponent().getRouter().navTo("home", {}, true);
                 return;
             }
-
+            
+            if (!data.attachment.file) {
+                sap.m.MessageToast.show("Select a file first!");
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append("file", data.attachment.file);
+    
+            formData.append("attachmentContext", JSON.stringify({
+                description: data.attachment.description,
+                type: data.attachment.type
+            }));
+            
             const headers = {
                 "Authorization": "Bearer " + TokenService.getToken(),
             };
 
             const oUploader = sap.ui.getCore().byId("idFileUploader");
 
-            oUploader.removeAllHeaderParameters();
-            Object.keys(headers).forEach(key => {
-                oUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
-                    name: key,
-                    value: headers[key]
-                }));
-            });
-
-            const sPath = this.getView().getBindingContext("ticketsModel").getPath();
-            const oTicket = this.getView().getModel("ticketsModel").getProperty(sPath);                       
-            oUploader.setUploadUrl(`https://localhost:7187/api/tickets/${oTicket.id}/uploadAttachment`);
-            oUploader.upload();
-            this.onDialogAfterClose();
+            fetch(`https://localhost:7187/api/tickets/${data.ticketId}/uploadAttachment`, {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + TokenService.getToken()
+                },
+                body: formData
+            })
+            .then(r => r.ok ? r.json() : Promise.reject(r))
+            .then(() => {
+                MessageToast.show("Attachment uploaded");
+                this._resetAttachmentModel();
+            })
+            .catch(() => {
+                oModel.setProperty("/state/error", "Upload failed");
+            })
+            .finally(() => {
+                oModel.setProperty("/attachment/file", null);
+                oModel.setProperty("/attachment/fileName", "");
+                oModel.setProperty("/attachment/size", 0);                
+                oModel.setProperty("/state/uploading", false);                
+                this.onDialogAfterClose();
+            });            
             
         },
 
         onButtonDeletePress: async function (oEvent) {
             const oBundle = this.getView().getModel("i18n").getResourceBundle();
-
-            // Récupérer le contexte de la ligne
+            
             const oItemAttachement = oEvent.getSource().getBindingContext("ticketsModel");
             
             const oAttachment = oItemAttachement.getObject();
@@ -248,7 +282,14 @@ sap.ui.define([
             try {
                 const sToken = TokenService.getToken();
 
-                const response = await fetch(`https://localhost:7187/tickets/${ticketId}/attachment/${attachmentId}`, {
+                if(!TokenService.isTokenValid(sToken))
+                {
+                    MessageToast.show("Session expired");
+                    this.getOwnerComponent().getRouter().navTo("home", {}, true);
+                    return;
+                }
+
+                const response = await fetch(`https://localhost:7187/api/tickets/${ticketId}/deleteAttachment/${attachmentId}`, {
                     method: "DELETE",
                     headers: {
                         "Authorization": "Bearer " + sToken
@@ -302,12 +343,8 @@ sap.ui.define([
             comment.author = currentUser.fullname;
             comment.createAt = new Date().toISOString();
 
-            // -- Add new comment safely
-            ticketData.comments = ticketData.comments || [];
-            ticketData.comments.push(comment);           
-
             // -- Update API
-            await TicketService.updateTicket(ticketId, ticketData);
+            await TicketService.addComment(ticketId, comment);
 
                 // -- Refresh UI bindings
             this.getView().getModel("ticketsModel").refresh(true);

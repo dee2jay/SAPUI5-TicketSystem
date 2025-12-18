@@ -103,23 +103,15 @@ sap.ui.define([
             var oSelectedItem = oEvent.getParameter("selectedItem");
             var oSelectedItem = oEvent.getParameter("selectedItem");
             var sKey = oSelectedItem.getKey();
-            var sText = oSelectedItem.getText();
-
-            console.log("Selected key:", sKey, "text:", sText);
-
-            // 1️⃣ Récupérer le modèle
+            var sText = oSelectedItem.getText();          
+            
             const oModel = this.getView().getModel("ticketViewModel");
-            console.log("Model: ", oModel);
-            // 2️⃣ Récupérer le binding context du ticket
-            //const oContext = oEvent.getSource().getBindingContext("ticketViewModel");
+            
 
             const oData = oModel.getData();
-            console.log("Data: ", oData);
-            // 3️⃣ Modifier la donnée correctement
-            //oContext.getObject().category = sKey;
+            
             oData.category = sText;
-
-            // 4️⃣ Rafraîchir le modèle
+            
             oModel.refresh(true);
            
         },
@@ -181,7 +173,7 @@ sap.ui.define([
         },
 
         onButtonToggleSideNavPress: function () {
-            var oSideNav = this.byId("sideNav");
+            var oSideNav = this.byId("idSideNavigation");
             oSideNav.setExpanded(!oSideNav.getExpanded());
         },
 

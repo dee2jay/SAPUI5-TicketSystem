@@ -39,8 +39,9 @@ builder.Services.ConfigureOptions<AssignmentRulesOptionsSetup>();
 
 // === Repositories ===
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+builder.Services.AddScoped<ITicketAttachmentRepository, TicketAttachmentRepository>();
+builder.Services.AddScoped<ITicketCommentRepository, TicketCommentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
 
 
 
@@ -71,6 +72,8 @@ builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<ISmtpSettingsProvider, SmtpSettingProvider>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketCommentService, TicketCommentService>();
+builder.Services.AddScoped<ITicketAttachmentService, TicketAttachmentService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IMappingService, MappingService>();
@@ -163,7 +166,7 @@ builder.Services.AddSwaggerGen(c =>
             {
                 Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
             },
-            new string[] { }
+            []
         }
     });
 
