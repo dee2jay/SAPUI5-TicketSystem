@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicketManagementSystem.Application.Services.MailService;
+﻿using TicketManagementSystem.Application.Services.Mail;
 
 namespace TicketManagementSystem.Application.Interfaces;
 

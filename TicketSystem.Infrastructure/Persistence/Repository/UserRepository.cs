@@ -1,13 +1,7 @@
 ﻿using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
 
@@ -16,17 +10,17 @@ namespace TicketManagementSystem.Infrastructure.Persistence.Repository;
 public class UserRepository : IUserRepository
 {
     private readonly ILogger<ITicketRepository> _logger;
-    private readonly TicketDbContext _dbcontext;
+    private readonly TicketDbContext dbContextcontext;
 
     public UserRepository(ILogger<ITicketRepository> logger, TicketDbContext dbcontext)
     {
         _logger = logger;
-        _dbcontext = dbcontext;
+        dbContextcontext = dbcontext;
     }
 
     public async Task<ErrorOr<IEnumerable<User>>> GetAllUsers()
     {
-        var userList = await _dbcontext.Users.ToListAsync();
+        var userList = await dbContextcontext.Users.ToListAsync();
         if (userList.Count > 0)
         {
             return userList;
@@ -39,8 +33,8 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            await _dbcontext.Users.AddAsync(user);
-            await _dbcontext.SaveChangesAsync();
+            await dbContextcontext.Users.AddAsync(user);
+            await dbContextcontext.SaveChangesAsync();
         }
         catch (DbException e)
         {
@@ -50,7 +44,7 @@ public class UserRepository : IUserRepository
 
     public async Task<ErrorOr<User>> GetUserById(int userId)
     {
-        var user = await _dbcontext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        var user = await dbContextcontext.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (user != null)
         {
             return user;
@@ -61,7 +55,7 @@ public class UserRepository : IUserRepository
 
     public async Task<ErrorOr<User>> GetUserByUsername(string username)
     {
-        var user = await _dbcontext.Users.FirstOrDefaultAsync(u => u.Email == username);
+        var user = await dbContextcontext.Users.FirstOrDefaultAsync(u => u.Email == username);
         if (user != null)
         {
             return user;
@@ -72,7 +66,7 @@ public class UserRepository : IUserRepository
 
     public async Task<ErrorOr<User>> GetUserByEmail(string email)
     {
-        var user = await _dbcontext.Users.FirstOrDefaultAsync(u => u.Email == email);
+        var user = await dbContextcontext.Users.FirstOrDefaultAsync(u => u.Email == email);
         if (user != null)
         {
             return user;
@@ -83,21 +77,21 @@ public class UserRepository : IUserRepository
 
     public async Task UpdateUser(User user)
     {
-        _dbcontext.Users.Update(user);
-        await _dbcontext.SaveChangesAsync();
+        dbContextcontext.Users.Update(user);
+        await dbContextcontext.SaveChangesAsync();
         _logger.LogInformation($"User with Email {user.Email} has been updated.");
     }
 
     public async Task RemoveUser(int userId)
     {
-        var user = await _dbcontext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        var user = await dbContextcontext.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (user != null)
         {
             var test = await CloseConnectionByUser(user);
 
             if (test)
             {
-                _dbcontext.Users.Remove(user);
+                dbContextcontext.Users.Remove(user);
             }
             _logger.LogInformation($"User with ID {userId} has been deleted.");
         }
@@ -106,10 +100,6 @@ public class UserRepository : IUserRepository
 
     private Task<bool> CloseConnectionByUser(User user)
     {
-        if (user.UserConnected)
-        {
-            user.UserConnected = false;
-        }
         return Task.FromResult(true);
     }
 }

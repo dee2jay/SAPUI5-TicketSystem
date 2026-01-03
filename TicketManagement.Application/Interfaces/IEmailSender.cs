@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicketManagementSystem.Application.Services.MailService;
+﻿using TicketManagementSystem.Application.Services.Mail;
 
-namespace TicketManagementSystem.Application.Interfaces
+namespace TicketManagementSystem.Application.Interfaces;
+
+public interface IEmailSender
 {
-    public interface IEmailSender
-    {
-        Task SendEmailAsync(EmailContent email, CancellationToken cancellationToken = default);
-    }
+    Task SendEmailAsync(EmailContent email, CancellationToken cancellationToken = default);
 }

@@ -1,15 +1,10 @@
-﻿using ErrorOr;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NodaTime;
-using System.Threading;
 using TicketManagementSystem.Application.Dtos;
-using TicketManagementSystem.Application.Events.TicketEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
-using TicketManagementSystem.Infrastructure.Migrations;
 using TicketManagementSystem.Infrastructure.Persistence;
 
 namespace TicketManagementSystem.API.Controllers;

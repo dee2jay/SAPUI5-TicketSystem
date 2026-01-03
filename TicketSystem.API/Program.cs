@@ -1,9 +1,11 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using NodaTime;
 using System.Text.Json.Serialization;
+using Microsoft.IdentityModel.JsonWebTokens;
 using NodaTime.Serialization.SystemTextJson;
 using TicketManagementSystem.API.OptionsSetup;
 using TicketManagementSystem.Application.Command.UserCommands;
@@ -18,8 +20,9 @@ using TicketManagementSystem.Application.Mapping;
 using TicketManagementSystem.Application.Publisher;
 using TicketManagementSystem.Application.Security;
 using TicketManagementSystem.Application.Services;
-using TicketManagementSystem.Application.Services.AssignmentService;
-using TicketManagementSystem.Application.Services.MailService;
+using TicketManagementSystem.Application.Services.Assignment;
+using TicketManagementSystem.Application.Services.Mail;
+using TicketManagementSystem.Application.Services.Print;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
 using TicketManagementSystem.Infrastructure.Logging;
@@ -32,7 +35,31 @@ var builder = WebApplication.CreateBuilder(args);
 // === Authentication Configurations ===
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async ctx =>
+        {
+            var sub = ctx.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var tokenVersion = int.Parse(ctx.Principal!.FindFirst("ver")!.Value);
+
+            if (int.TryParse(sub, out var userId))
+            {
+                ctx.Fail("Invalid user Id");
+            }
+
+            var db = ctx.HttpContext.RequestServices.GetRequiredService<TicketDbContext>();
+
+            var user = await db.Users.FindAsync(userId);
+
+            if (user == null || user.TokenVersion != tokenVersion)
+            {
+                ctx.Fail("Token invalidated");
+            }
+        }
+    };
+});
 
 // === Assignment Rules Configurations ===
 builder.Services.ConfigureOptions<AssignmentRulesOptionsSetup>();
@@ -42,7 +69,7 @@ builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<ITicketAttachmentRepository, TicketAttachmentRepository>();
 builder.Services.AddScoped<ITicketCommentRepository, TicketCommentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 
 builder.Services.AddScoped<IEventHandler<UserCreatedEvent>, RegisterUserEventHandler>();
@@ -61,10 +88,10 @@ builder.Services.AddScoped<IEventPublisher>(sp => sp.GetRequiredService<EventPub
 builder.Services.AddScoped<IEventDispatcher, EventDispatcher>();
 
 
-builder.Services.AddAutoMapper(profile => profile.AddProfile(typeof(TicketMappingProfile)));
-builder.Services.AddAutoMapper(profile => profile.AddProfile(typeof(UserMappingProfile)));
-builder.Services.AddAutoMapper(profile => profile.AddProfile(typeof(TicketCommentMappingProfile)));
-builder.Services.AddAutoMapper(profile => profile.AddProfile(typeof(TicketAttachmentMappingProfile)));
+builder.Services.AddAutoMapper(profile => profile.AddProfile<TicketMappingProfile>());
+builder.Services.AddAutoMapper(profile => profile.AddProfile<UserMappingProfile>());
+builder.Services.AddAutoMapper(profile => profile.AddProfile<TicketCommentMappingProfile>());
+builder.Services.AddAutoMapper(profile => profile.AddProfile<TicketAttachmentMappingProfile>());
 
 // === Services ===
 builder.Services.AddScoped<ITicketAssignmentService, TicketAssignmentService>();
@@ -77,6 +104,7 @@ builder.Services.AddScoped<ITicketAttachmentService, TicketAttachmentService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IMappingService, MappingService>();
+builder.Services.AddScoped<IPrintService, PrintService>();
 
 // === Command Handler and Event Handlers===
 builder.Services.AddScoped<IEventHandler<TicketCreatedEvent>, TicketCreatedEventHandler>();

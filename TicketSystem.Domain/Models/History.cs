@@ -1,14 +1,12 @@
-﻿using System.Text.Json.Serialization;
-using NodaTime;
+﻿using NodaTime;
 
-namespace TicketManagementSystem.Domain.Models
+namespace TicketManagementSystem.Domain.Models;
+
+public class History
 {
-    public class History
-    {
-        public int Id { get; set; }
-        public string? Action { get; set; }
-        public Instant? Timestamp { get; set; }
-        public int TicketId { get; set; }
+    public int Id { get; set; }
+    public string? Action { get; set; }
+    public Instant? Timestamp { get; set; }
+    public int TicketId { get; set; }
         
-    }
 }

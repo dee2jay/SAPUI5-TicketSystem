@@ -1,11 +1,6 @@
-﻿using System;
-
-using Microsoft.Extensions.DependencyInjection;
-using TicketManagementSystem.Application.Events.TicketEvents;
+﻿using TicketManagementSystem.Application.Events.TicketEvents;
 using TicketManagementSystem.Application.Interfaces;
-using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
-using TicketManagementSystem.Infrastructure.Persistence;
 
 namespace TicketManagementSystem.Application.EventHandlers.TicketEventHandlers;
 

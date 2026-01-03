@@ -13,6 +13,7 @@ public class TicketDbContext(DbContextOptions<TicketDbContext> options) : DbCont
     public DbSet<User> Users { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<CategoryLocationUserMapping> CategoryLocationUserMappings { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -81,7 +82,14 @@ public class TicketDbContext(DbContextOptions<TicketDbContext> options) : DbCont
         // -----------------------------
         //              User
         // -----------------------------
-        modelBuilder.Entity<User>();
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasIndex(u => u.Email).IsUnique();
+            entity.Property(u => u.Email).IsRequired();
+            entity.Property(t => t.LastRefreshAt)
+                .HasConversion(v => v.Value.ToDateTimeUtc(),
+                    v => Instant.FromDateTimeUtc(DateTime.SpecifyKind(v, DateTimeKind.Utc)));
+        });
 
         // -----------------------------
         //              Category
@@ -148,5 +156,18 @@ public class TicketDbContext(DbContextOptions<TicketDbContext> options) : DbCont
         // -----------------------------
         modelBuilder.Entity<CategoryLocationUserMapping>();
 
+        // -----------------------------
+        //              Token 
+        // -----------------------------
+        modelBuilder.Entity<RefreshToken>()
+            .Property(t => t.ExpiresAt)
+            .HasConversion(
+                v => v!.ToDateTimeUtc(),
+                v => Instant.FromDateTimeUtc(DateTime.SpecifyKind(v, DateTimeKind.Utc)));
+        modelBuilder.Entity<RefreshToken>()
+            .Property(t => t.RevokedAt)
+            .HasConversion(
+                v => v!.Value.ToDateTimeUtc(),
+                v => Instant.FromDateTimeUtc(DateTime.SpecifyKind(v, DateTimeKind.Utc)));
     }
 }

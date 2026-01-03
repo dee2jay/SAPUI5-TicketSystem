@@ -1,11 +1,4 @@
 ﻿using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.DbModels;
 using TicketManagementSystem.Infrastructure.Interface;
 

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using TicketManagementSystem.Application.Interfaces;
+﻿using TicketManagementSystem.Application.Interfaces;
 
 namespace TicketManagementSystem.Application.Publisher;
 

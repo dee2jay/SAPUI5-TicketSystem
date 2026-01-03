@@ -1,57 +1,68 @@
-﻿using AutoMapper;
+﻿using System.Security.Authentication;
+using AutoMapper;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using NodaTime;
 using TicketManagementSystem.Application.Command.UserCommands;
-using TicketManagementSystem.Application.Events;
 using TicketManagementSystem.Application.Events.UserEvents;
 using TicketManagementSystem.Application.Interfaces;
-using TicketManagementSystem.Application.Publisher;
 using TicketManagementSystem.Application.Security;
 using TicketManagementSystem.Infrastructure.Interface;
 
-namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers
-{
+namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers;
 
-    public class UserLoginCommandHandler : ICommandHandler<LoginUserCommand, string>
+public class UserLoginCommandHandler(
+    IUserRepository userRepo,
+    IRefreshTokenRepository refreshTokenRepo,
+    IMapper mapper,
+    IConfiguration config,
+    IEventPublisher eventPublisher,
+    IJwtProvider jwtProvider)
+    : ICommandHandler<LoginUserCommand, string> {
+
+    Task ICommandHandlerBase<LoginUserCommand>.Handle(LoginUserCommand command, CancellationToken ct)
     {
-        private readonly IUserRepository _userRepo;
-        private readonly IMapper _mapper;
-        private readonly IConfiguration _config;
-        private readonly IEventPublisher _eventPublisher;
-        private readonly IJwtProvider _jwtProvider;
-        public UserLoginCommandHandler(IUserRepository userRepo, IMapper mapper, IConfiguration config, IEventPublisher eventPublisher, IJwtProvider jwtProvider)
+        return Handle(command, ct);
+    }
+
+    public async Task<string> Handle(LoginUserCommand command, CancellationToken ct)
+    {
+        var userResult = await userRepo.GetUserByEmail(command.Email);
+        if (userResult.IsError)
         {
-            _userRepo = userRepo;
-            _mapper = mapper;
-            _config = config;
-            _eventPublisher = eventPublisher;
-            _jwtProvider = jwtProvider;
+            throw new UnauthorizedAccessException();
+        }
+        var user = userResult.Value;
+
+        if (!BCrypt.Net.BCrypt.Verify(command.Password, user.Password))
+        {
+            throw new UnauthorizedAccessException();
         }
 
-        Task ICommandHandlerBase<LoginUserCommand>.Handle(LoginUserCommand command, CancellationToken ct)
+        // Device
+        var deviceId = Guid.NewGuid().ToString();
+
+        // Refresh token
+        var refreshToken = jwtProvider.GenerateRefreshToken();
+        var refreshTokenHash = JwtProvider.Hash(refreshToken);
+
+        var refreshTokenExpirationInDaysString = config.GetSection("Jwt")["RefreshTokenExpirationInDays"];
+        if (!int.TryParse(refreshTokenExpirationInDaysString, out var refreshTokenExpirationInDays))
         {
-            return Handle(command, ct);
+            throw new InvalidOperationException("Invalid RefreshTokenExpirationInDays configuration value.");
         }
-
-        public async Task<string> Handle(LoginUserCommand command, CancellationToken ct)
+        var refreshTokenEntity = new Domain.Models.RefreshToken
         {
-            var user = await _userRepo.GetUserByEmail(command.Email);
-            if (!user.IsError)
-            {
-                if (!BCrypt.Net.BCrypt.Verify(command.Password, user.Value.Password))
-                    return null!;
-            }
-            user.Value.UserConnected = true;
+            UserId = user.Id,
+            TokenHash = refreshTokenHash,
+            ExpiresAt = SystemClock.Instance.GetCurrentInstant() + Duration.FromDays(refreshTokenExpirationInDays),
+            DeviceId = deviceId,
+        };
+        await refreshTokenRepo.AddRefreshToken(refreshTokenEntity);
 
-            var userLoginEvent = new UserLoginEvent(user.Value.Email, user.Value.Username);
-            await _userRepo.UpdateUser(user.Value);
-            await _eventPublisher.PublishEventAsync(userLoginEvent, CancellationToken.None);
+        var userLoginEvent = new UserLoginEvent(user.Email, user.Username, deviceId);
+        await userRepo.UpdateUser(user);
+        await eventPublisher.PublishEventAsync(userLoginEvent, ct);
 
-            return _jwtProvider.Generate(user.Value);
-        }
+        return jwtProvider.Generate(user);
     }
 }

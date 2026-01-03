@@ -1,60 +1,58 @@
 ﻿using Microsoft.AspNetCore.Http;
 using NodaTime;
-using TicketManagementSystem.Application.Events.TicketEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
 
-namespace TicketManagementSystem.Application.Services
+namespace TicketManagementSystem.Application.Services;
+
+public class TicketAttachmentService(ITicketAttachmentRepository attachmentRepository, IAppLogger logger, IEventPublisher eventPublisher) : ITicketAttachmentService
 {
-    public class TicketAttachmentService(ITicketAttachmentRepository attachmentRepository, IAppLogger logger, IEventPublisher eventPublisher) : ITicketAttachmentService
+    public async Task<TicketAttachment?> AddAttachment(int ticketId, IFormFile file, User user, CancellationToken ct)
     {
-        public async Task<TicketAttachment?> AddAttachment(int ticketId, IFormFile file, User user, CancellationToken ct)
+        try
         {
-            try
+            var attachment = new TicketAttachment
             {
-                var attachment = new TicketAttachment
-                {
-                    Id = Guid.NewGuid(),
-                    TicketId = ticketId,
-                    FileName = file.FileName,
-                    UploadedAt = SystemClock.Instance.GetCurrentInstant(),
-                    UserId = user.Id
-                };
+                Id = Guid.NewGuid(),
+                TicketId = ticketId,
+                FileName = file.FileName,
+                UploadedAt = SystemClock.Instance.GetCurrentInstant(),
+                UserId = user.Id
+            };
 
-                using var ms = new MemoryStream();
-                await file.CopyToAsync(ms, ct);
-                attachment.Data = ms.ToArray();
-                attachment.Url = $"/api/tickets/{ticketId}/attachment/get/{attachment.Id}";
+            using var ms = new MemoryStream();
+            await file.CopyToAsync(ms, ct);
+            attachment.Data = ms.ToArray();
+            attachment.Url = $"/api/tickets/{ticketId}/attachment/get/{attachment.Id}";
 
-                await attachmentRepository.AddAttachmentAsync(attachment, ct);
+            await attachmentRepository.AddAttachmentAsync(attachment, ct);
 
-                return attachment;
+            return attachment;
 
-            }
-            catch (Exception e)
+        }
+        catch (Exception e)
+        {
+            await logger.LogError(e.Message, e, e.Source, e.StackTrace!);
+            return null;
+        }
+    }
+
+    public async Task<TicketAttachment> GetAttachmentById(string attachmentId, CancellationToken ct)
+    {
+        try
+        {
+            var result = await attachmentRepository.GetTicketAttachmentById(attachmentId, ct);
+            if (!result.IsError)
             {
-                await logger.LogError(e.Message, e, e.Source, e.StackTrace!);
-                return null;
+                return result.Value;
             }
         }
-
-        public async Task<TicketAttachment> GetAttachmentById(string attachmentId, CancellationToken ct)
+        catch (Exception e)
         {
-            try
-            {
-                var result = await attachmentRepository.GetTicketAttachmentById(attachmentId, ct);
-                if (!result.IsError)
-                {
-                    return result.Value;
-                }
-            }
-            catch (Exception e)
-            {
-                await logger.LogError(e.Message, e, e.Source, e.StackTrace!);
+            await logger.LogError(e.Message, e, e.Source, e.StackTrace!);
                 
-            }
-            return null!;
         }
+        return null!;
     }
 }
