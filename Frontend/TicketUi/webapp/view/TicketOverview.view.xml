@@ -75,7 +75,7 @@
 											<Text id="idCreatedAt1Text" text="{parts:[{path: 'ticketsModel>createdAt'}], formatter: '.formatter.formatDateTimeWithTimezone'}"/>
 											<Text id="idAuthorText" text="{ticketsModel>author}"/>
 											<Text id="idAssignedToText" text="{ticketsModel>assignedTo}"/>
-											<Button id="idDetailViewButton" icon="sap-icon://sys-find" type="Emphasized" enabled="{= ${ticketsModel>status} !== 'Closed' }" press=".onButtonViewDetailsPress"/>
+											<Button id="idDetailViewButton" icon="sap-icon://detail-view" type="Emphasized" enabled="{= ${ticketsModel>status} !== 'Closed' }" press=".onButtonViewDetailsPress"/>
 										</cells>
 									</ColumnListItem>
 								</items>

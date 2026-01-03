@@ -19,24 +19,40 @@
                 type="Emphasized"
                 press=".onUploadButtonPress"/>
 
-                <List id="idAttachmentsList"
-                    headerText="{i18n>titleTicketAttachmentList}"
-                    items="{ticketsModel>attachments}">
-            <CustomListItem id="idCustomListItem"                
-                type="Active">
-                <HBox id="id1HBox" justifyContent="SpaceBetween" alignItems="Center">                
-                
-                <core:Icon id="idIcon" src= "sap-icon://document" />
-                <Text id="idFileNameText" text="{ticketsModel>fileName}" />
+            <List id="idAttachmentsList"
+                headerText="{i18n>titleTicketAttachmentList}"
+                items="{ticketsModel>attachments}">
+                <CustomListItem id="idCustomListItem" type="Active">
+                    <HBox id="id1HBox" justifyContent="SpaceBetween" alignItems="Center">                
+                    
+                    <core:Icon id="idIcon" src= "sap-icon://document" />
+                    <Text id="idFileNameText" text="{ticketsModel>fileName}" />
 
-                <Button id="idDeleteButton" icon="sap-icon://delete" press=".onButtonDeletePress"/>
-                </HBox>
-                </CustomListItem>
+                    <Button id="idDeleteButton" icon="sap-icon://delete" press=".onDeleteButtonPress"/>
+                    <!-- <Button id="idPreviewButton" icon="sap-icon://image-viewer" press=".onPreviewButtonPress"/> -->
+                    </HBox>
+                </CustomListItem>                
+            </List>
+        </VBox>
 
-        </List>
+        <VBox id="idViewerBox" visible="false" class="sapSmallMarginTop">
+            <Title id="idFilePreviewTitle" text="{i18n>filePreview}"/>
+            <!-- PDF -->
+            <PDFViewer
+                id="idPDFViewer"
+                visible="false"
+                width="100%"
+                height="600px"/>
+
+            <!-- Image -->
+            <Image
+                id="idViewerImage"
+                visible="false"
+                width="100%"
+                densityAware="false"/>
         </VBox>
         <endButton>
-            <Button id="idCloseButton" text="{i18n>buttonClose}" press=".onButtonClosePress"/>
+            <Button id="idCloseButton" text="{i18n>buttonClose}" press=".onCloseButtonPress"/>
         </endButton>
     </Dialog>
 </core:FragmentDefinition>
