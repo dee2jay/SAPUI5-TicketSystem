@@ -61,6 +61,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+//=== Mediator ===
+//builder.Services.AddMediatR(cfg =>
+//    cfg.RegisterServicesFromAssemblyContaining<LoginUserCommand>()
+//);
+
 // === Assignment Rules Configurations ===
 builder.Services.ConfigureOptions<AssignmentRulesOptionsSetup>();
 

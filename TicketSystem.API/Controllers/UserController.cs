@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.JsonWebTokens;
 using NodaTime;
 using System.Security.Claims;
-using MediatR;
+//using MediatR;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Application.Security;
@@ -17,7 +17,7 @@ namespace TicketManagementSystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController(IUserService userService, TicketDbContext dbContext, Mediator mediator) : ControllerBase
+public class UserController(IUserService userService, TicketDbContext dbContext) : ControllerBase
 {
     private readonly CancellationTokenSource _tokenSource = new();
 
