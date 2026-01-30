@@ -30,8 +30,6 @@ namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers
             var user = await _userRepo.GetUserByEmail(cmd.Email);
             if (!user.IsError)
             {
-                user.Value.UserConnected = false;
-
                 await _userRepo.UpdateUser(user.Value);
                 await _eventPublisher.PublishEventAsync(new UserLogoutEvent(user.Value.Email, user.Value.Username), CancellationToken.None);
             }

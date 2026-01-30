@@ -45,7 +45,6 @@ namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers
                 if (!BCrypt.Net.BCrypt.Verify(command.Password, user.Value.Password))
                     return null!;
             }
-            user.Value.UserConnected = true;
 
             var userLoginEvent = new UserLoginEvent(user.Value.Email, user.Value.Username);
             await _userRepo.UpdateUser(user.Value);

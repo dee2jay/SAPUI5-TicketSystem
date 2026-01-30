@@ -42,7 +42,6 @@ namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers
                 Username = command.Username,
                 Email = command.Email,
                 Password = string.Empty,
-                UserConnected = false
             };
             
             user.Password = BCrypt.Net.BCrypt.HashPassword(command.Password);

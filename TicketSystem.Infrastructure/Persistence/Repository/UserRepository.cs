@@ -106,10 +106,6 @@ public class UserRepository : IUserRepository
 
     private Task<bool> CloseConnectionByUser(User user)
     {
-        if (user.UserConnected)
-        {
-            user.UserConnected = false;
-        }
         return Task.FromResult(true);
     }
 }
