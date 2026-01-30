@@ -17,7 +17,7 @@ namespace TicketManagementSystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController(IUserService userService, TicketDbContext dbContext, Mediator mediator) : ControllerBase
+public class UserController(IUserService userService, TicketDbContext dbContext/*, Mediator mediator*/) : ControllerBase
 {
     private readonly CancellationTokenSource _tokenSource = new();
 
@@ -28,9 +28,14 @@ public class UserController(IUserService userService, TicketDbContext dbContext,
         try
         {
             _tokenSource.Token.ThrowIfCancellationRequested();
-            var user = await userService.RegisterUserAsync(dto, _tokenSource.Token);
+            var registerResult = await userService.RegisterUserAsync(dto, _tokenSource.Token);
             
-            return Ok(new { user.Id, UserName = user.Username, user.Email });
+            if (!registerResult.Success)
+            {
+                return BadRequest(new { message = registerResult.ErrorMessage });
+            }
+
+            return CreatedAtAction(nameof(Register), registerResult);
         }
         catch (Exception e)
         {
@@ -45,13 +50,14 @@ public class UserController(IUserService userService, TicketDbContext dbContext,
         try
         {
             _tokenSource.Token.ThrowIfCancellationRequested();
-            var token = await userService.LoginUserAsync(dto, _tokenSource.Token);
+            var loginResult = await userService.LoginUserAsync(dto, _tokenSource.Token);
 
-            if (string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(loginResult.Token))
             {
                 return Unauthorized();
             }
-            return Ok(new { token });
+            return CreatedAtAction(nameof(Login),
+                loginResult);
         }
         catch (Exception ex)
         {
@@ -64,7 +70,10 @@ public class UserController(IUserService userService, TicketDbContext dbContext,
     public async Task<IActionResult> Logout()
     {
         if (!Request.Cookies.TryGetValue("refreshToken", out var token))
-            return Ok();
+        {
+            return CreatedAtAction(nameof(Logout),
+             "logout completed");
+        }
 
         var hash = JwtProvider.Hash(token);
 
@@ -76,7 +85,8 @@ public class UserController(IUserService userService, TicketDbContext dbContext,
         }
 
         Response.Cookies.Delete("refreshToken");
-        return Ok();
+        return CreatedAtAction(nameof(Logout),
+            "logout completed");
     }
 
     [Authorize]
@@ -101,8 +111,13 @@ public class UserController(IUserService userService, TicketDbContext dbContext,
     [HttpGet("me")]
     public async Task<IActionResult> Me()
     {
-       var user =await userService.GetCurrentUser();
-       var fullname = $"{user.FirstName}, {user.LastName}";
-       return Ok(new { user.Id, fullname });
+        var user = await userService.GetCurrentUser();
+        if (user == null)
+        {
+            return BadRequest("No Current User");
+        }
+        var fullname = $"{user.FirstName}, {user.LastName}";
+        return Ok(new { user.Id, fullname });
+
     }
 }

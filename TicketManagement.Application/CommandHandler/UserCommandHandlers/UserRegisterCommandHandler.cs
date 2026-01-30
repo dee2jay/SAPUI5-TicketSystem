@@ -3,26 +3,22 @@ using NodaTime;
 using TicketManagementSystem.Application.Command.UserCommands;
 using TicketManagementSystem.Application.Events.UserEvents;
 using TicketManagementSystem.Application.Interfaces;
+using TicketManagementSystem.Application.Results;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
 
 namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers;
 
-public class UserRegisterCommandHandler : ICommandHandler<RegisterUserCommand, User>
+public class UserRegisterCommandHandler(
+    IUserRepository userRepo,
+    IMapper mapper,
+    IEventPublisher eventPublisher,
+    IAppLogger logger)
+    : ICommandHandler<RegisterUserCommand, RegisterUserResult>
 {
-    private readonly IUserRepository _userRepo;
-    private readonly IMapper _mapper;
-    private readonly IEventPublisher _eventPublisher;
-    private readonly IAppLogger _logger;
-    public UserRegisterCommandHandler(IUserRepository userRepo, IMapper mapper, IEventPublisher eventPublisher, IAppLogger logger)
-    {
-        _userRepo = userRepo;
-        _mapper = mapper;
-        _eventPublisher = eventPublisher;
-        _logger = logger;
-    }
+    private readonly IMapper _mapper = mapper;
 
-    public async Task<User> Handle(RegisterUserCommand command, CancellationToken ct)
+    public async Task<RegisterUserResult> Handle(RegisterUserCommand command, CancellationToken ct)
     {
         var user = new User
         {
@@ -44,13 +40,19 @@ public class UserRegisterCommandHandler : ICommandHandler<RegisterUserCommand, U
         try
         {
             ct.ThrowIfCancellationRequested();
-            await _userRepo.AddUser(user);
-            await _eventPublisher.PublishEventAsync(userRegisterEvent,ct );
-            return user;
+            if (userRepo.GetUserByEmail(command.Email).Result.Value != null)
+            {
+                return RegisterUserResult.Fail("EMAIL_ALREADY_USED", 
+                    "An account already exists with this email address.");
+            }
+            
+            await userRepo.AddUser(user);
+            await eventPublisher.PublishEventAsync(userRegisterEvent,ct );
+            return RegisterUserResult.Ok(user.Id);
         }
         catch (Exception e)
         {
-            await _logger.LogError(e.Message, e, e.Source, e.StackTrace!);
+            await logger.LogError(e.Message, e, e.Source, e.StackTrace!);
             return null!;
         }
             

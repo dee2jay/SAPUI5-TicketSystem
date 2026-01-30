@@ -12,8 +12,8 @@ public class LoginUserEventHandler(IAppLogger logger) : IEventHandler<UserLoginE
         var logEntry = new UserChangeLog
         {
             Title = "User logged in",
-            Property = "UserConnected",
-            OldValue = "False",
+            Property = "Login",
+            OldValue = null,
             NewValue = "True",
             ChangedAt = @event.OccuredOn,
         };

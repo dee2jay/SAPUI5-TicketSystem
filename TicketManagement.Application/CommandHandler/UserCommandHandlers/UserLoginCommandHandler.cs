@@ -1,10 +1,10 @@
 ﻿using System.Security.Authentication;
-using AutoMapper;
 using Microsoft.Extensions.Configuration;
 using NodaTime;
 using TicketManagementSystem.Application.Command.UserCommands;
 using TicketManagementSystem.Application.Events.UserEvents;
 using TicketManagementSystem.Application.Interfaces;
+using TicketManagementSystem.Application.Results;
 using TicketManagementSystem.Application.Security;
 using TicketManagementSystem.Infrastructure.Interface;
 
@@ -13,34 +13,37 @@ namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers;
 public class UserLoginCommandHandler(
     IUserRepository userRepo,
     IRefreshTokenRepository refreshTokenRepo,
-    IMapper mapper,
     IConfiguration config,
     IEventPublisher eventPublisher,
     IJwtProvider jwtProvider)
-    : ICommandHandler<LoginUserCommand, string> {
+    : ICommandHandler<LoginUserCommand, LoginResult> {
 
     Task ICommandHandlerBase<LoginUserCommand>.Handle(LoginUserCommand command, CancellationToken ct)
     {
         return Handle(command, ct);
     }
 
-    public async Task<string> Handle(LoginUserCommand command, CancellationToken ct)
+    public async Task<LoginResult> Handle(LoginUserCommand command, CancellationToken ct)
     {
         var userResult = await userRepo.GetUserByEmail(command.Email);
         if (userResult.IsError)
         {
-            throw new UnauthorizedAccessException();
+            return LoginResult.Fail("USER_NOT_FOUND", "User not found");
         }
         var user = userResult.Value;
 
         if (!BCrypt.Net.BCrypt.Verify(command.Password, user.Password))
         {
-            throw new UnauthorizedAccessException();
+            return LoginResult.Fail("INVALID_CREDENTIAL", 
+                "Email or password " );
+                                                         
         }
 
         // Device
         var deviceId = Guid.NewGuid().ToString();
 
+        //Token
+        var token = jwtProvider.Generate(user);
         // Refresh token
         var refreshToken = jwtProvider.GenerateRefreshToken();
         var refreshTokenHash = JwtProvider.Hash(refreshToken);
@@ -63,6 +66,7 @@ public class UserLoginCommandHandler(
         await userRepo.UpdateUser(user);
         await eventPublisher.PublishEventAsync(userLoginEvent, ct);
 
-        return jwtProvider.Generate(user);
+        return LoginResult.Ok(token, refreshToken, 
+            SystemClock.Instance.GetCurrentInstant().Plus(Duration.FromHours(refreshTokenExpirationInDays)));
     }
 }

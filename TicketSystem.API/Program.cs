@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -6,6 +7,8 @@ using Microsoft.OpenApi.Models;
 using NodaTime;
 using System.Text.Json.Serialization;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens.Experimental;
 using NodaTime.Serialization.SystemTextJson;
 using TicketManagementSystem.API.OptionsSetup;
 using TicketManagementSystem.Application.Command.UserCommands;
@@ -18,6 +21,7 @@ using TicketManagementSystem.Application.Events.UserEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Application.Mapping;
 using TicketManagementSystem.Application.Publisher;
+using TicketManagementSystem.Application.Results;
 using TicketManagementSystem.Application.Security;
 using TicketManagementSystem.Application.Services;
 using TicketManagementSystem.Application.Services.Assignment;
@@ -35,31 +39,50 @@ var builder = WebApplication.CreateBuilder(args);
 // === Authentication Configurations ===
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+//{
+//    options.Events = new JwtBearerEvents
+//    {
+//        OnTokenValidated = async ctx =>
+//        {
+//            var sub = ctx.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub);
+//            var tokenVersion = int.Parse(ctx.Principal!.FindFirst("token_version")!.Value);
+
+//            if (int.TryParse(sub, out var userId))
+//            {
+//                ctx.Fail("Invalid user Id");
+//            }
+
+//            var db = ctx.HttpContext.RequestServices.GetRequiredService<TicketDbContext>();
+
+//            var user = await db.Users.FindAsync(userId);
+
+//            if (user == null || user.TokenVersion != tokenVersion)
+//            {
+//                ctx.Fail("Token invalidated");
+//            }
+//        }
+//    };
+//});
+
+builder.Services.AddAuthentication(options =>
 {
-    options.Events = new JwtBearerEvents
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        OnTokenValidated = async ctx =>
-        {
-            var sub = ctx.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            var tokenVersion = int.Parse(ctx.Principal!.FindFirst("ver")!.Value);
-
-            if (int.TryParse(sub, out var userId))
-            {
-                ctx.Fail("Invalid user Id");
-            }
-
-            var db = ctx.HttpContext.RequestServices.GetRequiredService<TicketDbContext>();
-
-            var user = await db.Users.FindAsync(userId);
-
-            if (user == null || user.TokenVersion != tokenVersion)
-            {
-                ctx.Fail("Token invalidated");
-            }
-        }
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Issuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"])),
     };
+
 });
+
 
 // === Assignment Rules Configurations ===
 builder.Services.ConfigureOptions<AssignmentRulesOptionsSetup>();
@@ -77,8 +100,8 @@ builder.Services.AddScoped<IEventHandler<UserLoginEvent>, LoginUserEventHandler>
 builder.Services.AddScoped<IEventHandler<UserLogoutEvent>, LogoutUserEventHandler>();
 
 
-builder.Services.AddScoped<ICommandHandler<RegisterUserCommand, User>, UserRegisterCommandHandler>();
-builder.Services.AddScoped<ICommandHandler<LoginUserCommand, string>, UserLoginCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<RegisterUserCommand, RegisterUserResult>, UserRegisterCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<LoginUserCommand, LoginResult>, UserLoginCommandHandler>();
 builder.Services.AddScoped<ICommandHandlerBase<LogoutUserCommand>, UserLogoutCommandHandler>();
 
 

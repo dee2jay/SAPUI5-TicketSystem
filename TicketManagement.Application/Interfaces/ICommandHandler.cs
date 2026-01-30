@@ -1,4 +1,6 @@
-﻿namespace TicketManagementSystem.Application.Interfaces;
+﻿using TicketManagementSystem.Application.Results;
+
+namespace TicketManagementSystem.Application.Interfaces;
 
 public interface ICommandHandler<TCommand, TResult> : ICommandHandlerBase<TCommand>
 {

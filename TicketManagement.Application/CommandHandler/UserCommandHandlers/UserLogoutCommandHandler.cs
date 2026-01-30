@@ -1,28 +1,27 @@
 ﻿using TicketManagementSystem.Application.Command.UserCommands;
 using TicketManagementSystem.Application.Events.UserEvents;
 using TicketManagementSystem.Application.Interfaces;
+using TicketManagementSystem.Application.Results;
 using TicketManagementSystem.Infrastructure.Interface;
 
 namespace TicketManagementSystem.Application.CommandHandler.UserCommandHandlers;
 
-public class UserLogoutCommandHandler : ICommandHandlerBase<LogoutUserCommand>
+public class UserLogoutCommandHandler(IUserRepository userRepo, IEventPublisher eventPublisher)
+    : ICommandHandler<LogoutUserCommand, LogoutResult>
 {
-    private readonly IUserRepository _userRepo;
-    private readonly IEventPublisher _eventPublisher;
-
-    public UserLogoutCommandHandler(IUserRepository userRepo, IEventPublisher eventPublisher)
+    Task ICommandHandlerBase<LogoutUserCommand>.Handle(LogoutUserCommand command, CancellationToken ct)
     {
-        _userRepo = userRepo;
-        _eventPublisher = eventPublisher;
+        return Handle(command, ct);
     }
-
-    public async Task Handle(LogoutUserCommand cmd, CancellationToken ct)
+    public async Task<LogoutResult> Handle(LogoutUserCommand cmd, CancellationToken ct)
     {
-        var user = await _userRepo.GetUserByEmail(cmd.Email);
+        var user = await userRepo.GetUserByEmail(cmd.Email);
         if (!user.IsError)
         {
-            await _userRepo.UpdateUser(user.Value);
-            await _eventPublisher.PublishEventAsync(new UserLogoutEvent(user.Value.Email, user.Value.Username), CancellationToken.None);
+            await userRepo.UpdateUser(user.Value);
+            await eventPublisher.PublishEventAsync(new UserLogoutEvent(user.Value.Email, user.Value.Username), CancellationToken.None);
+            return LogoutResult.Ok();
         }
+        return LogoutResult.Fail();
     }
 }
