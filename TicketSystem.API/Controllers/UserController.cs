@@ -1,15 +1,23 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.JsonWebTokens;
+using NodaTime;
 using System.Security.Claims;
+using MediatR;
 using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Application.Interfaces;
-using TicketManagementSystem.Application.Services;
+using TicketManagementSystem.Application.Security;
+using TicketManagementSystem.Infrastructure.Persistence;
 
 namespace TicketManagementSystem.API.Controllers;
 
+
+
 [ApiController]
 [Route("api/[controller]")]
-public class UserController(IUserService userService) : ControllerBase
+public class UserController(IUserService userService, TicketDbContext dbContext, Mediator mediator) : ControllerBase
 {
     private readonly CancellationTokenSource _tokenSource = new();
 
@@ -55,15 +63,38 @@ public class UserController(IUserService userService) : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        var user = await userService.GetCurrentUser();
-        await userService.LogoutUserAsync(user.Email);
-        
-        return Ok(new
+        if (!Request.Cookies.TryGetValue("refreshToken", out var token))
+            return Ok();
+
+        var hash = JwtProvider.Hash(token);
+
+        var rt = await dbContext.RefreshTokens.SingleOrDefaultAsync(t => t.TokenHash == hash);
+        if (rt != null)
         {
-            message = "User successfully logged out",
-            email = user,
-            connected = false
-        });
+            rt.RevokedAt = SystemClock.Instance.GetCurrentInstant();
+            await dbContext.SaveChangesAsync();
+        }
+
+        Response.Cookies.Delete("refreshToken");
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpPost("logout-all")]
+    public async Task<IActionResult> LogoutAll()
+    {
+        var userId = int.Parse(User.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
+
+        var user = await dbContext.Users.FindAsync(userId);
+        user!.TokenVersion++;
+
+        var tokens = dbContext.RefreshTokens.Where(t => t.UserId == userId && t.RevokedAt == null);
+        foreach (var t in tokens)
+            t.RevokedAt = SystemClock.Instance.GetCurrentInstant();
+
+        await dbContext.SaveChangesAsync();
+
+        return Ok();
     }
 
     [Authorize]

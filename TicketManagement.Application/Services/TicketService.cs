@@ -1,18 +1,12 @@
 ﻿using AutoMapper;
-using ErrorOr;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
-using System.Linq.Expressions;
-using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using TicketManagementSystem.Application.Dtos;
-using TicketManagementSystem.Application.Events;
 using TicketManagementSystem.Application.Events.TicketEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Enums;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
-using TicketManagementSystem.Infrastructure.Persistence;
 
 namespace TicketManagementSystem.Application.Services;
 
@@ -115,30 +109,6 @@ public class TicketService(
         
         return [];
     }
-    public async Task AssignTicketToUserAsync(int ticketId, string userId, CancellationToken ct)
-    {
-        await using var logger = serviceProvider.GetRequiredService<IAppLogger>();
-        try
-        {
-            // Implementation for assigning ticket to user goes here.
-            var ticket = await ticketRepository.GetTicketById(ticketId, ct);
-
-            if (ticket.IsError)
-            {
-                await logger.LogWarning($"Ticket with ID {ticketId} not found.", nameof(TicketService));
-                return;
-            }
-            ticket.Value.AssignedTo = userId;
-            ticket.Value.UpdatedAt = SystemClock.Instance.GetCurrentInstant();
-            await ticketRepository.UpdateTicket(ticket.Value);
-            await  logger.LogInfo($"Ticket {ticketId} assigned to user {userId} at {SystemClock.Instance.GetCurrentInstant()}", nameof(TicketService));
-        }
-        catch (Exception ex)
-        {
-            if (ex.StackTrace != null)
-                await logger.LogError("Error assigning ticket to user", ex, nameof(TicketService), ex.StackTrace);
-        }
-    }
 
     public async Task<TicketDto> CreateTicketAsync(TicketDto dto, CancellationToken ct)
     {
@@ -179,7 +149,8 @@ public class TicketService(
         {
             var changes = new Dictionary<string, (object? oldValue, object? newValue)>();
             _userService = serviceProvider.GetRequiredService<IUserService>();
-
+             int oldCount = 0;
+             int newCount = 0;
             var currentUser = await _userService.GetCurrentUser();
 
             var result = await ticketRepository.GetTicketById(ticketId, ct);
@@ -193,23 +164,51 @@ public class TicketService(
             if (dto.CommentAdded)
             {
                 ct.ThrowIfCancellationRequested();
+
+                oldCount = currentTicket.Comments.Count;
+                
                 await eventPublisher.PublishEventAsync(
                     new CommentAddedToTicketEvent(ticketId, dto.Comment?? string.Empty, $"{currentUser.FirstName}, {currentUser.LastName}"), ct);
+                newCount = currentTicket.Comments.Count;
+
+                if (oldCount != newCount)
+                {
+                    changes[nameof(currentTicket.Comments)] = (oldCount, newCount);
+                }
             }
 
             if (dto.AttachmentDeleted)
             {
                 ct.ThrowIfCancellationRequested();
-                
+                oldCount = currentTicket.Attachments.Count;
                 await eventPublisher.PublishEventAsync(
                     new AttachmentDeletedToTicketEvent(ticketId, dto.FileName, $"{currentUser.FirstName},{currentUser.LastName}"), ct);
+                newCount = currentTicket.Attachments.Count;
+                if (oldCount != newCount)
+                {
+                    changes[nameof(currentTicket.Attachments)] = (oldCount, newCount);
+                }
             }
 
             if (dto.AttachmentAdded)
             {
                 ct.ThrowIfCancellationRequested();
+                oldCount = currentTicket.Attachments.Count;
+
                 await eventPublisher.PublishEventAsync(
                         new AttachmentAddedToTicketEvent(ticketId, dto.FileName, $"{currentUser.FirstName}, {currentUser.LastName}"), ct);
+                newCount = currentTicket.Attachments.Count;
+                if (oldCount != newCount)
+                {
+                    changes[nameof(currentTicket.Attachments)]
+                        = (oldCount, newCount);
+                }
+
+                if (changes.Any())
+                {
+                    await eventPublisher.PublishEventAsync(new TicketUpdatedEvent(
+                        ticketId, $"{currentUser.FirstName}, {currentUser.FirstName}", changes), ct);
+                }
             }
 
             await ticketRepository.UpdateTicket(currentTicket);

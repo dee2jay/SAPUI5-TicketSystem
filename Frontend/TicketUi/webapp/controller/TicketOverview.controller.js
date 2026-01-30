@@ -117,20 +117,38 @@ sap.ui.define([
         },
 
         onCreateButtonPress: async function(){
-            const newTicket = this.getView().getModel("ticketViewModel").getData();
-            console.log("newTicket", newTicket);
-            try {
-                    var response = await TicketService.createTicket(newTicket);
-                    console.log("response", response);
-                    if(!response)
-                    {
-                        sap.m.MessageToast.show("Error creating ticket");
-                        this._ticketCreate.close();
-                        return;
+            const oModel = this.getView().getModel("ticketViewModel");
+            const newTicket = oModel.getData();
+
+            let bValid = true;            
+            try {  
+                                
+                this.getView().findAggregatedObjects(true, o =>
+                    o.isA("sap.m.Input") && o.getRequired()
+                )
+                .forEach(oInput => {
+                    if (!oInput.getValue()) {
+                    oInput.setValueState("Error");
+                    bValid = false;
                     }
-                    sap.m.MessageToast.show("Ticket created successfully");
+                });                
+                
+
+                if(!bValid){
+                    MessageToast.show("Please insert a valid location");
+                    return;
+                }
+
+                var response = await TicketService.createTicket(newTicket);                
+                if(!response)
+                {
+                    sap.m.MessageToast.show("Error creating ticket");
                     this._ticketCreate.close();
-                    this._loadTickets(); // reload list
+                    return;
+                }
+                sap.m.MessageToast.show("Ticket created successfully");
+                this._ticketCreate.close();
+                this._loadTickets(); // reload list
             } catch (err) {
                 console.log("error: ", err);
                 sap.m.MessageToast.show("Error creating ticket");

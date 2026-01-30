@@ -106,7 +106,7 @@ sap.ui.define([
                 MessageToast.show("Ticket saved"); 
                 this._refreshHistory;           
             
-                this.onNavBack();
+                 this.getOwnerComponent().getRouter().navTo("tickets", {}, { skipHistory: true });
             }catch(error){
                 console.log(error);
             }
@@ -205,7 +205,7 @@ sap.ui.define([
             this._attachmentDialog.close();
         },
 
-        onButtonClosePress: function(){
+        onCloseButtonPress: function(){
             this._attachmentDialog.close();
         },
 
@@ -267,7 +267,7 @@ sap.ui.define([
             
         },
 
-        onButtonDeletePress: async function (oEvent) {
+        onDeleteButtonPress: async function (oEvent) {
             const oBundle = this.getView().getModel("i18n").getResourceBundle();
             
             const oItemAttachement = oEvent.getSource().getBindingContext("ticketsModel");
@@ -315,6 +315,10 @@ sap.ui.define([
                 console.error(err);
                 MessageToast.show("Issue during Deletion");
             }
+        },
+
+        onPreviewButtonPress: function(oEvent){
+
         },
         
         onSendButtonPress: async function(oEvent)
@@ -409,6 +413,24 @@ sap.ui.define([
                 oModel.setProperty(sPath + "/histories", data);
             })
             .catch(err => console.error(err));
+        },
+        _showViewer: function(sUrl){
+
+            const oViewerBox = this.byId("viewerBox");
+            const oPdfViewer = this.byId("pdfViewer");
+            const oImageViewer = this.byId("idViewerImage");
+
+            oViewerBox.setVisible(true);
+            oPdfViewer.setVisible(false);
+            oImageViewer.setVisible(false);
+
+            if (this._fileType === "application/pdf") {
+                oPdfViewer.setSource(sUrl);
+                oPdfViewer.setVisible(true);
+            } else if (this._fileType.startsWith("image")) {
+                oImageViewer.setSrc(sUrl);
+                oImageViewer.setVisible(true);
+            }
         }
            
     });

@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicketManagementSystem.Application.Dtos;
+﻿using TicketManagementSystem.Application.Dtos;
 using TicketManagementSystem.Domain.Models;
 
-namespace TicketManagementSystem.Application.Interfaces
+namespace TicketManagementSystem.Application.Interfaces;
+
+public interface IUserService : IAsyncDisposable
 {
-    public interface IUserService : IAsyncDisposable
-    {
-        Task<User> RegisterUserAsync(UserDto dto, CancellationToken ct);
-        Task<string> LoginUserAsync(LoginUserDto dto, CancellationToken ct);
-        Task LogoutUserAsync(string email);
-        public Task<User> GetCurrentUser();
-        Task<User?> GetUserById(int userId);
-        Task<string?> GetUserFullnameById(int  userId);
-    }
+    Task<User> RegisterUserAsync(UserDto dto, CancellationToken ct);
+    Task<string> LoginUserAsync(LoginUserDto dto, CancellationToken ct);
+    Task LogoutUserAsync(string email);
+    public Task<User> GetCurrentUser();
+    Task<User?> GetUserById(int userId);
+    Task<string?> GetUserFullnameById(int  userId);
 }

@@ -1,13 +1,11 @@
-﻿using System.Net.Sockets;
-using TicketManagementSystem.Application.Events.TicketEvents;
+﻿using TicketManagementSystem.Application.Events.TicketEvents;
 using TicketManagementSystem.Application.Events.UserEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Enums;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
-using TicketManagementSystem.Infrastructure.Migrations;
 
-namespace TicketManagementSystem.Application.Services.MailService;
+namespace TicketManagementSystem.Application.Services.Mail;
 
 public class NotificationService(ISmtpSettingsProvider emailProvider, IAppLogger logger) : INotificationService
 {

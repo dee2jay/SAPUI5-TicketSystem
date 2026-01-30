@@ -1,6 +1,6 @@
 <Dialog id="idDialog" title="{i18n>titleTicketCreation}" xmlns="sap.m" xmlns:l="sap.ui.layout.form" xmlns:core="sap.ui.core">
 	<content>
-		<l:SimpleForm id="idSimpleForm" editable="true" class="sapUiResponsiveMargin" width="auto">
+		<l:SimpleForm id="idSimpleForm" editable="true" class="sapUiResponsiveMargin" width="auto" >
 			<Label id="idCategoryLabel" text="{i18n>labelCategory}"/>
 			<Select id="idCategoriesSelect" selectedKey="{ticketViewModel>/category}"
 				items="{path: 'ticketCategoryViewModel>/categories',
@@ -9,7 +9,7 @@
 				
 			</Select>			
 			<Label id="idLocationLabel" text="{i18n>labelLocation}"/>
-			<Input id="idLocationInput" value="{ticketViewModel>/location}" placeholder="{i18n>labelLocation}" liveChange=".onLocationInputLiveChange" required="true"/>
+			<Input id="idLocationInput" value="{path:'ticketViewModel>/location',type: 'sap.ui.model.type.String', constraints:{minLength: 1}}" placeholder="{i18n>labelLocation}" liveChange=".onLocationInputLiveChange" required="true"/>
 			<Label id="idCostCenterLabel" text="{i18n>labelCostCenter}"/>
 			<Input id="idCostCenterInput" value="{ticketViewModel>/costCenter}" placeholder="{i18n>labelCostCenter}"/>
 			<Label id="idOrderNrLabel" text="{i18n>labelOrderNr}"/>

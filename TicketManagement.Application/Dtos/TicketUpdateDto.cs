@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using TicketManagementSystem.Domain.Enums;
-using TicketManagementSystem.Domain.Models;
+﻿using TicketManagementSystem.Domain.Enums;
 
 namespace TicketManagementSystem.Application.Dtos;
 

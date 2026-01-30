@@ -1,39 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TicketManagementSystem.Application.Events.UserEvents;
+﻿using TicketManagementSystem.Application.Events.UserEvents;
 using TicketManagementSystem.Application.Interfaces;
 using TicketManagementSystem.Domain.Models;
 using TicketManagementSystem.Infrastructure.Interface;
 
-namespace TicketManagementSystem.Application.EventHandlers.UserEventHandler
+namespace TicketManagementSystem.Application.EventHandlers.UserEventHandler;
+
+public class LoginUserEventHandler(IAppLogger logger) : IEventHandler<UserLoginEvent>
 {
-    public class LoginUserEventHandler : IEventHandler<UserLoginEvent>
+    public async Task HandleAsync(UserLoginEvent @event, CancellationToken ct)
     {
-        private readonly IAppLogger _logger;
-
-        public LoginUserEventHandler(IAppLogger logger)
+        var logEntry = new UserChangeLog
         {
-            _logger = logger;
-        }
-
-        public async Task HandleAsync(UserLoginEvent @event, CancellationToken ct)
-        {
-            var logEntry = new UserChangeLog
-            {
-                Title = "User logged in",
-                Property = "UserConnected",
-                OldValue = "False",
-                NewValue = "True",
-                ChangedAt = @event.OccuredOn,
-            };
-            var message =
-                $"TimeStamp-> {logEntry.ChangedAt}, {logEntry.Title}, Email -> {logEntry.NewValue}, " +
-                $"Login Status {logEntry.NewValue}";
+            Title = "User logged in",
+            Property = "UserConnected",
+            OldValue = "False",
+            NewValue = "True",
+            ChangedAt = @event.OccuredOn,
+        };
+        var message =
+            $"TimeStamp-> {logEntry.ChangedAt}, {logEntry.Title}, Email -> {logEntry.NewValue}, " +
+            $"Login Status {logEntry.NewValue}";
             
-            await _logger.LogInfo(message);
-        }
+        await logger.LogInfo(message);
     }
 }

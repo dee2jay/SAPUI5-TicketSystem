@@ -1,6 +1,4 @@
-﻿using TicketManagementSystem.Domain.Models;
-
-namespace TicketManagementSystem.Application.Dtos;
+﻿namespace TicketManagementSystem.Application.Dtos;
 
 public class TicketDto
 {

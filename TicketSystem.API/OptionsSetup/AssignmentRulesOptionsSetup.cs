@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using TicketManagementSystem.Application.Services.AssignmentService;
+using TicketManagementSystem.Application.Services.Assignment;
 
 namespace TicketManagementSystem.API.OptionsSetup;
 
