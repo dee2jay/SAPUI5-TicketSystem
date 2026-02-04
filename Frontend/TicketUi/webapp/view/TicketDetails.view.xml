@@ -17,6 +17,7 @@
 				<HBox id="id3HBox">
 					<Select id="idAssignedUserSelect" selectedKey="{ticketsModel>assignedTo}">
 						<items>
+						<core:Item id="idInselectAssigneeItem" key="" text="-- {i18n>selectAssignee} --" enabled="true"/>
 						<core:Item id="idTicketAssignee0Item" key="Assignee0"
 							           text="Ticket Assignee0"/>
 							<core:Item id="idTicketAssignee1Item" key="Assignee1"
@@ -29,6 +30,7 @@
 					</Select>
 					<Select id="idStatusSelect" selectedKey="{ticketsModel>status}">
 						<items>
+						<core:Item id="idInselectStatusItem" key="" text="-- {i18n>selectStatus} --" enabled="true"/>
 							<core:Item id="idOpenItem" key="Open"
 							           text="Open"/>
 							<core:Item id="idInProgressItem" key="InProgress"
@@ -41,6 +43,7 @@
 					</Select>
 					<Select id="idPrioritySelect" selectedKey="{ticketsModel>priority}">
 						<items>
+						<core:Item id="idInselectCategoryItem" key="" text="-- {i18n>selectCategory} --" enabled="true"/>
 							<core:Item id="idLowItem" key="Low"
 							           text="Low"/>
 							<core:Item id="idMediumItem" key="Medium"

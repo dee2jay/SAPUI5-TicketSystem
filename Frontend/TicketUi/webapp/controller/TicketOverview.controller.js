@@ -6,19 +6,21 @@ sap.ui.define([
     "sap/m/MessageToast",
     "ui5/ticketui/model/TicketViewModel",    
     "ui5/ticketui/model/TicketCategoryViewModel",
+    "ui5/ticketui/service/AuthService",
     "ui5/ticketui/service/TokenService",
     "ui5/ticketui/service/CategoryService",
     "sap/ui/core/library"
 ], function(Controller,
-    TicketService,
-    Fragment,
-    formatter,
-    MessageToast,
-    TicketViewModel,
-    TicketCategoryViewModel,
-    TokenService,
-    CategoryService,
-    coreLibrary) {
+	TicketService,
+	Fragment,
+	formatter,
+	MessageToast,
+	TicketViewModel,
+	TicketCategoryViewModel,    
+	AuthService,    
+	TokenService,
+	CategoryService,
+	library) {
     "use strict";
     return Controller.extend("ui5.ticketui.controller.TicketOverview", {
         
@@ -242,6 +244,8 @@ sap.ui.define([
         },
 
         onLogoutNavigationListItemSelect: function(){
+            AuthService.logout();
+
             this.getOwnerComponent().getRouter().navTo("home");
         }, 
         
