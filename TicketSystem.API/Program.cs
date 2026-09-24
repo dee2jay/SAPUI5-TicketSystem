@@ -160,7 +160,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowUI5", cors =>
     {
-        cors.WithOrigins("http://localhost:8080", "https://dee2jay.github.io")
+        cors.WithOrigins((builder.Configuration["Cors:AllowedOrigins"] ?? "http://localhost:8080").Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
             .AllowAnyMethod()
             .AllowAnyHeader();
     });
