@@ -35,7 +35,6 @@ using TicketManagementSystem.Infrastructure.Persistence.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 // === Authentication Configurations ===
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
@@ -58,22 +57,18 @@ builder.Services.AddScoped<ITicketCommentRepository, TicketCommentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
-
 builder.Services.AddScoped<IEventHandler<UserCreatedEvent>, RegisterUserEventHandler>();
 builder.Services.AddScoped<IEventHandler<UserLoginEvent>, LoginUserEventHandler>();
 builder.Services.AddScoped<IEventHandler<UserLogoutEvent>, LogoutUserEventHandler>();
-
 
 builder.Services.AddScoped<ICommandHandler<RegisterUserCommand, RegisterUserResult>, UserRegisterCommandHandler>();
 builder.Services.AddScoped<ICommandHandler<LoginUserCommand, LoginResult>, UserLoginCommandHandler>();
 builder.Services.AddScoped<ICommandHandlerBase<LogoutUserCommand>, UserLogoutCommandHandler>();
 
-
 // === Event Publisher & Dispatcher ===
 builder.Services.AddScoped<EventPublisher>();
 builder.Services.AddScoped<IEventPublisher>(sp => sp.GetRequiredService<EventPublisher>());
 builder.Services.AddScoped<IEventDispatcher, EventDispatcher>();
-
 
 builder.Services.AddAutoMapper(profile => profile.AddProfile<TicketMappingProfile>());
 builder.Services.AddAutoMapper(profile => profile.AddProfile<UserMappingProfile>());
@@ -93,7 +88,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IMappingService, MappingService>();
 builder.Services.AddScoped<IPrintService, PrintService>();
 
-// === Command Handler and Event Handlers===
+// === Command Handler and Event Handlers ===
 builder.Services.AddScoped<IEventHandler<TicketCreatedEvent>, TicketCreatedEventHandler>();
 builder.Services.AddScoped<IEventHandler<TicketUpdatedEvent>, TicketUpdatedEventHandler>();
 builder.Services.AddScoped<IEventHandler<AttachmentAddedToTicketEvent>, AttachmentAddedToTicketEventHandler>();
@@ -103,7 +98,6 @@ builder.Services.AddScoped<IEventHandler<TicketPriorityChangedEvent>, TicketPrio
 builder.Services.AddScoped<IEventHandler<TicketStatusChangedEvent>, TicketStatusChangedEventHandler>();
 builder.Services.AddScoped<IEventHandler<TicketOwnerChangedEvent>, TicketOwnerChangedEventHandler>();
 builder.Services.AddScoped<IEventHandler<DueDateAddedToTicketEvent>, DueDateAddedToTicketEventHandler>();
-
 
 // === Database Context ===
 builder.Services.AddDbContext<TicketDbContext>(
@@ -124,7 +118,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowUI5", cors =>
     {
-        cors.WithOrigins((builder.Configuration["Cors:AllowedOrigins"] ?? "http://localhost:8080").Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        cors.WithOrigins(
+                (builder.Configuration["Cors:AllowedOrigins"] ?? "http://localhost:8080")
+                    .Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
             .AllowAnyMethod()
             .AllowAnyHeader();
     });
@@ -147,7 +143,6 @@ builder.Services.AddControllers()
         option.JsonSerializerOptions.WriteIndented = true;
     });
 
-
 // === Swagger / OpenAPI ===
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -163,7 +158,7 @@ builder.Services.AddSwaggerGen(c =>
             Email = "support@spiratec.com"
         }
     });
-    // JWT Authorization  Swagger
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -184,7 +179,6 @@ builder.Services.AddSwaggerGen(c =>
             []
         }
     });
-
 });
 
 // Health Checks
@@ -193,8 +187,15 @@ builder.Services.AddHealthChecks()
 
 builder.Services.AddHttpContextAccessor();
 
-
 var app = builder.Build();
+
+// Apply pending EF Core migrations before accepting requests.
+// This is required for a fresh Docker deployment with an empty SQL Server volume.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<TicketDbContext>();
+    db.Database.Migrate();
+}
 
 // === Middleware ===
 if (app.Environment.IsDevelopment())
