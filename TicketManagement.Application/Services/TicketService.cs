@@ -127,6 +127,7 @@ public class TicketService(
             ticket.User = user;
             ticket.UserId = user.Id;
             await ticketRepository.AddTicket(ticket);
+            dto.Id = ticket.Id;
 
             var ticketCreatedEvent = new TicketCreatedEvent(ticket.Id, ticket.Title!, ticket.Author, ticket.AssignedTo!);
         

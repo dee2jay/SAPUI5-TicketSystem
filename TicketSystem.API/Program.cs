@@ -39,50 +39,14 @@ var builder = WebApplication.CreateBuilder(args);
 // === Authentication Configurations ===
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-//{
-//    options.Events = new JwtBearerEvents
-//    {
-//        OnTokenValidated = async ctx =>
-//        {
-//            var sub = ctx.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub);
-//            var tokenVersion = int.Parse(ctx.Principal!.FindFirst("token_version")!.Value);
 
-//            if (int.TryParse(sub, out var userId))
-//            {
-//                ctx.Fail("Invalid user Id");
-//            }
-
-//            var db = ctx.HttpContext.RequestServices.GetRequiredService<TicketDbContext>();
-
-//            var user = await db.Users.FindAsync(userId);
-
-//            if (user == null || user.TokenVersion != tokenVersion)
-//            {
-//                ctx.Fail("Token invalidated");
-//            }
-//        }
-//    };
-//});
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services
+    .AddAuthentication(options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"])),
-    };
-
-});
-
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer();
 
 // === Assignment Rules Configurations ===
 builder.Services.ConfigureOptions<AssignmentRulesOptionsSetup>();
@@ -160,7 +124,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowUI5", cors =>
     {
-        cors.WithOrigins("http://localhost:8080")
+        cors.WithOrigins((builder.Configuration["Cors:AllowedOrigins"] ?? "http://localhost:8080").Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
             .AllowAnyMethod()
             .AllowAnyHeader();
     });
