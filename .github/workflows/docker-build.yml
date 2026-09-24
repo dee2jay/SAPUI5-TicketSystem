@@ -1,0 +1,27 @@
+name: Docker Build
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build API image
+        run: docker build -f TicketSystem.API/Dockerfile -t ticketsystem-api:ci .
+
+      - name: Validate Compose
+        run: |
+          cp .env.example .env
+          docker compose config
+
+      - name: Build mobile image from public PoC
+        run: docker build -t ticketsystem-mobile:ci https://github.com/dee2jay/SAPUI5-TicketSystem-Mobile-PoC.git#main
