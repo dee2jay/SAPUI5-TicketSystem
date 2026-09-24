@@ -2,6 +2,7 @@
 
 public class TicketDto
 {
+    public int Id { get; set; }
     public string? Category { get; set; }
     public string? Location { get; set; }
     public string? CostCenter { get; set; }
