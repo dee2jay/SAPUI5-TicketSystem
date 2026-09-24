@@ -1,0 +1,28 @@
+name: API Build
+
+on:
+  push:
+    branches:
+      - master
+      - poc/mobile-api-integration
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Restore
+        run: dotnet restore TicketSystem.API/TicketManagementSystem.API.csproj
+
+      - name: Build
+        run: dotnet build TicketSystem.API/TicketManagementSystem.API.csproj --no-restore --configuration Release
