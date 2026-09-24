@@ -65,11 +65,21 @@ services:
     networks:
       - ticketsystem
 
+  mobile:
+    build:
+      context: https://github.com/dee2jay/SAPUI5-TicketSystem-Mobile-PoC.git#main
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - ticketsystem
+
   nginx:
     image: nginx:1.27-alpine
     restart: unless-stopped
     depends_on:
       - api
+      - mobile
     ports:
       - "8080:80"
     volumes:
