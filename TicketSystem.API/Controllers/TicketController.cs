@@ -201,7 +201,19 @@ public class TicketsController(ITicketService ticketService, ITicketAttachmentSe
 
             if (file == null)
             {
-                return BadRequest("No file");
+                return BadRequest(new { message = "No file supplied." });
+            }
+
+            const long maxFileSize = 10 * 1024 * 1024;
+            if (file.Length <= 0 || file.Length > maxFileSize)
+            {
+                return BadRequest(new { message = "File must be between 1 byte and 10 MB." });
+            }
+
+            var allowedImageTypes = new[] { "image/jpeg", "image/png", "image/webp" };
+            if (!allowedImageTypes.Contains(file.ContentType, StringComparer.OrdinalIgnoreCase))
+            {
+                return BadRequest(new { message = "Only JPEG, PNG and WebP images are supported." });
             }
 
             var attachment = await attachmentService.AddAttachment(ticketId, file, user, _cancellationToken.Token);
