@@ -145,6 +145,7 @@ public class TicketsController(ITicketService ticketService, ITicketAttachmentSe
         }
     }
 
+    [Authorize]
     [HttpPost("/api/tickets/{ticketId}/addComment", Name = "AddComment")]
     public async Task<IActionResult> AddComment(int ticketId, [FromBody] TicketCommentDto dto)
     {
